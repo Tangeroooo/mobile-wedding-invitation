@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './DesignLab.css'
+import FullInvitation from './FullInvitation'
 
 type Mood = 'all' | 'warm' | 'modern'
 
@@ -94,6 +95,10 @@ function readSavedSelection() {
 function DesignLab() {
   const [filter, setFilter] = useState<Mood>('all')
   const [selected, setSelected] = useState<string[]>(readSavedSelection)
+  const activeConcept = concepts.find(
+    (concept) =>
+      concept.id === new URLSearchParams(window.location.search).get('concept'),
+  )
 
   useEffect(() => {
     try {
@@ -102,6 +107,10 @@ function DesignLab() {
       // The lab still works when browser storage is unavailable.
     }
   }, [selected])
+
+  if (activeConcept) {
+    return <FullInvitation concept={activeConcept} concepts={concepts} />
+  }
 
   const visibleConcepts =
     filter === 'all'
@@ -209,6 +218,15 @@ function DesignLab() {
                     <li key={keyword}>{keyword}</li>
                   ))}
                 </ul>
+                <a
+                  className="open-concept"
+                  href={`${import.meta.env.BASE_URL}design-lab/?concept=${concept.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  전체 구성 보기
+                  <span aria-hidden="true">↗</span>
+                </a>
               </div>
             </article>
           )
@@ -219,9 +237,9 @@ function DesignLab() {
         <p className="lab-kicker">HOW TO CHOOSE</p>
         <h2>레이아웃을 먼저, 색감은 나중에.</h2>
         <p>
-          지금은 사진 없이도 오래 보기 좋은 구조를 고르는 단계입니다. 마음에 드는
-          시안을 최대 3개 선택하면 이 기기에 저장됩니다. 다음 단계에서 선택한
-          시안만 실제 섹션까지 확장하고, 마지막에 Warm과 Modern 테마를 조합합니다.
+          각 카드의 ‘전체 구성 보기’를 누르면 첫 화면부터 참석 응답까지 같은
+          내용으로 비교할 수 있습니다. 마음에 드는 시안을 최대 3개 선택하면 이
+          기기에 저장됩니다. 이후 선택한 시안의 장점을 합쳐 최종안을 만듭니다.
         </p>
       </section>
 
