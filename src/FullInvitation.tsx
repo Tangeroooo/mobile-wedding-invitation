@@ -64,6 +64,14 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     concepts[(activeIndex - 1 + concepts.length) % concepts.length]
   const nextConcept = concepts[(activeIndex + 1) % concepts.length]
   const designLabUrl = `${import.meta.env.BASE_URL}design-lab/`
+  const totalConcepts = String(concepts.length).padStart(2, '0')
+  const sampleHeroUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
+  const usesPhotoHero = [
+    'full-bleed-vow',
+    'glasshouse',
+    'oval-nocturne',
+    'paper-collage',
+  ].includes(concept.id)
 
   useEffect(() => {
     document.title = `${concept.koreanName} — Wedding Design Lab`
@@ -78,7 +86,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           Design Lab
         </a>
         <div className="preview-identity">
-          <span>{concept.number} / 06</span>
+          <span>{concept.number} / {totalConcepts}</span>
           <strong>{concept.name}</strong>
         </div>
         <nav aria-label="다른 디자인 보기">
@@ -117,7 +125,11 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
             </h1>
             <p>서로의 가장 좋은 친구가 되어 결혼합니다.</p>
           </div>
-          <PhotoPlaceholder className="hero-portrait" label="MAIN PORTRAIT" />
+          <PhotoPlaceholder
+            className="hero-portrait"
+            label="MAIN PORTRAIT"
+            imageSrc={usesPhotoHero ? sampleHeroUrl : undefined}
+          />
           <div className="hero-date">
             <time dateTime="2027-05-15T13:00">2027. 05. 15. SAT · 1:00 PM</time>
             <span>서울 ○○웨딩홀 그랜드홀</span>
@@ -299,12 +311,15 @@ function SectionTitle({
 function PhotoPlaceholder({
   className,
   label,
+  imageSrc,
 }: {
   className: string
   label: string
+  imageSrc?: string
 }) {
   return (
     <div className={`photo-placeholder ${className}`}>
+      {imageSrc && <img src={imageSrc} alt="" />}
       <span>{label}</span>
     </div>
   )

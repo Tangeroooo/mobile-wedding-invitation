@@ -674,6 +674,230 @@
     #171817;
 }
 
+.preview-full-bleed,
+.preview-glasshouse,
+.preview-oval {
+  isolation: isolate;
+  color: #fff;
+  background: #293026;
+}
+
+.preview-full-bleed > img,
+.preview-glasshouse > img,
+.preview-oval > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-full-bleed {
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8%;
+}
+
+.full-bleed-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 15, 10, 0.48),
+    transparent 35%,
+    transparent 58%,
+    rgba(9, 14, 10, 0.68)
+  );
+}
+
+.full-bleed-top {
+  font-size: clamp(0.45rem, 1vw, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.preview-full-bleed > strong {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: auto;
+  font: italic 400 clamp(2.6rem, 7.4vw, 5.3rem)/0.72 var(--lab-serif);
+  letter-spacing: -0.07em;
+}
+
+.preview-full-bleed > strong i {
+  margin-block: 5px;
+  font-size: 0.75rem;
+  color: #e3c7a5;
+}
+
+.full-bleed-bottom {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 7%;
+  border-top: 1px solid rgba(255, 255, 255, 0.48);
+  font-size: clamp(0.46rem, 1vw, 0.66rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.preview-glasshouse {
+  align-items: flex-end;
+  padding: 7%;
+}
+
+.preview-glasshouse::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(12, 18, 13, 0.46), transparent 58%);
+}
+
+.glass-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 8% 7%;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 16px;
+  background: rgba(21, 28, 22, 0.28);
+  box-shadow: 0 12px 30px rgba(10, 14, 11, 0.16);
+  backdrop-filter: blur(12px);
+}
+
+.glass-card > span {
+  font-size: clamp(0.42rem, 0.9vw, 0.58rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.glass-card > strong {
+  margin: 9% 0 6%;
+  font: 400 clamp(2.3rem, 6.5vw, 4.7rem)/0.8 var(--lab-serif);
+  letter-spacing: -0.06em;
+}
+
+.glass-card p {
+  margin: 0 0 12%;
+  font: 400 clamp(0.6rem, 1.35vw, 0.86rem)/1 var(--lab-serif);
+}
+
+.glass-card time {
+  padding-top: 5%;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: clamp(0.46rem, 1vw, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.preview-oval {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7%;
+  text-align: center;
+}
+
+.preview-oval::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(8, 11, 9, 0.48);
+}
+
+.oval-frame {
+  position: absolute;
+  inset: 15% 15% 12%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+}
+
+.preview-oval > strong {
+  z-index: 1;
+  font: 400 clamp(1.65rem, 4.8vw, 3.5rem)/1 var(--lab-serif);
+  letter-spacing: -0.04em;
+}
+
+.preview-oval > p {
+  z-index: 1;
+  margin: auto 0 4%;
+  font: 400 clamp(0.62rem, 1.4vw, 0.9rem)/1 var(--lab-serif);
+}
+
+.preview-oval > time {
+  z-index: 1;
+  font-size: clamp(0.46rem, 1vw, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.preview-collage {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8%;
+  color: #3d3732;
+  background:
+    repeating-linear-gradient(88deg, rgba(65, 54, 47, 0.02) 0 1px, transparent 1px 5px),
+    #eee8df;
+}
+
+.collage-date {
+  position: absolute;
+  top: 7%;
+  right: 7%;
+  font-size: clamp(0.45rem, 1vw, 0.62rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.collage-photo {
+  position: absolute;
+  overflow: hidden;
+  border: 8px solid #faf7f0;
+  box-shadow: 0 10px 24px rgba(63, 51, 43, 0.16);
+}
+
+.collage-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collage-photo-one {
+  top: 13%;
+  left: 12%;
+  width: 52%;
+  aspect-ratio: 0.77;
+  transform: rotate(-5deg);
+}
+
+.collage-photo-two {
+  top: 25%;
+  right: 10%;
+  width: 42%;
+  aspect-ratio: 0.76;
+  transform: rotate(7deg);
+}
+
+.preview-collage > strong {
+  z-index: 1;
+  font: 400 clamp(1.8rem, 4.8vw, 3.2rem)/1 var(--lab-serif);
+  transform: rotate(-4deg);
+}
+
+.preview-collage > p {
+  z-index: 1;
+  margin: 6% 0 0;
+  font-size: clamp(0.46rem, 1vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
 .noir-issue {
   align-self: flex-end;
   font-size: clamp(0.48rem, 1.1vw, 0.7rem);

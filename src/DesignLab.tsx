@@ -69,6 +69,42 @@ const concepts: Concept[] = [
     description: '강한 대비와 대담한 활자로 만드는 패션 매거진 스타일',
     keywords: ['고대비', '매거진', '모노크롬'],
   },
+  {
+    id: 'full-bleed-vow',
+    number: '07',
+    name: 'Full Bleed Vow',
+    koreanName: '풀블리드 바우',
+    mood: 'warm',
+    description: '입장 순간부터 세로 사진이 화면을 가득 채우는 몰입형 커버',
+    keywords: ['풀스크린 사진', '화이트 레터링', '시네마틱'],
+  },
+  {
+    id: 'glasshouse',
+    number: '08',
+    name: 'Glasshouse',
+    koreanName: '글래스하우스',
+    mood: 'modern',
+    description: '사진 위 반투명 카드에 이름과 예식 정보를 정돈한 현대적 구성',
+    keywords: ['풀스크린 사진', '글래스 UI', '레이어'],
+  },
+  {
+    id: 'oval-nocturne',
+    number: '09',
+    name: 'Oval Nocturne',
+    koreanName: '오벌 녹턴',
+    mood: 'modern',
+    description: '어두운 사진과 타원 프레임, 큰 제목을 조합한 극적인 커버',
+    keywords: ['오벌 프레임', '저채도 사진', '드라마틱'],
+  },
+  {
+    id: 'paper-collage',
+    number: '10',
+    name: 'Paper Collage',
+    koreanName: '페이퍼 콜라주',
+    mood: 'warm',
+    description: '사진을 오려 붙인 듯한 레이어와 손글씨 감성을 담은 구성',
+    keywords: ['콜라주', '폴라로이드', '손글씨'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -138,7 +174,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01</span>
+        <span className="lab-edition">DESIGN STUDY · 01—10</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -263,6 +299,8 @@ function DesignLab() {
 }
 
 function ConceptPreview({ conceptId }: { conceptId: string }) {
+  const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
+
   if (conceptId === 'linen-letter') {
     return (
       <div className="concept-preview preview-linen" aria-label="리넨 레터 미리보기">
@@ -346,6 +384,67 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
           <i>×</i>
           <span>SEOYEON</span>
         </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'full-bleed-vow') {
+    return (
+      <div className="concept-preview preview-full-bleed" aria-label="풀블리드 바우 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="full-bleed-shade" aria-hidden="true" />
+        <span className="full-bleed-top">OUR WEDDING DAY</span>
+        <strong>
+          민준
+          <i>&amp;</i>
+          서연
+        </strong>
+        <div className="full-bleed-bottom">
+          <time>2027. 05. 15</time>
+          <span>SEOUL</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'glasshouse') {
+    return (
+      <div className="concept-preview preview-glasshouse" aria-label="글래스하우스 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="glass-card">
+          <span>WE ARE GETTING MARRIED</span>
+          <strong>M / S</strong>
+          <p>민준 그리고 서연</p>
+          <time>15 MAY 2027 · 1PM</time>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'oval-nocturne') {
+    return (
+      <div className="concept-preview preview-oval" aria-label="오벌 녹턴 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="oval-frame" aria-hidden="true" />
+        <strong>TWO OF US</strong>
+        <p>민준 · 서연</p>
+        <time>15 / 05 / 2027</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'paper-collage') {
+    return (
+      <div className="concept-preview preview-collage" aria-label="페이퍼 콜라주 미리보기">
+        <span className="collage-date">MAY · 15 · 2027</span>
+        <div className="collage-photo collage-photo-one">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <div className="collage-photo collage-photo-two">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <strong>결혼합니다</strong>
+        <p>MINJUN &amp; SEOYEON</p>
       </div>
     )
   }
