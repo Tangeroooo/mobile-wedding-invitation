@@ -123,6 +123,42 @@ const concepts: Concept[] = [
     description: 'Day의 따뜻함과 Night의 모던함을 직접 전환하는 이중 테마',
     keywords: ['테마 전환', 'Day & Night', '인터랙션'],
   },
+  {
+    id: 'golden-hour-bleed',
+    number: '13',
+    name: 'Golden Hour Bleed',
+    koreanName: '골든아워 블리드',
+    mood: 'warm',
+    description: '노을빛 사진을 여백 없이 펼치고 작은 캡션만 남긴 감성 커버',
+    keywords: ['풀블리드', '골든아워', '감성 사진'],
+  },
+  {
+    id: 'cinema-still',
+    number: '14',
+    name: 'Cinema Still',
+    koreanName: '시네마 스틸',
+    mood: 'modern',
+    description: '영화의 한 장면처럼 넓은 사진과 자막형 정보를 배치한 구성',
+    keywords: ['시네마스코프', '필름 자막', '블랙'],
+  },
+  {
+    id: 'cover-story',
+    number: '15',
+    name: 'Cover Story',
+    koreanName: '커버 스토리',
+    mood: 'modern',
+    description: '인물 사진 위에 대담한 제호와 커버라인을 얹은 매거진 스타일',
+    keywords: ['매거진 커버', '대형 타이포', '에디토리얼'],
+  },
+  {
+    id: 'ivory-diptych',
+    number: '16',
+    name: 'Ivory Diptych',
+    koreanName: '아이보리 딥틱',
+    mood: 'warm',
+    description: '서로 다른 두 사진 장면을 한 화면에 이어 붙이는 포토 딥틱',
+    keywords: ['2분할 사진', '아이보리', '포트레이트'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -192,7 +228,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—12</span>
+        <span className="lab-edition">DESIGN STUDY · 01—16</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -500,6 +536,71 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         </div>
         <strong>M &amp; S</strong>
         <time>15 MAY 2027</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'golden-hour-bleed') {
+    return (
+      <div className="concept-preview preview-golden-bleed" aria-label="골든아워 블리드 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <span className="golden-kicker">A DAY TO REMEMBER</span>
+        <strong>
+          민준
+          <i>&amp;</i>
+          서연
+        </strong>
+        <div className="golden-caption">
+          <time>2027. 05. 15</time>
+          <span>SEOUL · 1PM</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'cinema-still') {
+    return (
+      <div className="concept-preview preview-cinema-still" aria-label="시네마 스틸 미리보기">
+        <span className="cinema-frame">FRAME 0515 · TAKE 01</span>
+        <div className="cinema-photo">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <strong>OUR<br />FAVORITE<br />SCENE</strong>
+        <div className="cinema-credit">
+          <span>MINJUN × SEOYEON</span>
+          <time>15 MAY 2027</time>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'cover-story') {
+    return (
+      <div className="concept-preview preview-cover-story" aria-label="커버 스토리 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <span className="cover-issue">THE WEDDING ISSUE · 2027</span>
+        <strong className="cover-masthead">VOWS</strong>
+        <div className="cover-lines">
+          <span>THE NEW<br />CHAPTER</span>
+          <p>민준 &amp; 서연</p>
+        </div>
+        <time>MAY 15 · SEOUL</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'ivory-diptych') {
+    return (
+      <div className="concept-preview preview-diptych" aria-label="아이보리 딥틱 미리보기">
+        <div className="diptych-photo diptych-photo-left">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <div className="diptych-photo diptych-photo-right">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <span className="diptych-kicker">TWO PORTRAITS · ONE STORY</span>
+        <strong>민준 <i>&amp;</i> 서연</strong>
+        <time>15 · 05 · 2027</time>
       </div>
     )
   }

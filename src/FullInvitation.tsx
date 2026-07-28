@@ -74,6 +74,10 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     'oval-nocturne',
     'paper-collage',
     'two-chapters',
+    'golden-hour-bleed',
+    'cinema-still',
+    'cover-story',
+    'ivory-diptych',
   ].includes(concept.id)
   const heroImageSrc =
     concept.id === 'moonlit-hanji'
@@ -165,6 +169,13 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
             label="MAIN PORTRAIT"
             imageSrc={heroImageSrc}
           />
+          {concept.id === 'ivory-diptych' && (
+            <PhotoPlaceholder
+              className="hero-portrait hero-portrait-secondary"
+              label="SECOND PORTRAIT"
+              imageSrc={sampleHeroUrl}
+            />
+          )}
           <div className="hero-date">
             <time dateTime="2027-05-15T13:00">2027. 05. 15. SAT · 1:00 PM</time>
             <span>서울 ○○웨딩홀 그랜드홀</span>
@@ -318,7 +329,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>12개 디자인 목록으로 돌아가기</a>
+        <a href={designLabUrl}>16개 디자인 목록으로 돌아가기</a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>

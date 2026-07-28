@@ -13,7 +13,7 @@
 
 <https://tangeroooo.github.io/mobile-wedding-invitation/design-lab/>
 
-Warm 6종과 Modern 6종의 전체 청첩장 구성을 비교하고 최대 3개를 후보로
+Warm 8종과 Modern 8종의 전체 청첩장 구성을 비교하고 최대 3개를 후보로
 선택할 수 있습니다. 각 시안은 초대 문구, 달력, 사진첩, 오시는 길, 연락처와
 계좌 안내, 참석 여부 전달 영역을 포함합니다. 선택 결과는 현재 브라우저에만
 저장됩니다. `두 개의 장면` 시안에서는 Day와 Night 분위기를 직접 전환해
