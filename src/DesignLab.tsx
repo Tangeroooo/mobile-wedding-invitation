@@ -105,6 +105,24 @@ const concepts: Concept[] = [
     description: '사진을 오려 붙인 듯한 레이어와 손글씨 감성을 담은 구성',
     keywords: ['콜라주', '폴라로이드', '손글씨'],
   },
+  {
+    id: 'moonlit-hanji',
+    number: '11',
+    name: 'Moonlit Hanji',
+    koreanName: '달빛 한지',
+    mood: 'warm',
+    description: '현대 수묵 일러스트와 한지 여백으로 완성하는 보존형 청첩장',
+    keywords: ['수묵 일러스트', '한지', '아카이브'],
+  },
+  {
+    id: 'two-chapters',
+    number: '12',
+    name: 'Two Chapters',
+    koreanName: '두 개의 장면',
+    mood: 'modern',
+    description: 'Day의 따뜻함과 Night의 모던함을 직접 전환하는 이중 테마',
+    keywords: ['테마 전환', 'Day & Night', '인터랙션'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -174,7 +192,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—10</span>
+        <span className="lab-edition">DESIGN STUDY · 01—12</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -300,6 +318,7 @@ function DesignLab() {
 
 function ConceptPreview({ conceptId }: { conceptId: string }) {
   const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
+  const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
 
   if (conceptId === 'linen-letter') {
     return (
@@ -445,6 +464,42 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         </div>
         <strong>결혼합니다</strong>
         <p>MINJUN &amp; SEOYEON</p>
+      </div>
+    )
+  }
+
+  if (conceptId === 'moonlit-hanji') {
+    return (
+      <div className="concept-preview preview-hanji" aria-label="달빛 한지 미리보기">
+        <img src={moonlitHanjiUrl} alt="" />
+        <span className="hanji-overline">두 사람의 혼례</span>
+        <strong>
+          민준
+          <i>그리고</i>
+          서연
+        </strong>
+        <div className="hanji-seal" aria-hidden="true">喜</div>
+        <time>二〇二七 · 五月 · 十五日</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'two-chapters') {
+    return (
+      <div className="concept-preview preview-chapters" aria-label="두 개의 장면 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="chapter-half chapter-day">
+          <span>DAY</span>
+        </div>
+        <div className="chapter-half chapter-night">
+          <span>NIGHT</span>
+        </div>
+        <div className="chapter-toggle" aria-hidden="true">
+          <i />
+          <span>SWITCH THE MOOD</span>
+        </div>
+        <strong>M &amp; S</strong>
+        <time>15 MAY 2027</time>
       </div>
     )
   }

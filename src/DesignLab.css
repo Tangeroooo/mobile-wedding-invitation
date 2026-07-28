@@ -898,6 +898,165 @@
   letter-spacing: 0.18em;
 }
 
+.preview-hanji {
+  isolation: isolate;
+  color: #423c34;
+  background: #e9dfca;
+}
+
+.preview-hanji > img {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hanji-overline {
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  padding-left: 8px;
+  border-left: 2px solid #a84c34;
+  font: 500 clamp(0.48rem, 1.1vw, 0.7rem)/1 var(--lab-serif);
+  letter-spacing: 0.18em;
+}
+
+.preview-hanji > strong {
+  position: absolute;
+  top: 18%;
+  right: 9%;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font: 400 clamp(1.65rem, 4.5vw, 3.2rem)/0.9 var(--lab-serif);
+  letter-spacing: 0.12em;
+  writing-mode: vertical-rl;
+}
+
+.preview-hanji > strong i {
+  margin-inline: 7px;
+  font-size: 0.48em;
+  font-style: normal;
+  color: #817468;
+}
+
+.hanji-seal {
+  position: absolute;
+  right: 9%;
+  bottom: 16%;
+  display: grid;
+  width: 34px;
+  aspect-ratio: 1;
+  place-items: center;
+  font: 600 0.75rem/1 var(--lab-serif);
+  color: #f1e8d5;
+  background: #a84c34;
+}
+
+.preview-hanji > time {
+  position: absolute;
+  right: 9%;
+  bottom: 7%;
+  font: 500 clamp(0.46rem, 1vw, 0.64rem)/1 var(--lab-serif);
+  letter-spacing: 0.12em;
+}
+
+.preview-chapters {
+  isolation: isolate;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #1b211c;
+}
+
+.preview-chapters > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chapter-half {
+  position: absolute;
+  inset-block: 0;
+  z-index: -1;
+  width: 50%;
+  padding: 6%;
+}
+
+.chapter-half > span {
+  position: absolute;
+  bottom: 6%;
+  font-size: clamp(0.45rem, 1vw, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.chapter-day {
+  left: 0;
+  background: linear-gradient(to top, rgba(95, 66, 47, 0.55), rgba(196, 164, 129, 0.05));
+}
+
+.chapter-day > span {
+  left: 10%;
+}
+
+.chapter-night {
+  right: 0;
+  background: rgba(8, 13, 10, 0.48);
+  backdrop-filter: grayscale(1) contrast(1.1);
+}
+
+.chapter-night > span {
+  right: 10%;
+}
+
+.chapter-toggle {
+  position: absolute;
+  top: 7%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 999px;
+  background: rgba(17, 24, 19, 0.24);
+  backdrop-filter: blur(10px);
+}
+
+.chapter-toggle i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #efc18f;
+  box-shadow: 18px 0 0 #d9d9d3;
+}
+
+.chapter-toggle span {
+  margin-left: 18px;
+  font-size: clamp(0.4rem, 0.85vw, 0.54rem);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.preview-chapters > strong {
+  font: 400 clamp(2.9rem, 8vw, 5.8rem)/1 var(--lab-serif);
+  letter-spacing: -0.06em;
+  text-shadow: 0 3px 24px rgba(7, 11, 8, 0.35);
+}
+
+.preview-chapters > time {
+  position: absolute;
+  bottom: 7%;
+  font-size: clamp(0.46rem, 1vw, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
 .noir-issue {
   align-self: flex-end;
   font-size: clamp(0.48rem, 1.1vw, 0.7rem);

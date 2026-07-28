@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './FullInvitation.css'
 
 type InvitationConcept = {
@@ -59,6 +59,7 @@ const calendarDays: Array<number | ''> = [
 const weekdayLabels = ['일', '월', '화', '수', '목', '금', '토']
 
 function FullInvitation({ concept, concepts }: FullInvitationProps) {
+  const [chapter, setChapter] = useState<'day' | 'night'>('day')
   const activeIndex = concepts.findIndex((item) => item.id === concept.id)
   const previousConcept =
     concepts[(activeIndex - 1 + concepts.length) % concepts.length]
@@ -66,12 +67,20 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const designLabUrl = `${import.meta.env.BASE_URL}design-lab/`
   const totalConcepts = String(concepts.length).padStart(2, '0')
   const sampleHeroUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
+  const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
   const usesPhotoHero = [
     'full-bleed-vow',
     'glasshouse',
     'oval-nocturne',
     'paper-collage',
+    'two-chapters',
   ].includes(concept.id)
+  const heroImageSrc =
+    concept.id === 'moonlit-hanji'
+      ? moonlitHanjiUrl
+      : usesPhotoHero
+        ? sampleHeroUrl
+        : undefined
 
   useEffect(() => {
     document.title = `${concept.koreanName} — Wedding Design Lab`
@@ -109,8 +118,34 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         DESIGN PREVIEW · 모든 이름, 날짜, 장소, 연락처는 비교용 임시 정보입니다.
       </p>
 
-      <article className="full-invitation" data-concept={concept.id}>
+      <article
+        className="full-invitation"
+        data-concept={concept.id}
+        data-chapter={concept.id === 'two-chapters' ? chapter : undefined}
+      >
         <section className="invitation-hero">
+          {concept.id === 'two-chapters' && (
+            <div
+              className="full-chapter-switcher"
+              role="group"
+              aria-label="청첩장 분위기"
+            >
+              <button
+                type="button"
+                aria-pressed={chapter === 'day'}
+                onClick={() => setChapter('day')}
+              >
+                Day
+              </button>
+              <button
+                type="button"
+                aria-pressed={chapter === 'night'}
+                onClick={() => setChapter('night')}
+              >
+                Night
+              </button>
+            </div>
+          )}
           <div className="hero-ornament" aria-hidden="true">
             <i />
             <i />
@@ -128,7 +163,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           <PhotoPlaceholder
             className="hero-portrait"
             label="MAIN PORTRAIT"
-            imageSrc={usesPhotoHero ? sampleHeroUrl : undefined}
+            imageSrc={heroImageSrc}
           />
           <div className="hero-date">
             <time dateTime="2027-05-15T13:00">2027. 05. 15. SAT · 1:00 PM</time>
@@ -283,7 +318,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>6개 디자인 목록으로 돌아가기</a>
+        <a href={designLabUrl}>12개 디자인 목록으로 돌아가기</a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>
