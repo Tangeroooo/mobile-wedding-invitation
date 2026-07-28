@@ -159,6 +159,24 @@ const concepts: Concept[] = [
     description: '서로 다른 두 사진 장면을 한 화면에 이어 붙이는 포토 딥틱',
     keywords: ['2분할 사진', '아이보리', '포트레이트'],
   },
+  {
+    id: 'coming-warm-expanded',
+    number: '17',
+    name: 'Coming Warm Expanded',
+    koreanName: '커밍 웜 익스팬디드',
+    mood: 'warm',
+    description: '현재 Coming Soon의 아치와 식물선을 전체 청첩장으로 확장한 시안',
+    keywords: ['Coming Soon 연계', '아치 카드', '로즈 베이지'],
+  },
+  {
+    id: 'coming-modern-expanded',
+    number: '18',
+    name: 'Coming Modern Expanded',
+    koreanName: '커밍 모던 익스팬디드',
+    mood: 'modern',
+    description: '현재 Coming Soon의 직선 프레임과 격자를 이어가는 모던 시안',
+    keywords: ['Coming Soon 연계', '직선 프레임', '모노톤'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -228,7 +246,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—16</span>
+        <span className="lab-edition">DESIGN STUDY · 01—18</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -601,6 +619,47 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <span className="diptych-kicker">TWO PORTRAITS · ONE STORY</span>
         <strong>민준 <i>&amp;</i> 서연</strong>
         <time>15 · 05 · 2027</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'coming-warm-expanded') {
+    return (
+      <div className="concept-preview preview-coming preview-coming-warm" aria-label="커밍 웜 익스팬디드 미리보기">
+        <div className="coming-preview-botanical" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <span />
+        </div>
+        <p className="coming-preview-eyebrow">OUR WEDDING</p>
+        <strong>
+          <span>민준과 서연</span>
+          <span>결혼합니다</span>
+        </strong>
+        <p className="coming-preview-copy">두 사람이 함께 걷게 될 날에<br />소중한 분들을 초대합니다.</p>
+        <div className="coming-preview-divider" aria-hidden="true"><i /></div>
+        <time>2027 · 05 · 15</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'coming-modern-expanded') {
+    return (
+      <div className="concept-preview preview-coming preview-coming-modern" aria-label="커밍 모던 익스팬디드 미리보기">
+        <i className="coming-corner coming-corner-tl" aria-hidden="true" />
+        <i className="coming-corner coming-corner-tr" aria-hidden="true" />
+        <i className="coming-corner coming-corner-bl" aria-hidden="true" />
+        <i className="coming-corner coming-corner-br" aria-hidden="true" />
+        <div className="coming-modern-mark" aria-hidden="true"><i /><i /><i /></div>
+        <p className="coming-preview-eyebrow">OUR WEDDING</p>
+        <strong>
+          <span>민준과 서연</span>
+          <span>결혼합니다</span>
+        </strong>
+        <p className="coming-preview-copy">TWO PEOPLE · ONE DIRECTION</p>
+        <div className="coming-preview-divider" aria-hidden="true"><i /></div>
+        <time>15 MAY 2027 · SEOUL</time>
       </div>
     )
   }

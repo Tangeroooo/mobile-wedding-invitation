@@ -268,6 +268,25 @@
   --inv-line: rgba(57, 51, 46, 0.19);
 }
 
+.full-invitation[data-concept='coming-warm-expanded'] {
+  --inv-bg: #f3eee7;
+  --inv-paper: rgba(255, 252, 247, 0.78);
+  --inv-text: #3d352f;
+  --inv-muted: #84766b;
+  --inv-accent: #a45e51;
+  --inv-line: rgba(95, 71, 59, 0.2);
+}
+
+.full-invitation[data-concept='coming-modern-expanded'] {
+  --inv-bg: #ecebe7;
+  --inv-paper: rgba(248, 248, 245, 0.9);
+  --inv-text: #171817;
+  --inv-muted: #6a6b68;
+  --inv-accent: #171817;
+  --inv-line: rgba(23, 24, 23, 0.18);
+  --inv-serif: var(--inv-sans);
+}
+
 .invitation-hero,
 .invitation-section,
 .invitation-footer {
@@ -2336,6 +2355,306 @@
   width: auto;
   min-width: 240px;
   border-radius: 999px;
+}
+
+/* 17 · Coming Warm Expanded */
+.full-invitation[data-concept='coming-warm-expanded'] {
+  background:
+    radial-gradient(circle at 16% 5%, rgba(216, 179, 155, 0.34), transparent 22%),
+    radial-gradient(circle at 86% 94%, rgba(150, 172, 149, 0.18), transparent 24%),
+    var(--inv-bg);
+}
+
+[data-concept='coming-warm-expanded'] .invitation-hero {
+  justify-content: center;
+  width: calc(100% - 32px);
+  min-height: min(820px, calc(100svh - 82px));
+  margin: 16px;
+  padding: 70px 32px 42px;
+  border: 1px solid var(--inv-line);
+  border-radius: 220px 220px 24px 24px;
+  background: var(--inv-paper);
+  box-shadow: 0 24px 60px rgba(101, 75, 59, 0.13);
+  backdrop-filter: blur(16px);
+}
+
+[data-concept='coming-warm-expanded'] .hero-portrait {
+  display: none;
+}
+
+[data-concept='coming-warm-expanded'] .hero-ornament {
+  top: 84px;
+  left: 50%;
+  width: 72px;
+  height: 82px;
+  transform: translateX(-50%);
+}
+
+[data-concept='coming-warm-expanded'] .hero-ornament i {
+  width: 28px;
+  height: 42px;
+  border-color: var(--inv-accent);
+}
+
+[data-concept='coming-warm-expanded'] .hero-ornament i:first-child {
+  top: 0;
+  left: 22px;
+  transform: rotate(-18deg);
+}
+
+[data-concept='coming-warm-expanded'] .hero-ornament i:nth-child(2) {
+  top: 18px;
+  left: 4px;
+  transform: rotate(-70deg);
+}
+
+[data-concept='coming-warm-expanded'] .hero-ornament i:last-child {
+  top: 20px;
+  right: 0;
+  bottom: auto;
+  transform: rotate(24deg) scale(0.86);
+}
+
+[data-concept='coming-warm-expanded'] .hero-heading {
+  padding-top: 112px;
+}
+
+[data-concept='coming-warm-expanded'] .hero-heading h1 {
+  flex-direction: column;
+  gap: 4px;
+  font-size: 3.4rem;
+  line-height: 1.02;
+}
+
+[data-concept='coming-warm-expanded'] .hero-heading h1 i {
+  margin-block: 7px;
+}
+
+[data-concept='coming-warm-expanded'] .hero-heading > p {
+  margin: 28px 0 0;
+  line-height: 1.8;
+}
+
+[data-concept='coming-warm-expanded'] .hero-date {
+  position: relative;
+  display: flex;
+  z-index: 2;
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--inv-line);
+}
+
+[data-concept='coming-warm-expanded'] .invitation-section {
+  margin: 14px;
+  padding: 120px 32px 84px;
+  border: 1px solid var(--inv-line);
+  border-radius: 170px 170px 24px 24px;
+  background: var(--inv-paper);
+  box-shadow: 0 16px 42px rgba(101, 75, 59, 0.08);
+}
+
+[data-concept='coming-warm-expanded'] .section-title h2 {
+  font-size: 2.15rem;
+}
+
+[data-concept='coming-warm-expanded'] .section-title::after {
+  content: '';
+  display: block;
+  width: 76px;
+  height: 1px;
+  margin: 22px auto 0;
+  background: var(--inv-line);
+}
+
+[data-concept='coming-warm-expanded'] .gallery-photo {
+  border-radius: 100px 100px 12px 12px;
+  filter: sepia(0.08) saturate(0.76);
+}
+
+[data-concept='coming-warm-expanded'] .map-placeholder {
+  margin-inline: -32px;
+}
+
+[data-concept='coming-warm-expanded'] .rsvp-section > button {
+  border-radius: 999px;
+}
+
+/* 18 · Coming Modern Expanded */
+.full-invitation[data-concept='coming-modern-expanded'] {
+  background:
+    linear-gradient(rgba(23, 24, 23, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 23, 0.035) 1px, transparent 1px),
+    var(--inv-bg);
+  background-size: 42px 42px;
+}
+
+[data-concept='coming-modern-expanded'] .invitation-hero {
+  justify-content: center;
+  width: calc(100% - 28px);
+  min-height: min(820px, calc(100svh - 78px));
+  margin: 14px;
+  padding: 66px 32px 38px;
+  border: 1px solid var(--inv-line);
+  background: var(--inv-paper);
+  box-shadow: 0 26px 64px rgba(21, 22, 21, 0.1);
+  backdrop-filter: blur(16px);
+}
+
+[data-concept='coming-modern-expanded'] .invitation-hero::before,
+[data-concept='coming-modern-expanded'] .invitation-hero::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+}
+
+[data-concept='coming-modern-expanded'] .invitation-hero::before {
+  top: 15px;
+  left: 15px;
+  border-top: 2px solid var(--inv-text);
+  border-left: 2px solid var(--inv-text);
+}
+
+[data-concept='coming-modern-expanded'] .invitation-hero::after {
+  right: 15px;
+  bottom: 15px;
+  border-right: 2px solid var(--inv-text);
+  border-bottom: 2px solid var(--inv-text);
+}
+
+[data-concept='coming-modern-expanded'] .hero-portrait {
+  display: none;
+}
+
+[data-concept='coming-modern-expanded'] .hero-ornament {
+  top: 92px;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+[data-concept='coming-modern-expanded'] .hero-ornament i {
+  inset: auto;
+  border-color: var(--inv-text);
+  border-radius: 0;
+}
+
+[data-concept='coming-modern-expanded'] .hero-ornament i:first-child {
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 56px;
+  transform: none;
+}
+
+[data-concept='coming-modern-expanded'] .hero-ornament i:nth-child(2) {
+  top: 10px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  transform: none;
+}
+
+[data-concept='coming-modern-expanded'] .hero-ornament i:last-child {
+  top: 20px;
+  left: 20px;
+  width: 16px;
+  height: 16px;
+  background: var(--inv-text);
+  transform: none;
+}
+
+[data-concept='coming-modern-expanded'] .hero-heading {
+  padding-top: 116px;
+}
+
+[data-concept='coming-modern-expanded'] .hero-overline {
+  color: var(--inv-text);
+}
+
+[data-concept='coming-modern-expanded'] .hero-heading h1 {
+  flex-direction: column;
+  gap: 4px;
+  font-size: 3.35rem;
+  font-weight: 300;
+  line-height: 0.98;
+}
+
+[data-concept='coming-modern-expanded'] .hero-heading h1 i {
+  margin-block: 8px;
+}
+
+[data-concept='coming-modern-expanded'] .hero-heading > p {
+  margin: 28px 0 0;
+  line-height: 1.8;
+}
+
+[data-concept='coming-modern-expanded'] .hero-date {
+  position: relative;
+  z-index: 2;
+  margin-top: 48px;
+  padding-top: 21px;
+  border-top: 1px solid var(--inv-line);
+}
+
+[data-concept='coming-modern-expanded'] .invitation-section {
+  margin: 14px;
+  padding: 88px 32px;
+  border: 1px solid var(--inv-line);
+  background:
+    linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 23, 0.025) 1px, transparent 1px),
+    var(--inv-paper);
+  background-size: 42px 42px;
+}
+
+[data-concept='coming-modern-expanded'] .section-title {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: end;
+  gap: 9px 14px;
+  text-align: left;
+}
+
+[data-concept='coming-modern-expanded'] .section-title > span {
+  display: block;
+  grid-row: 1 / 3;
+  font: 700 0.66rem/1 var(--inv-sans);
+}
+
+[data-concept='coming-modern-expanded'] .section-title p {
+  margin: 0;
+  color: var(--inv-text);
+}
+
+[data-concept='coming-modern-expanded'] .section-title h2 {
+  font-size: 2.4rem;
+  font-weight: 300;
+}
+
+[data-concept='coming-modern-expanded'] .date-display {
+  justify-content: flex-start;
+}
+
+[data-concept='coming-modern-expanded'] .gallery-layout {
+  gap: 4px;
+  margin-inline: -32px;
+}
+
+[data-concept='coming-modern-expanded'] .gallery-photo {
+  border-radius: 0;
+  filter: grayscale(0.7) contrast(0.95);
+}
+
+[data-concept='coming-modern-expanded'] .map-placeholder {
+  margin-inline: -32px;
+}
+
+[data-concept='coming-modern-expanded'] .rsvp-section > button {
+  color: var(--inv-paper);
 }
 
 .preview-footer {

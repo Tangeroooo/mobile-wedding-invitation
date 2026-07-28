@@ -1337,6 +1337,224 @@
   background: #eee9df;
 }
 
+.preview-coming {
+  isolation: isolate;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.preview-coming-warm {
+  width: 90%;
+  margin-inline: 5%;
+  aspect-ratio: 4 / 5;
+  padding: 10% 8%;
+  color: #3d352f;
+  border: 1px solid rgba(95, 71, 59, 0.2);
+  border-radius: 48% 48% 22px 22px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(216, 179, 155, 0.32), transparent 34%),
+    rgba(255, 252, 247, 0.78);
+  box-shadow: 0 18px 48px rgba(101, 75, 59, 0.13);
+}
+
+.coming-preview-botanical {
+  position: relative;
+  width: 58px;
+  height: 65px;
+  margin-bottom: 8%;
+  color: #a45e51;
+}
+
+.coming-preview-botanical > i,
+.coming-preview-botanical > span {
+  position: absolute;
+  display: block;
+  border: 1px solid currentColor;
+}
+
+.coming-preview-botanical > i {
+  width: 22px;
+  height: 33px;
+  border-radius: 70% 20% 70% 30%;
+}
+
+.coming-preview-botanical > i:first-child {
+  top: 0;
+  left: 17px;
+  transform: rotate(-18deg);
+}
+
+.coming-preview-botanical > i:nth-child(2) {
+  top: 14px;
+  left: 2px;
+  transform: rotate(-70deg);
+}
+
+.coming-preview-botanical > i:nth-child(3) {
+  top: 17px;
+  right: 0;
+  transform: rotate(24deg) scale(0.86);
+}
+
+.coming-preview-botanical > span {
+  bottom: 1px;
+  left: 29px;
+  width: 1px;
+  height: 35px;
+  border-width: 0 0 0 1px;
+  transform: rotate(8deg);
+}
+
+.coming-preview-eyebrow {
+  margin: 0 0 7%;
+  font-size: clamp(0.44rem, 0.95vw, 0.62rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: #a45e51;
+}
+
+.preview-coming > strong {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 400 clamp(1.8rem, 5vw, 3.6rem)/1.12 var(--lab-serif);
+  letter-spacing: -0.06em;
+}
+
+.coming-preview-copy {
+  margin: 8% 0 0;
+  font-size: clamp(0.52rem, 1.15vw, 0.74rem);
+  line-height: 1.8;
+  color: #84766b;
+}
+
+.coming-preview-divider {
+  position: relative;
+  width: 90px;
+  height: 1px;
+  margin: 9% 0 6%;
+  background: rgba(95, 71, 59, 0.24);
+}
+
+.coming-preview-divider i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  aspect-ratio: 1;
+  border: 1px solid #a45e51;
+  background: #fffaf5;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.preview-coming > time {
+  font-size: clamp(0.44rem, 0.95vw, 0.62rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.preview-coming-modern {
+  width: 90%;
+  margin: 5%;
+  aspect-ratio: 4 / 5;
+  padding: 10% 8%;
+  color: #171817;
+  border: 1px solid rgba(23, 24, 23, 0.2);
+  background:
+    linear-gradient(rgba(23, 24, 23, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 23, 0.035) 1px, transparent 1px),
+    rgba(248, 248, 245, 0.9);
+  background-size: 28px 28px;
+}
+
+.preview-coming-modern .coming-preview-eyebrow {
+  color: #171817;
+}
+
+.preview-coming-modern > strong {
+  font-family: var(--lab-sans);
+  font-weight: 300;
+  line-height: 1.02;
+}
+
+.preview-coming-modern .coming-preview-copy {
+  font-size: clamp(0.42rem, 0.9vw, 0.58rem);
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  color: #6a6b68;
+}
+
+.coming-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+}
+
+.coming-corner-tl {
+  top: 13px;
+  left: 13px;
+  border-top: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+}
+
+.coming-corner-tr {
+  top: 13px;
+  right: 13px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+.coming-corner-bl {
+  bottom: 13px;
+  left: 13px;
+  border-bottom: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+}
+
+.coming-corner-br {
+  right: 13px;
+  bottom: 13px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.coming-modern-mark {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 10%;
+  transform: rotate(45deg);
+}
+
+.coming-modern-mark i {
+  position: absolute;
+  border: 1px solid #171817;
+}
+
+.coming-modern-mark i:first-child {
+  inset: 0;
+}
+
+.coming-modern-mark i:nth-child(2) {
+  inset: 9px;
+}
+
+.coming-modern-mark i:last-child {
+  inset: 18px;
+  background: #171817;
+}
+
+.preview-coming-modern .coming-preview-divider {
+  background: rgba(23, 24, 23, 0.25);
+}
+
+.preview-coming-modern .coming-preview-divider i {
+  border-color: #171817;
+  background: #f8f8f5;
+}
+
 .noir-issue {
   align-self: flex-end;
   font-size: clamp(0.48rem, 1.1vw, 0.7rem);
