@@ -298,7 +298,7 @@
   color: var(--accent);
 }
 
-h1 {
+.coming-soon-card h1 {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -312,7 +312,7 @@ h1 {
   word-break: keep-all;
 }
 
-[data-theme='modern'] h1 {
+[data-theme='modern'] .coming-soon-card h1 {
   font-family: var(--sans);
   font-weight: 300;
   line-height: 1.08;
@@ -372,6 +372,10 @@ h1 {
   padding-block: 17px 20px;
   font: 500 0.66rem/1.4 var(--sans);
   letter-spacing: 0.06em;
+}
+
+.page-footer span:first-child {
+  max-width: calc(100% - 34px);
 }
 
 .page-footer span:last-child {

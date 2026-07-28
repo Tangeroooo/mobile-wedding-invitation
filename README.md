@@ -9,6 +9,13 @@
 
 저장소 이름 또는 GitHub 사용자명을 변경하면 주소와 QR 코드가 달라질 수 있습니다.
 
+## Design Lab
+
+<https://tangeroooo.github.io/mobile-wedding-invitation/design-lab/>
+
+Warm 3종과 Modern 3종을 비교하고 최대 3개를 후보로 선택할 수 있습니다.
+선택 결과는 현재 브라우저에만 저장됩니다.
+
 ## 실행
 
 ```bash

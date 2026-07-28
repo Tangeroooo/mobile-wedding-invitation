@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import DesignLab from './DesignLab'
 
 type Theme = 'warm' | 'modern'
 
@@ -9,6 +10,16 @@ const themeOptions: Array<{ id: Theme; label: string }> = [
 ]
 
 function App() {
+  const currentPath = window.location.pathname.replace(/\/+$/, '')
+
+  if (currentPath.endsWith('/design-lab')) {
+    return <DesignLab />
+  }
+
+  return <ComingSoon />
+}
+
+function ComingSoon() {
   const [theme, setTheme] = useState<Theme>('warm')
 
   return (
@@ -70,7 +81,7 @@ function App() {
       </section>
 
       <footer className="page-footer">
-        <span>같은 주소에서 곧 다시 만나요.</span>
+        <span>초대장을 준비 중입니다. 곧 새로운 모습으로 찾아뵐게요.</span>
         <span aria-hidden="true">∞</span>
       </footer>
     </main>
