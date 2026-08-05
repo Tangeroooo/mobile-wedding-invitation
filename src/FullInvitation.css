@@ -3700,7 +3700,6 @@
   flex-direction: column;
   align-items: center;
   color: #efa0b6;
-  text-shadow: 0 3px 18px rgba(43, 15, 27, 0.34);
   pointer-events: none;
   transform: rotate(-4deg);
 }
@@ -3709,9 +3708,9 @@
   display: block;
   width: max-content;
   max-width: 100%;
-  font: 400 clamp(3.15rem, 15vw, 4.45rem)/0.8 'Snell Roundhand',
-    'Apple Chancery', 'Segoe Script', cursive;
-  letter-spacing: -0.08em;
+  font: 400 clamp(3.9rem, 18vw, 5.25rem)/0.82 'Allura Local', cursive;
+  font-synthesis: none;
+  letter-spacing: -0.015em;
   clip-path: inset(0 100% 0 0);
 }
 
@@ -3720,8 +3719,8 @@
 }
 
 .hero-script-line-two {
-  margin: 6px 0 0 62px;
-  font-size: clamp(4.15rem, 19vw, 5.65rem);
+  margin: 0 0 0 60px;
+  font-size: clamp(4.8rem, 22vw, 6.35rem);
   animation: rose-ink-write 1.35s 1.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
