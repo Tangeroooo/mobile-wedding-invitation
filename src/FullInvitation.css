@@ -4016,7 +4016,7 @@
   pointer-events: none;
 }
 
-.letter-cover-title > div {
+.letter-cover-title > div:first-child {
   display: flex;
   justify-content: space-between;
   font-size: 0.58rem;
@@ -4038,6 +4038,8 @@
   width: 100%;
   height: auto;
   overflow: visible;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
 }
 
 .letter-cover-script > img:last-child {
@@ -4046,9 +4048,25 @@
 }
 
 .letter-cover-title > small {
+  opacity: 0;
   font: 400 0.68rem/1.4 'Iowan Old Style', 'Times New Roman', serif;
   letter-spacing: 0.04em;
   text-align: center;
+}
+
+[data-concept='letter-prelude'][data-prelude-phase='done']
+  .letter-cover-script > img:first-child {
+  animation: letter-cover-write 1.35s 0.12s cubic-bezier(0.62, 0.02, 0.35, 1) both;
+}
+
+[data-concept='letter-prelude'][data-prelude-phase='done']
+  .letter-cover-script > img:last-child {
+  animation: letter-cover-write 1.25s 1.12s cubic-bezier(0.62, 0.02, 0.35, 1) both;
+}
+
+[data-concept='letter-prelude'][data-prelude-phase='done']
+  .letter-cover-title > small {
+  animation: letter-cover-caption 0.75s 2.4s ease-out both;
 }
 
 [data-concept='letter-prelude'] .hero-date {
@@ -4096,6 +4114,30 @@
   to {
     opacity: 1;
     clip-path: inset(0);
+    transform: none;
+  }
+}
+
+@keyframes letter-cover-write {
+  from {
+    opacity: 0.12;
+    clip-path: inset(0 100% 0 0);
+    transform: translateX(-7px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
+@keyframes letter-cover-caption {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
     transform: none;
   }
 }
@@ -4193,8 +4235,12 @@
   }
 
   .letter-prelude-intro > img,
-  .letter-prelude-signature > img {
+  .letter-prelude-signature > img,
+  .letter-cover-script > img,
+  .letter-cover-title > small {
     animation: none !important;
     clip-path: inset(0) !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

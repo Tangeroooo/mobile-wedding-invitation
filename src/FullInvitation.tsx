@@ -279,6 +279,9 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         data-concept={concept.id}
         data-chapter={concept.id === 'two-chapters' ? chapter : undefined}
         data-motion-profile={motionProfile}
+        data-prelude-phase={
+          concept.id === 'letter-prelude' ? preludePhase : undefined
+        }
       >
         <section className="invitation-hero">
           {concept.id === 'two-chapters' && (

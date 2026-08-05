@@ -2216,11 +2216,15 @@
   width: 100%;
   height: auto;
   overflow: visible;
+  opacity: 0.12;
+  clip-path: inset(0 100% 0 0);
+  animation: letter-preview-cover-write-one 7s cubic-bezier(0.62, 0.02, 0.35, 1) infinite;
 }
 
 .letter-preview-cover-script > img:last-child {
   width: 88%;
   margin-top: -2%;
+  animation-name: letter-preview-cover-write-two;
 }
 
 .letter-preview-second > time {
@@ -2275,6 +2279,36 @@
 @keyframes letter-preview-progress {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
+}
+
+@keyframes letter-preview-cover-write-one {
+  0%, 52% {
+    opacity: 0.12;
+    clip-path: inset(0 100% 0 0);
+  }
+  66%, 92% {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+  93%, 100% {
+    opacity: 0.12;
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes letter-preview-cover-write-two {
+  0%, 60% {
+    opacity: 0.12;
+    clip-path: inset(0 100% 0 0);
+  }
+  74%, 92% {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+  93%, 100% {
+    opacity: 0.12;
+    clip-path: inset(0 100% 0 0);
+  }
 }
 
 .noir-issue {
@@ -2527,5 +2561,11 @@
 
   .letter-preview-progress {
     display: none;
+  }
+
+  .letter-preview-cover-script > img {
+    animation: none !important;
+    clip-path: inset(0) !important;
+    opacity: 1 !important;
   }
 }
