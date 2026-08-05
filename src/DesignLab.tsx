@@ -337,7 +337,7 @@ function DesignLab() {
         href={`${import.meta.env.BASE_URL}design-lab/?view=brush-fonts`}
       >
         <span>NEW · TYPE STUDY</span>
-        <strong>Black Rush와 가장 가까운 브러시 레터링 6종 비교하기</strong>
+        <strong>Black Rush와 직접 고른 브러시 레터링 20종 비교하기</strong>
         <i aria-hidden="true">→</i>
       </a>
 
