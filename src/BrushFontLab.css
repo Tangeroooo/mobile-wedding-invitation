@@ -1,0 +1,479 @@
+@font-face {
+  font-family: 'Mrs Sheppards Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/mrs-sheppards-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rock Salt Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/rock-salt-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Caveat Brush Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/caveat-brush-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Permanent Marker Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/permanent-marker-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Trade Winds Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/trade-winds-latin.woff2') format('woff2');
+}
+
+.brush-font-lab {
+  --brush-paper: #efede6;
+  --brush-ink: #171713;
+  --brush-muted: #6f6d66;
+  --brush-line: rgba(23, 23, 19, 0.16);
+  --brush-yellow: #f4d94f;
+  min-width: 320px;
+  min-height: 100svh;
+  padding-bottom: 110px;
+  color: var(--brush-ink);
+  background:
+    linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(23, 23, 19, 0.05) 50%, transparent calc(50% + 0.5px)),
+    var(--brush-paper);
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
+}
+
+.brush-lab-header,
+.brush-lab-intro,
+.reference-fonts,
+.brush-font-grid,
+.brush-lab-footer {
+  width: min(calc(100% - 40px), 1180px);
+  margin-inline: auto;
+}
+
+.brush-lab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 24px;
+  border-bottom: 1px solid var(--brush-line);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--brush-muted);
+}
+
+.brush-lab-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brush-ink);
+  text-decoration: none;
+}
+
+.brush-lab-back span {
+  font-size: 1rem;
+}
+
+.brush-lab-intro {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: end;
+  padding-block: 92px 78px;
+}
+
+.brush-lab-intro > p,
+.reference-font-heading > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.2em;
+  color: var(--brush-muted);
+}
+
+.brush-lab-intro h1 {
+  margin: 0;
+  font: 400 clamp(3.4rem, 8vw, 7rem)/0.96 'Iowan Old Style', 'Times New Roman', serif;
+  letter-spacing: -0.065em;
+}
+
+.brush-lab-intro > div {
+  padding-left: 34px;
+  border-left: 1px solid var(--brush-ink);
+}
+
+.brush-lab-intro > div > p {
+  margin: 0 0 28px;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--brush-muted);
+}
+
+.brush-lab-intro label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
+.brush-lab-intro input {
+  width: 100%;
+  padding: 13px 0;
+  border: 0;
+  border-bottom: 1px solid var(--brush-ink);
+  border-radius: 0;
+  color: var(--brush-ink);
+  background: transparent;
+  font: 400 1.05rem/1.3 'Iowan Old Style', 'Times New Roman', serif;
+}
+
+.brush-lab-intro input:focus-visible,
+.brush-font-copy a:focus-visible,
+.reference-fonts a:focus-visible,
+.brush-lab-back:focus-visible,
+.brush-lab-footer a:focus-visible {
+  outline: 2px solid #987239;
+  outline-offset: 4px;
+}
+
+.reference-fonts {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 18px;
+  padding-block: 28px 70px;
+  border-top: 1px solid var(--brush-line);
+}
+
+.reference-font-heading h2 {
+  margin: 14px 0 0;
+  font: 400 1.7rem/1.15 'Iowan Old Style', 'Times New Roman', serif;
+  letter-spacing: -0.04em;
+}
+
+.reference-fonts article {
+  min-height: 225px;
+  padding: 24px;
+  border: 1px solid var(--brush-line);
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.reference-fonts article > span {
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  color: var(--brush-muted);
+}
+
+.reference-fonts article > strong {
+  display: block;
+  margin-top: 30px;
+  font: 400 1.7rem/1 'Iowan Old Style', 'Times New Roman', serif;
+}
+
+.reference-fonts article > p {
+  margin: 18px 0;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--brush-muted);
+}
+
+.reference-fonts article > small,
+.reference-fonts article > a {
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: var(--brush-ink);
+}
+
+.brush-font-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 76px 26px;
+}
+
+.brush-font-card {
+  min-width: 0;
+  border-top: 1px solid var(--brush-line);
+}
+
+.brush-font-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 76px;
+}
+
+.brush-font-meta span {
+  font-size: 0.6rem;
+  color: var(--brush-muted);
+}
+
+.brush-font-meta h2 {
+  margin: 5px 0 0;
+  font: 500 1rem/1.2 inherit;
+}
+
+.brush-font-meta > strong {
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--brush-ink);
+  font-size: 0.58rem;
+}
+
+.brush-font-stage {
+  position: relative;
+  display: grid;
+  aspect-ratio: 4 / 5;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.brush-font-stage > img,
+.brush-font-stage > div {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.brush-font-stage > img {
+  z-index: -2;
+  object-fit: cover;
+  filter: saturate(0.75) contrast(1.03);
+}
+
+.brush-font-stage > div {
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, rgba(24, 23, 20, 0.38), transparent 38%),
+    linear-gradient(to top, rgba(24, 20, 16, 0.56), transparent 48%);
+}
+
+.brush-sample {
+  width: calc(100% - 42px);
+  margin: 0;
+  padding: 0.28em 0.18em;
+  overflow-wrap: break-word;
+  color: var(--brush-yellow);
+  font-size: clamp(3.3rem, 8.6vw, 6.4rem);
+  font-synthesis: none;
+  line-height: 0.86;
+  text-align: center;
+  text-shadow: none;
+  text-wrap: balance;
+  transform: rotate(-3deg);
+}
+
+.brush-sample-water-brush {
+  font-family: 'Water Brush Local', cursive;
+}
+
+.brush-sample-mrs-sheppards {
+  font-family: 'Mrs Sheppards Local', cursive;
+  font-size: clamp(3.5rem, 9.2vw, 6.8rem);
+}
+
+.brush-sample-rock-salt {
+  font-family: 'Rock Salt Local', cursive;
+  font-size: clamp(2.05rem, 5.1vw, 3.8rem);
+  line-height: 1.16;
+}
+
+.brush-sample-caveat-brush {
+  font-family: 'Caveat Brush Local', cursive;
+  font-size: clamp(3rem, 7.7vw, 5.8rem);
+  line-height: 0.96;
+}
+
+.brush-sample-permanent-marker {
+  font-family: 'Permanent Marker Local', cursive;
+  font-size: clamp(2.55rem, 6.5vw, 4.9rem);
+  line-height: 1;
+}
+
+.brush-sample-trade-winds {
+  font-family: 'Trade Winds Local', cursive;
+  font-size: clamp(2.45rem, 6.2vw, 4.7rem);
+  line-height: 1;
+}
+
+.brush-font-stage > small {
+  position: absolute;
+  right: 8%;
+  bottom: 6%;
+  left: 8%;
+  padding-top: 4%;
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.2em;
+}
+
+.brush-font-copy {
+  padding-top: 20px;
+}
+
+.brush-font-copy > p {
+  min-height: 48px;
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--brush-muted);
+}
+
+.brush-font-copy dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 22px 0;
+  padding-block: 14px;
+  border-block: 1px solid var(--brush-line);
+}
+
+.brush-font-copy dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.brush-font-copy dt,
+.brush-font-copy dd {
+  margin: 0;
+  font-size: 0.58rem;
+}
+
+.brush-font-copy dt {
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
+.brush-font-copy dd {
+  color: var(--brush-muted);
+}
+
+.brush-font-copy > a,
+.brush-lab-footer > a {
+  color: var(--brush-ink);
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.brush-lab-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 110px;
+  padding-top: 28px;
+  border-top: 1px solid var(--brush-line);
+}
+
+.brush-lab-footer p {
+  max-width: 540px;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--brush-muted);
+}
+
+@media (max-width: 760px) {
+  .brush-lab-intro,
+  .reference-fonts,
+  .brush-font-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brush-lab-intro {
+    gap: 42px;
+    padding-block: 64px 58px;
+  }
+
+  .brush-lab-intro > div {
+    padding-left: 22px;
+  }
+
+  .reference-fonts {
+    padding-bottom: 58px;
+  }
+
+  .reference-font-heading {
+    padding-bottom: 14px;
+  }
+
+  .brush-font-grid {
+    gap: 66px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brush-lab-header,
+  .brush-lab-intro,
+  .reference-fonts,
+  .brush-font-grid,
+  .brush-lab-footer {
+    width: calc(100% - 28px);
+  }
+
+  .brush-lab-header {
+    padding-block: 17px;
+  }
+
+  .brush-lab-intro h1 {
+    font-size: clamp(3rem, 15vw, 4.8rem);
+  }
+
+  .brush-font-meta {
+    min-height: 68px;
+  }
+
+  .brush-sample {
+    width: calc(100% - 28px);
+    font-size: clamp(3.1rem, 17vw, 5.1rem);
+  }
+
+  .brush-sample-rock-salt {
+    font-size: clamp(1.75rem, 8.4vw, 2.7rem);
+  }
+
+  .brush-sample-permanent-marker,
+  .brush-sample-trade-winds {
+    font-size: clamp(2.15rem, 10.5vw, 3.4rem);
+  }
+
+  .brush-font-copy dl {
+    grid-template-columns: 1fr;
+  }
+
+  .brush-lab-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 78px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brush-font-lab * {
+    scroll-behavior: auto !important;
+  }
+}

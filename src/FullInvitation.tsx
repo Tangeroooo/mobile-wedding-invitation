@@ -88,10 +88,14 @@ const motionProfiles: Record<string, MotionProfile> = {
   'terracotta-reel': 'paper-settle',
   'lavender-glass': 'glass-focus',
   'rose-ink-bleed': 'photo-drift',
+  'letter-prelude': 'photo-drift',
 }
 
 function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const [chapter, setChapter] = useState<'day' | 'night'>('day')
+  const [preludePhase, setPreludePhase] = useState<'intro' | 'leaving' | 'done'>(
+    concept.id === 'letter-prelude' ? 'intro' : 'done',
+  )
   const activeIndex = concepts.findIndex((item) => item.id === concept.id)
   const previousConcept =
     concepts[(activeIndex - 1 + concepts.length) % concepts.length]
@@ -115,9 +119,10 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     'terracotta-reel',
     'lavender-glass',
     'rose-ink-bleed',
+    'letter-prelude',
   ].includes(concept.id)
   const heroImageSrc =
-    concept.id === 'moonlit-hanji'
+    concept.id === 'moonlit-hanji' || concept.id === 'letter-prelude'
       ? moonlitHanjiUrl
       : usesPhotoHero
         ? sampleHeroUrl
@@ -128,6 +133,38 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     document.title = `${concept.koreanName} — Wedding Design Lab`
     window.scrollTo(0, 0)
   }, [concept.koreanName])
+
+  useEffect(() => {
+    if (concept.id !== 'letter-prelude') {
+      setPreludePhase('done')
+      return
+    }
+
+    setPreludePhase('intro')
+    const leaveTimer = window.setTimeout(() => setPreludePhase('leaving'), 4200)
+    const doneTimer = window.setTimeout(() => setPreludePhase('done'), 5100)
+
+    return () => {
+      window.clearTimeout(leaveTimer)
+      window.clearTimeout(doneTimer)
+    }
+  }, [concept.id])
+
+  useEffect(() => {
+    if (concept.id !== 'letter-prelude' || preludePhase === 'done') return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [concept.id, preludePhase])
+
+  const skipPrelude = () => {
+    setPreludePhase('leaving')
+    window.setTimeout(() => setPreludePhase('done'), 700)
+  }
 
   useEffect(() => {
     if (!motionProfile) return
@@ -186,8 +223,26 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
 
   return (
     <main
-      className={`invitation-preview-page${concept.id === 'rose-ink-bleed' ? ' preview-page-edge-to-edge' : ''}`}
+      className={`invitation-preview-page${['rose-ink-bleed', 'letter-prelude'].includes(concept.id) ? ' preview-page-edge-to-edge' : ''}`}
     >
+      {concept.id === 'letter-prelude' && preludePhase !== 'done' && (
+        <section
+          className={`letter-prelude-intro${preludePhase === 'leaving' ? ' is-leaving' : ''}`}
+          aria-label="첫 번째 사진 손글씨 인트로"
+        >
+          <img src={sampleHeroUrl} alt="두 사람이 정원을 함께 걷는 사진" />
+          <div className="letter-prelude-shade" aria-hidden="true" />
+          <div className="letter-prelude-signature" aria-label="Minjun and Seoyeon">
+            <span>Minjun</span>
+            <i>&amp;</i>
+            <span>Seoyeon</span>
+          </div>
+          <p>OUR FIRST CHAPTER</p>
+          <button type="button" onClick={skipPrelude}>
+            건너뛰기 <span aria-hidden="true">›</span>
+          </button>
+        </section>
+      )}
       <header className="preview-toolbar">
         <a href={designLabUrl} className="preview-back">
           <span aria-hidden="true">←</span>
@@ -270,6 +325,16 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
               <span className="hero-script-line hero-script-line-one">We're getting</span>
               <span className="hero-script-line hero-script-line-two">married</span>
               <small>MINJUN · SEOYEON</small>
+            </div>
+          )}
+          {concept.id === 'letter-prelude' && (
+            <div className="letter-cover-title" aria-label="Wedding Invitation, Minjun and Seoyeon">
+              <div>
+                <span>MINJUN</span>
+                <span>SEOYEON</span>
+              </div>
+              <strong>Wedding<br />Invitation</strong>
+              <small>We have been writing this story.</small>
             </div>
           )}
           {concept.id === 'ivory-diptych' && (

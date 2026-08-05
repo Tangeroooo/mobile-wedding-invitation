@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './DesignLab.css'
+import BrushFontLab from './BrushFontLab'
 import FullInvitation from './FullInvitation'
 
 type Mood = 'all' | 'warm' | 'modern'
@@ -222,6 +223,15 @@ const concepts: Concept[] = [
     description: '풀블리드 사진 위로 로즈빛 캘리그라피가 한 획씩 쓰이는 감성 커버',
     keywords: ['필기 애니메이션', '풀스크린 사진', '로즈 잉크'],
   },
+  {
+    id: 'letter-prelude',
+    number: '24',
+    name: 'Letter Prelude',
+    koreanName: '레터 프렐류드',
+    mood: 'warm',
+    description: '첫 사진의 손글씨 인트로가 사라지며 두 번째 커버로 이어지는 2단 입장 구성',
+    keywords: ['사진 전환', '손글씨 인트로', '스킵 가능'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -248,9 +258,9 @@ function readSavedSelection() {
 function DesignLab() {
   const [filter, setFilter] = useState<Mood>('all')
   const [selected, setSelected] = useState<string[]>(readSavedSelection)
+  const searchParams = new URLSearchParams(window.location.search)
   const activeConcept = concepts.find(
-    (concept) =>
-      concept.id === new URLSearchParams(window.location.search).get('concept'),
+    (concept) => concept.id === searchParams.get('concept'),
   )
 
   useEffect(() => {
@@ -263,6 +273,10 @@ function DesignLab() {
 
   if (activeConcept) {
     return <FullInvitation concept={activeConcept} concepts={concepts} />
+  }
+
+  if (searchParams.get('view') === 'brush-fonts') {
+    return <BrushFontLab />
   }
 
   const visibleConcepts =
@@ -312,6 +326,15 @@ function DesignLab() {
           <span>아래 이름과 날짜는 레이아웃 비교용 임시 문구입니다.</span>
         </div>
       </section>
+
+      <a
+        className="brush-lab-banner"
+        href={`${import.meta.env.BASE_URL}design-lab/?view=brush-fonts`}
+      >
+        <span>NEW · TYPE STUDY</span>
+        <strong>브러시 폰트 6종을 같은 문장으로 비교해 보세요.</strong>
+        <i aria-hidden="true">→</i>
+      </a>
 
       <section className="lab-toolbar" aria-label="디자인 필터와 선택 현황">
         <div className="filter-group" role="group" aria-label="분위기 필터">
@@ -791,6 +814,30 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
           <time>15 MAY 2027</time>
           <span>SEOUL · 1PM</span>
         </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'letter-prelude') {
+    return (
+      <div className="concept-preview preview-letter-prelude" aria-label="첫 사진에서 다음 커버로 전환되는 레터 프렐류드 미리보기">
+        <div className="letter-preview-frame letter-preview-first">
+          <img src={samplePhotoUrl} alt="" />
+          <div className="letter-preview-names">
+            <span>Minjun</span>
+            <i>&amp;</i>
+            <span>Seoyeon</span>
+          </div>
+          <small>PHOTO 01 · INTRO</small>
+        </div>
+        <div className="letter-preview-frame letter-preview-second">
+          <img src={moonlitHanjiUrl} alt="" />
+          <span>MINJUN</span>
+          <span>SEOYEON</span>
+          <strong>Wedding<br />Invitation</strong>
+          <time>15 · MAY · 2027</time>
+        </div>
+        <div className="letter-preview-progress" aria-hidden="true"><i /></div>
       </div>
     )
   }
