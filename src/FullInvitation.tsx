@@ -57,12 +57,37 @@ const calendarDays: Array<number | ''> = [
 ]
 
 const weekdayLabels = ['일', '월', '화', '수', '목', '금', '토']
-const motionConceptIds = new Set([
-  'porcelain-orbit',
-  'citrus-poster',
-  'terracotta-reel',
-  'lavender-glass',
-])
+type MotionProfile =
+  | 'soft-rise'
+  | 'editorial-wipe'
+  | 'photo-drift'
+  | 'paper-settle'
+  | 'glass-focus'
+
+const motionProfiles: Record<string, MotionProfile> = {
+  'linen-letter': 'soft-rise',
+  'soft-film': 'paper-settle',
+  'garden-note': 'soft-rise',
+  'quiet-ivory': 'soft-rise',
+  'gallery-white': 'editorial-wipe',
+  'editorial-noir': 'editorial-wipe',
+  'full-bleed-vow': 'photo-drift',
+  glasshouse: 'glass-focus',
+  'oval-nocturne': 'photo-drift',
+  'paper-collage': 'paper-settle',
+  'moonlit-hanji': 'soft-rise',
+  'two-chapters': 'glass-focus',
+  'golden-hour-bleed': 'photo-drift',
+  'cinema-still': 'editorial-wipe',
+  'cover-story': 'editorial-wipe',
+  'ivory-diptych': 'photo-drift',
+  'coming-warm-expanded': 'soft-rise',
+  'coming-modern-expanded': 'editorial-wipe',
+  'porcelain-orbit': 'soft-rise',
+  'citrus-poster': 'editorial-wipe',
+  'terracotta-reel': 'paper-settle',
+  'lavender-glass': 'glass-focus',
+}
 
 function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const [chapter, setChapter] = useState<'day' | 'night'>('day')
@@ -95,6 +120,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       : usesPhotoHero
         ? sampleHeroUrl
         : undefined
+  const motionProfile = motionProfiles[concept.id]
 
   useEffect(() => {
     document.title = `${concept.koreanName} — Wedding Design Lab`
@@ -102,7 +128,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
   }, [concept.koreanName])
 
   useEffect(() => {
-    if (!motionConceptIds.has(concept.id)) return
+    if (!motionProfile) return
 
     const invitation = document.querySelector<HTMLElement>(
       `.full-invitation[data-concept="${concept.id}"]`,
@@ -154,7 +180,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         entry.style.removeProperty('--motion-order')
       })
     }
-  }, [concept.id])
+  }, [concept.id, motionProfile])
 
   return (
     <main className="invitation-preview-page">
@@ -191,6 +217,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         className="full-invitation"
         data-concept={concept.id}
         data-chapter={concept.id === 'two-chapters' ? chapter : undefined}
+        data-motion-profile={motionProfile}
       >
         <section className="invitation-hero">
           {concept.id === 'two-chapters' && (
