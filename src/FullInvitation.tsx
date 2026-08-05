@@ -104,6 +104,8 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const totalConcepts = String(concepts.length).padStart(2, '0')
   const sampleHeroUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
+  const blackRushLetteringUrl = (line: string) =>
+    `${import.meta.env.BASE_URL}images/design-lab/lettering/black-rush-${line}.svg`
   const usesPhotoHero = [
     'full-bleed-vow',
     'glasshouse',
@@ -233,9 +235,9 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           <img src={sampleHeroUrl} alt="두 사람이 정원을 함께 걷는 사진" />
           <div className="letter-prelude-shade" aria-hidden="true" />
           <div className="letter-prelude-signature" aria-label="Minjun and Seoyeon">
-            <span>Minjun</span>
+            <img src={blackRushLetteringUrl('minjun')} alt="" />
             <i>&amp;</i>
-            <span>Seoyeon</span>
+            <img src={blackRushLetteringUrl('seoyeon')} alt="" />
           </div>
           <p>OUR FIRST CHAPTER</p>
           <button type="button" onClick={skipPrelude}>
@@ -322,8 +324,16 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           />
           {concept.id === 'rose-ink-bleed' && (
             <div className="hero-script-mark" aria-label="We're getting married, 민준과 서연">
-              <span className="hero-script-line hero-script-line-one">We're getting</span>
-              <span className="hero-script-line hero-script-line-two">married</span>
+              <img
+                className="hero-script-line hero-script-line-one"
+                src={blackRushLetteringUrl('were-getting')}
+                alt=""
+              />
+              <img
+                className="hero-script-line hero-script-line-two"
+                src={blackRushLetteringUrl('married')}
+                alt=""
+              />
               <small>MINJUN · SEOYEON</small>
             </div>
           )}
@@ -333,7 +343,10 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
                 <span>MINJUN</span>
                 <span>SEOYEON</span>
               </div>
-              <strong>Wedding<br />Invitation</strong>
+              <div className="letter-cover-script" aria-hidden="true">
+                <img src={blackRushLetteringUrl('wedding')} alt="" />
+                <img src={blackRushLetteringUrl('invitation')} alt="" />
+              </div>
               <small>We have been writing this story.</small>
             </div>
           )}

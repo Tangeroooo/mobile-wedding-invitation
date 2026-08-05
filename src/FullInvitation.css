@@ -3733,8 +3733,8 @@
 .hero-script-mark {
   position: absolute;
   top: calc(18% + env(safe-area-inset-top));
-  right: 20px;
-  left: 20px;
+  right: 12px;
+  left: 12px;
   z-index: 5;
   display: flex;
   flex-direction: column;
@@ -3746,14 +3746,10 @@
 
 .hero-script-line {
   display: block;
-  width: max-content;
-  max-width: 100%;
-  color: #f2d84f;
-  font: 400 clamp(4rem, 18vw, 5.4rem)/0.82 'Water Brush Local', cursive;
-  font-synthesis: none;
-  letter-spacing: -0.018em;
-  text-shadow: none;
-  clip-path: inset(-28% 100% -28% -18%);
+  width: min(100%, 448px);
+  height: auto;
+  overflow: visible;
+  clip-path: inset(0 100% 0 0);
 }
 
 .hero-script-line-one {
@@ -3763,8 +3759,8 @@
 
 .hero-script-line-two {
   --ink-tilt: 1.5deg;
-  margin: 10px 0 0 42px;
-  font-size: clamp(4.8rem, 21vw, 6.4rem);
+  width: min(70%, 308px);
+  margin: 2px 0 0 38px;
   animation: rose-ink-write 1.35s 1.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
@@ -3910,26 +3906,29 @@
   right: 12%;
   left: 12%;
   z-index: 2;
-  display: grid;
-  place-items: center;
-  font: 400 clamp(4.5rem, 20vw, 6.2rem)/0.66 'Mrs Sheppards Local', 'Water Brush Local', cursive;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-shadow: none;
   transform: rotate(-7deg);
 }
 
-.letter-prelude-signature > span {
-  padding: 0.22em 0.18em;
-  clip-path: inset(-28% -18% -28% -18%);
+.letter-prelude-signature > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  clip-path: inset(0);
   animation: letter-prelude-write 1.45s 0.45s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
-.letter-prelude-signature > span:last-child {
+.letter-prelude-signature > img:last-child {
   animation-delay: 1.7s;
 }
 
 .letter-prelude-signature > i {
-  margin-block: 12px;
-  font: 400 0.28em/1 'Iowan Old Style', 'Times New Roman', serif;
+  margin-block: 4px;
+  font: 400 1.1rem/1 'Iowan Old Style', 'Times New Roman', serif;
 }
 
 .letter-prelude-intro > p {
@@ -4025,13 +4024,25 @@
   letter-spacing: 0.2em;
 }
 
-.letter-cover-title > strong {
+.letter-cover-script {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   margin: auto 0 20px;
-  padding: 0.18em;
-  font: 400 clamp(4.3rem, 19vw, 5.9rem)/0.67 'Water Brush Local', cursive;
-  text-align: center;
-  text-shadow: none;
   transform: rotate(-3deg);
+}
+
+.letter-cover-script > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.letter-cover-script > img:last-child {
+  width: 88%;
+  margin-top: -2%;
 }
 
 .letter-cover-title > small {
@@ -4079,12 +4090,12 @@
 @keyframes letter-prelude-write {
   from {
     opacity: 0.12;
-    clip-path: inset(-28% 100% -28% -18%);
+    clip-path: inset(0 100% 0 0);
     transform: translateX(-8px);
   }
   to {
     opacity: 1;
-    clip-path: inset(-28% -18% -28% -18%);
+    clip-path: inset(0);
     transform: none;
   }
 }
@@ -4092,12 +4103,12 @@
 @keyframes rose-ink-write {
   from {
     opacity: 0.16;
-    clip-path: inset(-28% 100% -28% -18%);
+    clip-path: inset(0 100% 0 0);
     transform: translateX(-8px) rotate(var(--ink-tilt, 0deg));
   }
   to {
     opacity: 1;
-    clip-path: inset(-28% -18% -28% -18%);
+    clip-path: inset(0);
     transform: rotate(var(--ink-tilt, 0deg));
   }
 }
@@ -4176,13 +4187,14 @@
   .hero-script-line,
   .hero-script-mark > small {
     animation: none !important;
-    clip-path: inset(-28% -18% -28% -18%) !important;
+    clip-path: inset(0) !important;
     opacity: 1 !important;
     transform: none !important;
   }
 
   .letter-prelude-intro > img,
-  .letter-prelude-signature > span {
+  .letter-prelude-signature > img {
     animation: none !important;
+    clip-path: inset(0) !important;
   }
 }

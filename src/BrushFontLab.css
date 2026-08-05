@@ -1,43 +1,3 @@
-@font-face {
-  font-family: 'Mrs Sheppards Local';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/mrs-sheppards-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Rock Salt Local';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/rock-salt-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Caveat Brush Local';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/caveat-brush-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Permanent Marker Local';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/permanent-marker-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Trade Winds Local';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/trade-winds-latin.woff2') format('woff2');
-}
-
 .brush-font-lab {
   --brush-paper: #efede6;
   --brush-ink: #171713;
@@ -124,32 +84,29 @@
   color: var(--brush-muted);
 }
 
-.brush-lab-intro label {
-  display: block;
-  margin-bottom: 9px;
-  font-size: 0.65rem;
-  font-weight: 750;
-  letter-spacing: 0.12em;
-}
-
-.brush-lab-intro input {
-  width: 100%;
-  padding: 13px 0;
-  border: 0;
-  border-bottom: 1px solid var(--brush-ink);
-  border-radius: 0;
-  color: var(--brush-ink);
-  background: transparent;
-  font: 400 1.05rem/1.3 'Iowan Old Style', 'Times New Roman', serif;
-}
-
-.brush-lab-intro input:focus-visible,
 .brush-font-copy a:focus-visible,
 .reference-fonts a:focus-visible,
 .brush-lab-back:focus-visible,
 .brush-lab-footer a:focus-visible {
   outline: 2px solid #987239;
   outline-offset: 4px;
+}
+
+.brush-lab-intro > div > strong,
+.brush-lab-intro > div > span {
+  display: block;
+}
+
+.brush-lab-intro > div > strong {
+  font-size: 0.67rem;
+  letter-spacing: 0.14em;
+}
+
+.brush-lab-intro > div > span {
+  margin-top: 8px;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  color: var(--brush-muted);
 }
 
 .reference-fonts {
@@ -232,9 +189,20 @@
 .brush-font-meta > strong {
   padding: 6px 9px;
   border-radius: 999px;
-  color: #fff;
-  background: var(--brush-ink);
+  border: 1px solid var(--brush-line);
+  color: var(--brush-muted);
+  background: rgba(255, 255, 255, 0.28);
   font-size: 0.58rem;
+}
+
+.brush-font-card[data-reference='true'] {
+  border-top-color: var(--brush-ink);
+}
+
+.brush-font-card[data-reference='true'] .brush-font-meta > strong {
+  color: #1c1b16;
+  border-color: var(--brush-yellow);
+  background: var(--brush-yellow);
 }
 
 .brush-font-stage {
@@ -246,73 +214,47 @@
   isolation: isolate;
 }
 
-.brush-font-stage > img,
-.brush-font-stage > div {
+.brush-stage-photo,
+.brush-stage-shade {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.brush-font-stage > img {
+.brush-stage-photo {
   z-index: -2;
   object-fit: cover;
   filter: saturate(0.75) contrast(1.03);
 }
 
-.brush-font-stage > div {
+.brush-stage-shade {
   z-index: -1;
   background:
     linear-gradient(to bottom, rgba(24, 23, 20, 0.38), transparent 38%),
     linear-gradient(to top, rgba(24, 20, 16, 0.56), transparent 48%);
 }
 
-.brush-sample {
-  width: calc(100% - 42px);
-  margin: 0;
-  padding: 0.28em 0.18em;
-  overflow-wrap: break-word;
-  color: var(--brush-yellow);
-  font-size: clamp(3.3rem, 8.6vw, 6.4rem);
-  font-synthesis: none;
-  line-height: 0.86;
-  text-align: center;
-  text-shadow: none;
-  text-wrap: balance;
+.brush-svg-sample {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100% - 34px);
   transform: rotate(-3deg);
 }
 
-.brush-sample-water-brush {
-  font-family: 'Water Brush Local', cursive;
+.brush-svg-sample img {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 
-.brush-sample-mrs-sheppards {
-  font-family: 'Mrs Sheppards Local', cursive;
-  font-size: clamp(3.5rem, 9.2vw, 6.8rem);
-}
-
-.brush-sample-rock-salt {
-  font-family: 'Rock Salt Local', cursive;
-  font-size: clamp(2.05rem, 5.1vw, 3.8rem);
-  line-height: 1.16;
-}
-
-.brush-sample-caveat-brush {
-  font-family: 'Caveat Brush Local', cursive;
-  font-size: clamp(3rem, 7.7vw, 5.8rem);
-  line-height: 0.96;
-}
-
-.brush-sample-permanent-marker {
-  font-family: 'Permanent Marker Local', cursive;
-  font-size: clamp(2.55rem, 6.5vw, 4.9rem);
-  line-height: 1;
-}
-
-.brush-sample-trade-winds {
-  font-family: 'Trade Winds Local', cursive;
-  font-size: clamp(2.45rem, 6.2vw, 4.7rem);
-  line-height: 1;
+.brush-svg-sample img + img {
+  width: 68%;
+  margin-top: -1.5%;
 }
 
 .brush-font-stage > small {
@@ -447,18 +389,8 @@
     min-height: 68px;
   }
 
-  .brush-sample {
-    width: calc(100% - 28px);
-    font-size: clamp(3.1rem, 17vw, 5.1rem);
-  }
-
-  .brush-sample-rock-salt {
-    font-size: clamp(1.75rem, 8.4vw, 2.7rem);
-  }
-
-  .brush-sample-permanent-marker,
-  .brush-sample-trade-winds {
-    font-size: clamp(2.15rem, 10.5vw, 3.4rem);
+  .brush-svg-sample {
+    width: calc(100% - 22px);
   }
 
   .brush-font-copy dl {

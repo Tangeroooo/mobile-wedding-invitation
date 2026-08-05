@@ -305,9 +305,14 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">
-          DESIGN STUDY · 01—{String(concepts.length).padStart(2, '0')}
-        </span>
+        <div className="lab-header-actions">
+          <a href={`${import.meta.env.BASE_URL}design-lab/?view=brush-fonts`}>
+            FONT LAB
+          </a>
+          <span className="lab-edition">
+            DESIGN STUDY · 01—{String(concepts.length).padStart(2, '0')}
+          </span>
+        </div>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -332,9 +337,18 @@ function DesignLab() {
         href={`${import.meta.env.BASE_URL}design-lab/?view=brush-fonts`}
       >
         <span>NEW · TYPE STUDY</span>
-        <strong>브러시 폰트 6종을 같은 문장으로 비교해 보세요.</strong>
+        <strong>Black Rush와 가장 가까운 브러시 레터링 6종 비교하기</strong>
         <i aria-hidden="true">→</i>
       </a>
+
+      <aside className="lab-asset-note" aria-label="디자인 시안 이미지 출처">
+        <span>IMAGE NOTE</span>
+        <p>
+          시안 속 인물 사진과 한지 일러스트는 참고한 청첩장 사이트에서 가져온
+          이미지가 아니라, 이 디자인 랩을 위해 생성한 임시 AI 이미지입니다.
+          최종안에서는 두 분의 사진 또는 직접 제작한 일러스트로 교체합니다.
+        </p>
+      </aside>
 
       <section className="lab-toolbar" aria-label="디자인 필터와 선택 현황">
         <div className="filter-group" role="group" aria-label="분위기 필터">
@@ -443,6 +457,8 @@ function DesignLab() {
 function ConceptPreview({ conceptId }: { conceptId: string }) {
   const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
+  const blackRushLetteringUrl = (line: string) =>
+    `${import.meta.env.BASE_URL}images/design-lab/lettering/black-rush-${line}.svg`
 
   if (conceptId === 'linen-letter') {
     return (
@@ -807,8 +823,8 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <div className="rose-ink-shade" aria-hidden="true" />
         <span className="rose-ink-kicker">MINJUN · SEOYEON</span>
         <div className="rose-preview-script" aria-label="We're getting married">
-          <span>We're getting</span>
-          <span>married</span>
+          <img src={blackRushLetteringUrl('were-getting')} alt="" />
+          <img src={blackRushLetteringUrl('married')} alt="" />
         </div>
         <div className="rose-ink-footer">
           <time>15 MAY 2027</time>
@@ -824,9 +840,9 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <div className="letter-preview-frame letter-preview-first">
           <img src={samplePhotoUrl} alt="" />
           <div className="letter-preview-names">
-            <span>Minjun</span>
+            <img src={blackRushLetteringUrl('minjun')} alt="" />
             <i>&amp;</i>
-            <span>Seoyeon</span>
+            <img src={blackRushLetteringUrl('seoyeon')} alt="" />
           </div>
           <small>PHOTO 01 · INTRO</small>
         </div>
@@ -834,7 +850,10 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
           <img src={moonlitHanjiUrl} alt="" />
           <span>MINJUN</span>
           <span>SEOYEON</span>
-          <strong>Wedding<br />Invitation</strong>
+          <div className="letter-preview-cover-script" aria-label="Wedding Invitation">
+            <img src={blackRushLetteringUrl('wedding')} alt="" />
+            <img src={blackRushLetteringUrl('invitation')} alt="" />
+          </div>
           <time>15 · MAY · 2027</time>
         </div>
         <div className="letter-preview-progress" aria-hidden="true"><i /></div>

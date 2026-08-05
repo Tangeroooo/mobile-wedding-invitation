@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import './BrushFontLab.css'
 
 type BrushFont = {
@@ -9,71 +9,79 @@ type BrushFont = {
   mood: string
   license: string
   source: string
-  current?: boolean
+  rank: string
+  reference?: boolean
 }
 
 const brushFonts: BrushFont[] = [
   {
-    id: 'water-brush',
-    name: 'Water Brush',
-    label: '마른 붓 캘리그래피',
-    texture: '획 안쪽의 끊김과 거친 붓 끝이 가장 선명합니다.',
-    mood: '로맨틱 · 자유로움',
-    license: 'SIL OFL 1.1',
-    source: 'https://fonts.google.com/specimen/Water+Brush',
-    current: true,
+    id: 'black-rush',
+    name: 'Black Rush',
+    label: '기준 레터링',
+    texture: '길게 연결되는 획, 큰 대문자, 마른 붓의 갈라짐이 모두 살아 있는 현재 기준점입니다.',
+    mood: '대담함 · 로맨틱 · 러프',
+    license: 'PERSONAL USE · SVG ONLY',
+    source: 'https://www.dafont.com/blackrush.font',
+    rank: 'REFERENCE',
+    reference: true,
   },
   {
-    id: 'mrs-sheppards',
-    name: 'Mrs Sheppards',
-    label: '굵고 빠른 연결 획',
-    texture: '상업 템플릿에서 자주 보이는 대담한 브러시 실루엣에 가깝습니다.',
-    mood: '감각적 · 대담함',
-    license: 'SIL OFL 1.1',
-    source: 'https://fonts.google.com/specimen/Mrs+Sheppards',
+    id: 'selima',
+    name: 'Selima',
+    label: '가장 가까운 무료 후보',
+    texture: 'Black Rush보다 가볍지만 빠른 연결 획과 자연스러운 잉크 번짐의 균형이 가장 비슷합니다.',
+    mood: '자유로움 · 감성적 · 유연함',
+    license: '100% FREE · SVG PREVIEW',
+    source: 'https://www.dafont.com/selima.font',
+    rank: 'CLOSE 01',
   },
   {
-    id: 'rock-salt',
-    name: 'Rock Salt',
-    label: '거친 드라이 브러시',
-    texture: '번짐보다 긁힌 붓 자국이 강해 짧은 제목에서 힘이 생깁니다.',
-    mood: '빈티지 · 에너지틱',
-    license: 'Apache 2.0',
-    source: 'https://fonts.google.com/specimen/Rock+Salt',
+    id: 'brusher',
+    name: 'Brusher',
+    label: '굵은 연결 브러시',
+    texture: '거친 입자는 적지만 획의 압력과 연결감이 강합니다. 사진 위에서도 글자가 흐려지지 않습니다.',
+    mood: '볼드 · 현대적 · 선명함',
+    license: '100% FREE · SVG PREVIEW',
+    source: 'https://www.dafont.com/brusher.font',
+    rank: 'CLOSE 02',
   },
   {
-    id: 'caveat-brush',
-    name: 'Caveat Brush',
-    label: '따뜻한 손글씨 붓',
-    texture: '거친 정도는 낮지만 작은 화면에서도 편안하고 잘 읽힙니다.',
-    mood: '따뜻함 · 친근함',
-    license: 'SIL OFL 1.1',
-    source: 'https://fonts.google.com/specimen/Caveat+Brush',
+    id: 'dry-brush',
+    name: 'Dry Brush',
+    label: '질감이 가장 거친 후보',
+    texture: '갈라진 붓털과 긁힌 가장자리가 가장 강합니다. 연결감보다 실제 페인트 질감을 우선할 때 좋습니다.',
+    mood: '거침 · 시네마틱 · 강한 대비',
+    license: 'PERSONAL USE · SVG ONLY',
+    source: 'https://www.dafont.com/dry-brush.font',
+    rank: 'TEXTURE 01',
   },
   {
-    id: 'permanent-marker',
-    name: 'Permanent Marker',
-    label: '굵은 마커 브러시',
-    texture: '대문자 중심의 강한 획으로 사진 위에서 존재감이 큽니다.',
-    mood: '모던 · 캐주얼',
-    license: 'Apache 2.0',
-    source: 'https://fonts.google.com/specimen/Permanent+Marker',
+    id: 'bretageds',
+    name: 'Bretageds',
+    label: '날렵한 러프 스크립트',
+    texture: '긴 사선과 불규칙한 끝 획이 살아 있어 Black Rush의 속도감에 가까운 인상을 줍니다.',
+    mood: '날렵함 · 패션 · 드라마틱',
+    license: 'PERSONAL USE · SVG ONLY',
+    source: 'https://www.dafont.com/bretageds.font',
+    rank: 'FLOW 01',
   },
   {
-    id: 'trade-winds',
-    name: 'Trade Winds',
-    label: '사선형 러프 브러시',
-    texture: '비스듬한 획과 불규칙한 가장자리가 화보 같은 인상을 만듭니다.',
-    mood: '에디토리얼 · 시네마틱',
-    license: 'SIL OFL 1.1',
-    source: 'https://fonts.google.com/specimen/Trade+Winds',
+    id: 'rough-brush-script',
+    name: 'Rough Brush Script',
+    label: '손으로 칠한 듯한 후보',
+    texture: '글자마다 붓 압력이 크게 달라집니다. 정제되지 않은 손맛은 좋지만 Black Rush보다 장식성이 낮습니다.',
+    mood: '핸드메이드 · 소박함 · 빈티지',
+    license: '100% FREE · SVG PREVIEW',
+    source: 'https://www.dafont.com/rough-brush-script.font',
+    rank: 'TEXTURE 02',
   },
 ]
 
 function BrushFontLab() {
-  const [previewText, setPreviewText] = useState("We're getting married")
-  const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const designLabUrl = `${import.meta.env.BASE_URL}design-lab/`
+  const letteringUrl = (fontId: string, line: 'were-getting' | 'married') =>
+    `${import.meta.env.BASE_URL}images/design-lab/lettering/${fontId}-${line}.svg`
+  const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
 
   useEffect(() => {
     document.title = 'Brush Font Lab — Wedding Design Lab'
@@ -91,76 +99,56 @@ function BrushFontLab() {
       </header>
 
       <section className="brush-lab-intro" aria-labelledby="brush-lab-title">
-        <p>BRUSH LETTERING STUDY</p>
+        <p>ROUGH BRUSH LETTERING STUDY</p>
         <h1 id="brush-lab-title">
-          같은 문장,
+          Black Rush와
           <br />
-          다른 붓의 온도.
+          정말 가까운 붓만.
         </h1>
         <div>
           <p>
-            동일한 사진·크기·노란색으로 비교합니다. 글자를 직접 바꾸면 실제
-            이름이나 문구가 각 폰트에서 어떻게 보이는지 확인할 수 있어요.
+            기존 후보는 모두 제외했습니다. 이번에는 연결된 굵은 획과 거친 잉크
+            자국을 함께 가진 서체만, 같은 사진과 같은 문장으로 비교합니다.
           </p>
-          <label htmlFor="brush-preview-text">비교 문구</label>
-          <input
-            id="brush-preview-text"
-            value={previewText}
-            maxLength={42}
-            onChange={(event) => setPreviewText(event.target.value)}
-            placeholder="We're getting married"
-          />
+          <strong>WE'RE GETTING MARRIED</strong>
+          <span>폰트 파일 대신 윤곽선 SVG만 사용한 고정 문구입니다.</span>
         </div>
       </section>
 
       <section className="reference-fonts" aria-labelledby="reference-font-title">
         <div className="reference-font-heading">
-          <p>YOURSLETTER SAMPLE 02</p>
-          <h2 id="reference-font-title">샘플에서 확인한 두 레터링</h2>
+          <p>SELECTION RULE</p>
+          <h2 id="reference-font-title">이번 후보의 기준</h2>
         </div>
         <article>
-          <span>01 · INTRO NAMES</span>
-          <strong>Custom event lettering</strong>
-          <p>
-            첫 사진의 이름은 일반 폰트가 아니라 손글씨를 윤곽선으로 만든 맞춤
-            SVG입니다. 같은 모양의 재사용 가능한 폰트 파일은 없습니다.
-          </p>
-          <small>맞춤 제작 필요 · FONT FILE 없음</small>
+          <span>01 · FORM</span>
+          <strong>Connected &amp; bold</strong>
+          <p>가느다란 사인펜 필기체는 제외하고, 단어 전체가 한 붓처럼 흐르는 굵은 스크립트만 남겼습니다.</p>
         </article>
         <article>
-          <span>02 · COVER TITLE</span>
-          <strong>Black Rush</strong>
-          <p>
-            다음 사진의 “Wedding Invitation”은 Black Rush 브러시체를 SVG로
-            변환해 재생합니다. 데모 폰트는 개인용이며 공개 저장소 탑재 전 별도
-            라이선스 확인이 필요합니다.
-          </p>
-          <a
-            href="https://www.dafont.com/blackrush.font"
-            target="_blank"
-            rel="noreferrer"
-          >
-            폰트 정보 보기 ↗
-          </a>
+          <span>02 · TEXTURE</span>
+          <strong>Dry ink, not clean</strong>
+          <p>매끈한 벡터 가장자리보다 붓털의 갈라짐과 비어 있는 잉크 자국이 보이는 후보를 우선했습니다.</p>
         </article>
       </section>
 
-      <section className="brush-font-grid" aria-label="공개 브러시 폰트 비교">
+      <section className="brush-font-grid" aria-label="Black Rush와 유사 브러시 폰트 비교">
         {brushFonts.map((font) => (
-          <article className="brush-font-card" key={font.id}>
+          <article className="brush-font-card" key={font.id} data-reference={font.reference}>
             <div className="brush-font-meta">
               <div>
                 <span>{font.label}</span>
                 <h2>{font.name}</h2>
               </div>
-              {font.current && <strong>현재 적용</strong>}
+              <strong>{font.rank}</strong>
             </div>
             <div className="brush-font-stage">
-              <img src={samplePhotoUrl} alt="" />
-              <div aria-hidden="true" />
-              <p className={`brush-sample brush-sample-${font.id}`}>
-                {previewText || "We're getting married"}
-              </p>
+              <img className="brush-stage-photo" src={samplePhotoUrl} alt="" />
+              <div className="brush-stage-shade" aria-hidden="true" />
+              <div className="brush-svg-sample" aria-label={`We're getting married — ${font.name}`}>
+                <img src={letteringUrl(font.id, 'were-getting')} alt="" />
+                <img src={letteringUrl(font.id, 'married')} alt="" />
+              </div>
               <small>MINJUN · SEOYEON</small>
             </div>
             <div className="brush-font-copy">
@@ -171,12 +159,12 @@ function BrushFontLab() {
                   <dd>{font.mood}</dd>
                 </div>
                 <div>
-                  <dt>LICENSE</dt>
+                  <dt>USE</dt>
                   <dd>{font.license}</dd>
                 </div>
               </dl>
               <a href={font.source} target="_blank" rel="noreferrer">
-                Google Fonts에서 보기 ↗
+                출처와 라이선스 보기 ↗
               </a>
             </div>
           </article>
@@ -185,8 +173,8 @@ function BrushFontLab() {
 
       <footer className="brush-lab-footer">
         <p>
-          공개 폰트는 각각의 라이선스 파일과 함께 저장소에 보관했습니다.
-          최종안에서는 선택한 폰트만 남겨 초기 로딩을 가볍게 만들 예정입니다.
+          이 화면에는 폰트 원본 파일이 없습니다. 각 문구를 윤곽선 SVG로 변환했고,
+          개인용 후보는 이 청첩장 시안 외의 용도로 재사용하지 않습니다.
         </p>
         <a href={designLabUrl}>전체 디자인으로 돌아가기 →</a>
       </footer>
