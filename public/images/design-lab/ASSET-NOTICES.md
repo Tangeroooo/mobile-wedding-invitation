@@ -9,6 +9,7 @@
 ## Lettering outlines
 
 The SVG files in `lettering/` contain fixed lettering outlines only. No original font binary from the sources below is stored in this repository.
+The fixed preview strings are `We're getting`, `married`, `Minjun`, `Seoyeon`, `Wedding`, and `Invitation`; they are used only by the font comparison and two brush-lettering invitation studies.
 
 - Black Rush by Basni.std — free for personal use. Source: https://www.dafont.com/blackrush.font
 - Selima by Jroh Creative — marked 100% free by the author. Source: https://www.dafont.com/selima.font

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './DesignLab.css'
 import BrushFontLab from './BrushFontLab'
+import { brushFontOptions } from './brushFontOptions'
 import FullInvitation from './FullInvitation'
 
 type Mood = 'all' | 'warm' | 'modern'
@@ -241,6 +242,23 @@ const filterOptions: Array<{ id: Mood; label: string }> = [
 ]
 
 const selectionStorageKey = 'wedding-design-lab-selection'
+const brushFontStorageKey = 'wedding-design-lab-brush-font'
+
+function isBrushFontId(fontId: string | null): fontId is string {
+  return Boolean(fontId && brushFontOptions.some((font) => font.id === fontId))
+}
+
+function readSavedBrushFont() {
+  const requestedFont = new URLSearchParams(window.location.search).get('font')
+  if (isBrushFontId(requestedFont)) return requestedFont
+
+  try {
+    const savedFont = window.localStorage.getItem(brushFontStorageKey)
+    return isBrushFontId(savedFont) ? savedFont : 'black-rush'
+  } catch {
+    return 'black-rush'
+  }
+}
 
 function readSavedSelection() {
   try {
@@ -258,6 +276,7 @@ function readSavedSelection() {
 function DesignLab() {
   const [filter, setFilter] = useState<Mood>('all')
   const [selected, setSelected] = useState<string[]>(readSavedSelection)
+  const [brushFontId, setBrushFontId] = useState(readSavedBrushFont)
   const searchParams = new URLSearchParams(window.location.search)
   const activeConcept = concepts.find(
     (concept) => concept.id === searchParams.get('concept'),
@@ -271,8 +290,32 @@ function DesignLab() {
     }
   }, [selected])
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(brushFontStorageKey, brushFontId)
+    } catch {
+      // The lab still works when browser storage is unavailable.
+    }
+  }, [brushFontId])
+
+  const changeBrushFont = (fontId: string) => {
+    if (!isBrushFontId(fontId)) return
+    setBrushFontId(fontId)
+
+    const nextUrl = new URL(window.location.href)
+    nextUrl.searchParams.set('font', fontId)
+    window.history.replaceState(null, '', nextUrl)
+  }
+
   if (activeConcept) {
-    return <FullInvitation concept={activeConcept} concepts={concepts} />
+    return (
+      <FullInvitation
+        concept={activeConcept}
+        concepts={concepts}
+        brushFontId={brushFontId}
+        onBrushFontChange={changeBrushFont}
+      />
+    )
   }
 
   if (searchParams.get('view') === 'brush-fonts') {
@@ -341,6 +384,27 @@ function DesignLab() {
         <i aria-hidden="true">→</i>
       </a>
 
+      <section className="lab-lettering-control" aria-labelledby="lettering-control-title">
+        <div>
+          <span>LETTERING OPTION</span>
+          <strong id="lettering-control-title">청첩장 브러시 폰트 바꾸기</strong>
+          <p>선택한 서체는 23 · 로즈 잉크 블리드와 24 · 레터 프렐류드에 바로 적용됩니다.</p>
+        </div>
+        <label>
+          <span>FONT</span>
+          <select
+            value={brushFontId}
+            onChange={(event) => changeBrushFont(event.target.value)}
+          >
+            {brushFontOptions.map((font) => (
+              <option value={font.id} key={font.id}>
+                {font.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
       <aside className="lab-asset-note" aria-label="디자인 시안 이미지 출처">
         <span>IMAGE NOTE</span>
         <p>
@@ -397,7 +461,7 @@ function DesignLab() {
                 </button>
               </div>
 
-              <ConceptPreview conceptId={concept.id} />
+              <ConceptPreview conceptId={concept.id} brushFontId={brushFontId} />
 
               <div className="concept-copy">
                 <div>
@@ -412,7 +476,7 @@ function DesignLab() {
                 </ul>
                 <a
                   className="open-concept"
-                  href={`${import.meta.env.BASE_URL}design-lab/?concept=${concept.id}`}
+                  href={`${import.meta.env.BASE_URL}design-lab/?concept=${concept.id}&font=${brushFontId}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -454,11 +518,17 @@ function DesignLab() {
   )
 }
 
-function ConceptPreview({ conceptId }: { conceptId: string }) {
+function ConceptPreview({
+  conceptId,
+  brushFontId,
+}: {
+  conceptId: string
+  brushFontId: string
+}) {
   const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
-  const blackRushLetteringUrl = (line: string) =>
-    `${import.meta.env.BASE_URL}images/design-lab/lettering/black-rush-${line}.svg`
+  const brushLetteringUrl = (line: string) =>
+    `${import.meta.env.BASE_URL}images/design-lab/lettering/${brushFontId}-${line}.svg`
 
   if (conceptId === 'linen-letter') {
     return (
@@ -823,8 +893,8 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <div className="rose-ink-shade" aria-hidden="true" />
         <span className="rose-ink-kicker">MINJUN · SEOYEON</span>
         <div className="rose-preview-script" aria-label="We're getting married">
-          <img src={blackRushLetteringUrl('were-getting')} alt="" />
-          <img src={blackRushLetteringUrl('married')} alt="" />
+          <img src={brushLetteringUrl('were-getting')} alt="" />
+          <img src={brushLetteringUrl('married')} alt="" />
         </div>
         <div className="rose-ink-footer">
           <time>15 MAY 2027</time>
@@ -840,9 +910,9 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <div className="letter-preview-frame letter-preview-first">
           <img src={samplePhotoUrl} alt="" />
           <div className="letter-preview-names">
-            <img src={blackRushLetteringUrl('minjun')} alt="" />
+            <img src={brushLetteringUrl('minjun')} alt="" />
             <i>&amp;</i>
-            <img src={blackRushLetteringUrl('seoyeon')} alt="" />
+            <img src={brushLetteringUrl('seoyeon')} alt="" />
           </div>
           <small>PHOTO 01 · INTRO</small>
         </div>
@@ -851,8 +921,8 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
           <span>MINJUN</span>
           <span>SEOYEON</span>
           <div className="letter-preview-cover-script" aria-label="Wedding Invitation">
-            <img src={blackRushLetteringUrl('wedding')} alt="" />
-            <img src={blackRushLetteringUrl('invitation')} alt="" />
+            <img src={brushLetteringUrl('wedding')} alt="" />
+            <img src={brushLetteringUrl('invitation')} alt="" />
           </div>
           <time>15 · MAY · 2027</time>
         </div>

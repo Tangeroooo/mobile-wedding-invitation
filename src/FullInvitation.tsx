@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './FullInvitation.css'
+import { brushFontOptions } from './brushFontOptions'
 
 type InvitationConcept = {
   id: string
@@ -14,6 +15,8 @@ type InvitationConcept = {
 type FullInvitationProps = {
   concept: InvitationConcept
   concepts: InvitationConcept[]
+  brushFontId: string
+  onBrushFontChange: (fontId: string) => void
 }
 
 const calendarDays: Array<number | ''> = [
@@ -91,7 +94,12 @@ const motionProfiles: Record<string, MotionProfile> = {
   'letter-prelude': 'photo-drift',
 }
 
-function FullInvitation({ concept, concepts }: FullInvitationProps) {
+function FullInvitation({
+  concept,
+  concepts,
+  brushFontId,
+  onBrushFontChange,
+}: FullInvitationProps) {
   const [chapter, setChapter] = useState<'day' | 'night'>('day')
   const [preludePhase, setPreludePhase] = useState<'intro' | 'leaving' | 'done'>(
     concept.id === 'letter-prelude' ? 'intro' : 'done',
@@ -104,8 +112,11 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const totalConcepts = String(concepts.length).padStart(2, '0')
   const sampleHeroUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
-  const blackRushLetteringUrl = (line: string) =>
-    `${import.meta.env.BASE_URL}images/design-lab/lettering/black-rush-${line}.svg`
+  const brushLetteringUrl = (line: string) =>
+    `${import.meta.env.BASE_URL}images/design-lab/lettering/${brushFontId}-${line}.svg`
+  const usesBrushLettering = ['rose-ink-bleed', 'letter-prelude'].includes(
+    concept.id,
+  )
   const usesPhotoHero = [
     'full-bleed-vow',
     'glasshouse',
@@ -225,7 +236,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
 
   return (
     <main
-      className={`invitation-preview-page${['rose-ink-bleed', 'letter-prelude'].includes(concept.id) ? ' preview-page-edge-to-edge' : ''}`}
+      className={`invitation-preview-page${['rose-ink-bleed', 'letter-prelude'].includes(concept.id) ? ' preview-page-edge-to-edge' : ''}${usesBrushLettering ? ' has-lettering-picker' : ''}`}
     >
       {concept.id === 'letter-prelude' && preludePhase !== 'done' && (
         <section
@@ -235,9 +246,9 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           <img src={sampleHeroUrl} alt="두 사람이 정원을 함께 걷는 사진" />
           <div className="letter-prelude-shade" aria-hidden="true" />
           <div className="letter-prelude-signature" aria-label="Minjun and Seoyeon">
-            <img src={blackRushLetteringUrl('minjun')} alt="" />
+            <img src={brushLetteringUrl('minjun')} alt="" />
             <i>&amp;</i>
-            <img src={blackRushLetteringUrl('seoyeon')} alt="" />
+            <img src={brushLetteringUrl('seoyeon')} alt="" />
           </div>
           <p>OUR FIRST CHAPTER</p>
           <button type="button" onClick={skipPrelude}>
@@ -246,7 +257,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         </section>
       )}
       <header className="preview-toolbar">
-        <a href={designLabUrl} className="preview-back">
+        <a href={`${designLabUrl}?font=${brushFontId}`} className="preview-back">
           <span aria-hidden="true">←</span>
           Design Lab
         </a>
@@ -256,19 +267,36 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
         </div>
         <nav aria-label="다른 디자인 보기">
           <a
-            href={`${designLabUrl}?concept=${previousConcept.id}`}
+            href={`${designLabUrl}?concept=${previousConcept.id}&font=${brushFontId}`}
             aria-label={`이전 디자인: ${previousConcept.koreanName}`}
           >
             ←
           </a>
           <a
-            href={`${designLabUrl}?concept=${nextConcept.id}`}
+            href={`${designLabUrl}?concept=${nextConcept.id}&font=${brushFontId}`}
             aria-label={`다음 디자인: ${nextConcept.koreanName}`}
           >
             →
           </a>
         </nav>
       </header>
+
+      {usesBrushLettering && (
+        <label className="preview-lettering-picker">
+          <span>LETTERING</span>
+          <select
+            aria-label="브러시 레터링 폰트"
+            value={brushFontId}
+            onChange={(event) => onBrushFontChange(event.target.value)}
+          >
+            {brushFontOptions.map((font) => (
+              <option value={font.id} key={font.id}>
+                {font.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <p className="demo-notice">
         DESIGN PREVIEW · 모든 이름, 날짜, 장소, 연락처는 비교용 임시 정보입니다.
@@ -328,13 +356,15 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
           {concept.id === 'rose-ink-bleed' && (
             <div className="hero-script-mark" aria-label="We're getting married, 민준과 서연">
               <img
+                key={`${brushFontId}-were-getting`}
                 className="hero-script-line hero-script-line-one"
-                src={blackRushLetteringUrl('were-getting')}
+                src={brushLetteringUrl('were-getting')}
                 alt=""
               />
               <img
+                key={`${brushFontId}-married`}
                 className="hero-script-line hero-script-line-two"
-                src={blackRushLetteringUrl('married')}
+                src={brushLetteringUrl('married')}
                 alt=""
               />
               <small>MINJUN · SEOYEON</small>
@@ -347,8 +377,16 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
                 <span>SEOYEON</span>
               </div>
               <div className="letter-cover-script" aria-hidden="true">
-                <img src={blackRushLetteringUrl('wedding')} alt="" />
-                <img src={blackRushLetteringUrl('invitation')} alt="" />
+                <img
+                  key={`${brushFontId}-wedding`}
+                  src={brushLetteringUrl('wedding')}
+                  alt=""
+                />
+                <img
+                  key={`${brushFontId}-invitation`}
+                  src={brushLetteringUrl('invitation')}
+                  alt=""
+                />
               </div>
               <small>We have been writing this story.</small>
             </div>
@@ -513,7 +551,9 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>{totalConcepts}개 디자인 목록으로 돌아가기</a>
+        <a href={`${designLabUrl}?font=${brushFontId}`}>
+          {totalConcepts}개 디자인 목록으로 돌아가기
+        </a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>

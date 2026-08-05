@@ -20,6 +20,7 @@
 .lab-header,
 .lab-intro,
 .brush-lab-banner,
+.lab-lettering-control,
 .lab-asset-note,
 .lab-toolbar,
 .concept-grid,
@@ -176,6 +177,55 @@
 .brush-lab-banner:focus-visible {
   outline: 2px solid #926f5b;
   outline-offset: 4px;
+}
+
+.lab-lettering-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 0.42fr);
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px solid var(--lab-ink);
+  background: #ede6d5;
+}
+
+.lab-lettering-control > div > span,
+.lab-lettering-control label > span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.56rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  color: var(--lab-muted);
+}
+
+.lab-lettering-control > div > strong {
+  display: block;
+  font: 400 1.3rem/1.15 var(--lab-serif);
+}
+
+.lab-lettering-control > div > p {
+  margin: 8px 0 0;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  color: var(--lab-muted);
+}
+
+.lab-lettering-control select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 42px 0 14px;
+  border: 1px solid rgba(22, 22, 22, 0.3);
+  border-radius: 0;
+  color: var(--lab-ink);
+  background: rgba(255, 255, 255, 0.66);
+  font: 650 0.8rem/1 var(--lab-sans);
+}
+
+.lab-lettering-control select:focus-visible {
+  outline: 2px solid #926f5b;
+  outline-offset: 3px;
 }
 
 .lab-asset-note {
@@ -2456,6 +2506,7 @@
   .lab-header,
   .lab-intro,
   .brush-lab-banner,
+  .lab-lettering-control,
   .lab-asset-note,
   .lab-toolbar,
   .concept-grid,
@@ -2499,6 +2550,12 @@
   .lab-asset-note {
     grid-template-columns: 1fr;
     gap: 8px;
+    padding: 16px;
+  }
+
+  .lab-lettering-control {
+    grid-template-columns: 1fr;
+    gap: 18px;
     padding: 16px;
   }
 

@@ -1,0 +1,23 @@
+export const brushFontOptions = [
+  { id: 'black-rush', name: 'Black Rush' },
+  { id: 'bretageds', name: 'Bretageds' },
+  { id: 'hey-august', name: 'Hey August' },
+  { id: 'hey-october', name: 'Hey October' },
+  { id: 'smithen-script', name: 'Smithen Script' },
+  { id: 'james-stroker', name: 'James Stroker' },
+  { id: 'great-sejagad', name: 'Great Sejagad' },
+  { id: 'darty-zhedant', name: 'Darty Zhedant' },
+  { id: 'all-pony', name: 'All Pony' },
+  { id: 'wintersoul', name: 'Wintersoul' },
+  { id: 'hotel-lorint', name: 'Hotel Lorint' },
+  { id: 'passengers-script', name: 'Passengers Script' },
+  { id: 'a-buster-down', name: 'A Buster Down' },
+  { id: 'dolato-de-stato', name: 'Dolato de Stato' },
+  { id: 'rampage-kid', name: 'Rampage Kid' },
+  { id: 'tony-bhages', name: 'Tony Bhages' },
+  { id: 'loving-memories', name: 'Loving Memories' },
+  { id: 'mybread', name: 'Mybread' },
+  { id: 'bhineka', name: 'Bhineka' },
+  { id: 'wandertucker', name: 'Wandertucker' },
+] as const
+
