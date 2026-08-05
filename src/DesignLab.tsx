@@ -177,6 +177,42 @@ const concepts: Concept[] = [
     description: '현재 Coming Soon의 직선 프레임과 격자를 이어가는 모던 시안',
     keywords: ['Coming Soon 연계', '직선 프레임', '모노톤'],
   },
+  {
+    id: 'porcelain-orbit',
+    number: '19',
+    name: 'Porcelain Orbit',
+    koreanName: '포슬린 오빗',
+    mood: 'modern',
+    description: '백자빛 여백과 코발트 원형 프레임을 중심으로 구성한 청량한 시안',
+    keywords: ['원형 포트레이트', '코발트', '슬로 페이드'],
+  },
+  {
+    id: 'citrus-poster',
+    number: '20',
+    name: 'Citrus Poster',
+    koreanName: '시트러스 포스터',
+    mood: 'modern',
+    description: '버터 옐로와 코발트 도형, 대형 활자를 조합한 그래픽 포스터형',
+    keywords: ['컬러 블록', '볼드 타이포', '사이드 슬라이드'],
+  },
+  {
+    id: 'terracotta-reel',
+    number: '21',
+    name: 'Terracotta Reel',
+    koreanName: '테라코타 릴',
+    mood: 'warm',
+    description: '클레이와 플럼 컬러 위에 사진을 영화 필름처럼 이어가는 구성',
+    keywords: ['필름 스트립', '테라코타', '마스크 리빌'],
+  },
+  {
+    id: 'lavender-glass',
+    number: '22',
+    name: 'Lavender Glass',
+    koreanName: '라벤더 글래스',
+    mood: 'warm',
+    description: '라벤더 안개와 모스 그린, 반투명 패널이 겹쳐지는 몽환적 시안',
+    keywords: ['글래스 패널', '라벤더', '블러 리빌'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -246,7 +282,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—18</span>
+        <span className="lab-edition">DESIGN STUDY · 01—22</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -660,6 +696,72 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <p className="coming-preview-copy">TWO PEOPLE · ONE DIRECTION</p>
         <div className="coming-preview-divider" aria-hidden="true"><i /></div>
         <time>15 MAY 2027 · SEOUL</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'porcelain-orbit') {
+    return (
+      <div className="concept-preview preview-porcelain" aria-label="포슬린 오빗 미리보기">
+        <span className="porcelain-kicker">THE WEDDING OF</span>
+        <div className="porcelain-photo">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <div className="porcelain-orbit" aria-hidden="true" />
+        <strong>
+          <span>M</span><i>&amp;</i><span>S</span>
+        </strong>
+        <p>민준 그리고 서연</p>
+        <time>15 · 05 · 2027</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'citrus-poster') {
+    return (
+      <div className="concept-preview preview-citrus" aria-label="시트러스 포스터 미리보기">
+        <div className="citrus-shape citrus-circle" aria-hidden="true" />
+        <div className="citrus-shape citrus-block" aria-hidden="true" />
+        <div className="citrus-photo">
+          <img src={samplePhotoUrl} alt="" />
+        </div>
+        <span className="citrus-kicker">WEDDING POSTER · NO.20</span>
+        <strong>YES,<br />WE<br />DO!</strong>
+        <p>MINJUN × SEOYEON</p>
+        <time>MAY 15 · 2027</time>
+      </div>
+    )
+  }
+
+  if (conceptId === 'terracotta-reel') {
+    return (
+      <div className="concept-preview preview-terracotta" aria-label="테라코타 릴 미리보기">
+        <span className="reel-kicker">A FILM ABOUT US</span>
+        <div className="reel-photo">
+          <img src={samplePhotoUrl} alt="" />
+          <i aria-hidden="true" />
+        </div>
+        <strong>민준 <i>&amp;</i> 서연</strong>
+        <div className="reel-footer">
+          <span>SCENE 05</span>
+          <time>15 MAY 2027</time>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'lavender-glass') {
+    return (
+      <div className="concept-preview preview-lavender" aria-label="라벤더 글래스 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="lavender-haze lavender-haze-one" aria-hidden="true" />
+        <div className="lavender-haze lavender-haze-two" aria-hidden="true" />
+        <div className="lavender-card">
+          <span>OUR WEDDING DAY</span>
+          <strong>M <i>&amp;</i> S</strong>
+          <p>민준과 서연, 결혼합니다.</p>
+          <time>2027 · 05 · 15</time>
+        </div>
       </div>
     )
   }

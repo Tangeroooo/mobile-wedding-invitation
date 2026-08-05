@@ -57,6 +57,12 @@ const calendarDays: Array<number | ''> = [
 ]
 
 const weekdayLabels = ['일', '월', '화', '수', '목', '금', '토']
+const motionConceptIds = new Set([
+  'porcelain-orbit',
+  'citrus-poster',
+  'terracotta-reel',
+  'lavender-glass',
+])
 
 function FullInvitation({ concept, concepts }: FullInvitationProps) {
   const [chapter, setChapter] = useState<'day' | 'night'>('day')
@@ -78,6 +84,10 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     'cinema-still',
     'cover-story',
     'ivory-diptych',
+    'porcelain-orbit',
+    'citrus-poster',
+    'terracotta-reel',
+    'lavender-glass',
   ].includes(concept.id)
   const heroImageSrc =
     concept.id === 'moonlit-hanji'
@@ -90,6 +100,61 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     document.title = `${concept.koreanName} — Wedding Design Lab`
     window.scrollTo(0, 0)
   }, [concept.koreanName])
+
+  useEffect(() => {
+    if (!motionConceptIds.has(concept.id)) return
+
+    const invitation = document.querySelector<HTMLElement>(
+      `.full-invitation[data-concept="${concept.id}"]`,
+    )
+    if (!invitation) return
+
+    const entries = Array.from(
+      invitation.querySelectorAll<HTMLElement>(
+        '.invitation-section, .invitation-footer',
+      ),
+    )
+
+    invitation.classList.add('motion-enabled')
+    entries.forEach((entry, index) => {
+      entry.classList.add('motion-entry')
+      entry.style.setProperty('--motion-order', String(index % 3))
+    })
+
+    const revealAll = () => {
+      entries.forEach((entry) => entry.classList.add('is-visible'))
+    }
+
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !('IntersectionObserver' in window)
+    ) {
+      revealAll()
+      return () => invitation.classList.remove('motion-enabled')
+    }
+
+    const observer = new IntersectionObserver(
+      (observedEntries) => {
+        observedEntries.forEach((observedEntry) => {
+          if (!observedEntry.isIntersecting) return
+          observedEntry.target.classList.add('is-visible')
+          observer.unobserve(observedEntry.target)
+        })
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+    )
+
+    entries.forEach((entry) => observer.observe(entry))
+
+    return () => {
+      observer.disconnect()
+      invitation.classList.remove('motion-enabled')
+      entries.forEach((entry) => {
+        entry.classList.remove('motion-entry', 'is-visible')
+        entry.style.removeProperty('--motion-order')
+      })
+    }
+  }, [concept.id])
 
   return (
     <main className="invitation-preview-page">
@@ -329,7 +394,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>18개 디자인 목록으로 돌아가기</a>
+        <a href={designLabUrl}>22개 디자인 목록으로 돌아가기</a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>
