@@ -324,6 +324,15 @@
   --inv-line: rgba(52, 64, 51, 0.2);
 }
 
+.full-invitation[data-concept='rose-ink-bleed'] {
+  --inv-bg: #eadbd6;
+  --inv-paper: #f4eae5;
+  --inv-text: #4a3738;
+  --inv-muted: #8b7072;
+  --inv-accent: #c4657f;
+  --inv-line: rgba(74, 55, 56, 0.2);
+}
+
 .invitation-hero,
 .invitation-section,
 .invitation-footer {
@@ -3620,6 +3629,239 @@
   border-radius: 999px;
 }
 
+/* 23 · Rose Ink Bleed */
+[data-concept='rose-ink-bleed'] .invitation-hero {
+  isolation: isolate;
+  min-height: min(900px, 100svh);
+  padding: 38px 30px 32px;
+  overflow: hidden;
+  color: #fff4f6;
+  background: #38352f;
+}
+
+[data-concept='rose-ink-bleed'] .hero-ornament {
+  display: none;
+}
+
+[data-concept='rose-ink-bleed'] .hero-heading {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  animation: none;
+}
+
+[data-concept='rose-ink-bleed'] .hero-overline {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  left: 30px;
+  margin: 0;
+  color: rgba(255, 244, 246, 0.88);
+}
+
+[data-concept='rose-ink-bleed'] .hero-heading h1,
+[data-concept='rose-ink-bleed'] .hero-heading > p {
+  display: none;
+}
+
+[data-concept='rose-ink-bleed'] .hero-portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: auto;
+  min-height: 0;
+  border-radius: 0;
+  background: #38352f;
+}
+
+[data-concept='rose-ink-bleed'] .hero-portrait::before {
+  z-index: 1;
+  background:
+    linear-gradient(to bottom, rgba(24, 23, 20, 0.48), transparent 38%),
+    linear-gradient(to top, rgba(27, 20, 23, 0.74), transparent 51%);
+}
+
+[data-concept='rose-ink-bleed'] .hero-portrait > img {
+  object-position: center 48%;
+  filter: saturate(0.78) contrast(1.04);
+}
+
+[data-concept='rose-ink-bleed'] .hero-portrait span {
+  display: none;
+}
+
+.hero-script-mark {
+  position: absolute;
+  top: 18%;
+  right: 20px;
+  left: 20px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #efa0b6;
+  text-shadow: 0 3px 18px rgba(43, 15, 27, 0.34);
+  pointer-events: none;
+  transform: rotate(-4deg);
+}
+
+.hero-script-line {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  font: 400 clamp(3.15rem, 15vw, 4.45rem)/0.8 'Snell Roundhand',
+    'Apple Chancery', 'Segoe Script', cursive;
+  letter-spacing: -0.08em;
+  clip-path: inset(0 100% 0 0);
+}
+
+.hero-script-line-one {
+  animation: rose-ink-write 1.55s 0.5s cubic-bezier(0.62, 0.02, 0.35, 1) both;
+}
+
+.hero-script-line-two {
+  margin: 6px 0 0 62px;
+  font-size: clamp(4.15rem, 19vw, 5.65rem);
+  animation: rose-ink-write 1.35s 1.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
+}
+
+.hero-script-mark > i {
+  width: 60%;
+  height: 2px;
+  margin: 10px 0 0 52px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, currentColor 10% 90%, transparent);
+  transform-origin: left;
+  animation: rose-ink-flourish 0.75s 2.85s ease-out both;
+}
+
+.hero-script-mark > small {
+  margin: 22px 0 0 44px;
+  font: 700 0.58rem/1 var(--inv-sans);
+  letter-spacing: 0.24em;
+  color: rgba(255, 244, 246, 0.9);
+  animation: rose-ink-caption 0.8s 3.2s ease-out both;
+}
+
+[data-concept='rose-ink-bleed'] .hero-date {
+  position: absolute;
+  right: 30px;
+  bottom: 32px;
+  left: 30px;
+  z-index: 5;
+  color: #fff4f6;
+  border-top: 1px solid rgba(255, 244, 246, 0.5);
+}
+
+[data-concept='rose-ink-bleed'] .hero-date span {
+  color: rgba(255, 244, 246, 0.74);
+}
+
+[data-concept='rose-ink-bleed'] .invitation-section {
+  padding: 106px 30px;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(196, 101, 127, 0.08), transparent 27%),
+    var(--inv-paper);
+}
+
+[data-concept='rose-ink-bleed'] .invitation-section:nth-of-type(odd) {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.26), transparent 48%),
+    #eadbd6;
+}
+
+[data-concept='rose-ink-bleed'] .section-title::after {
+  content: '';
+  display: block;
+  width: 82px;
+  height: 2px;
+  margin: 22px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--inv-accent) 14% 86%, transparent);
+  transform: rotate(-3deg);
+}
+
+[data-concept='rose-ink-bleed'] .section-title h2 {
+  font-style: italic;
+}
+
+[data-concept='rose-ink-bleed'] .gallery-layout {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 330px 235px;
+  gap: 5px;
+  margin-inline: -30px;
+}
+
+[data-concept='rose-ink-bleed'] .gallery-photo {
+  grid-row: auto;
+  grid-column: auto;
+  min-height: 0;
+  border-radius: 0;
+  filter: sepia(0.08) saturate(0.72) contrast(1.03);
+}
+
+[data-concept='rose-ink-bleed'] .gallery-photo:first-child {
+  grid-column: 1 / 3;
+}
+
+[data-concept='rose-ink-bleed'] .map-placeholder {
+  margin-inline: -30px;
+  border-radius: 0;
+}
+
+[data-concept='rose-ink-bleed'] .rsvp-section {
+  --inv-text: #fff3f5;
+  --inv-muted: rgba(255, 243, 245, 0.72);
+  --inv-line: rgba(255, 243, 245, 0.24);
+  background: #57323d;
+}
+
+[data-concept='rose-ink-bleed'] .rsvp-section > button {
+  color: #57323d;
+  border-radius: 999px;
+  background: #f2a2b7;
+}
+
+[data-concept='rose-ink-bleed'] .invitation-footer {
+  color: #fff3f5;
+  background: #2f282a;
+}
+
+@keyframes rose-ink-write {
+  from {
+    opacity: 0.16;
+    clip-path: inset(0 100% 0 0);
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
+@keyframes rose-ink-flourish {
+  from {
+    opacity: 0;
+    transform: rotate(-4deg) scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-4deg) scaleX(1);
+  }
+}
+
+@keyframes rose-ink-caption {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .preview-footer {
   display: flex;
   align-items: center;
@@ -3677,6 +3919,15 @@
   .full-invitation.motion-enabled .hero-date,
   [data-motion-profile='photo-drift'].motion-enabled .hero-portrait > img {
     animation: none !important;
+    transform: none !important;
+  }
+
+  .hero-script-line,
+  .hero-script-mark > i,
+  .hero-script-mark > small {
+    animation: none !important;
+    clip-path: inset(0) !important;
+    opacity: 1 !important;
     transform: none !important;
   }
 }

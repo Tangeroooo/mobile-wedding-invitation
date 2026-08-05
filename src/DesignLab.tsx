@@ -213,6 +213,15 @@ const concepts: Concept[] = [
     description: '라벤더 안개와 모스 그린, 반투명 패널이 겹쳐지는 몽환적 시안',
     keywords: ['글래스 패널', '라벤더', '블러 리빌'],
   },
+  {
+    id: 'rose-ink-bleed',
+    number: '23',
+    name: 'Rose Ink Bleed',
+    koreanName: '로즈 잉크 블리드',
+    mood: 'warm',
+    description: '풀블리드 사진 위로 로즈빛 캘리그라피가 한 획씩 쓰이는 감성 커버',
+    keywords: ['필기 애니메이션', '풀스크린 사진', '로즈 잉크'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -282,7 +291,9 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—22</span>
+        <span className="lab-edition">
+          DESIGN STUDY · 01—{String(concepts.length).padStart(2, '0')}
+        </span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -761,6 +772,25 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
           <strong>M <i>&amp;</i> S</strong>
           <p>민준과 서연, 결혼합니다.</p>
           <time>2027 · 05 · 15</time>
+        </div>
+      </div>
+    )
+  }
+
+  if (conceptId === 'rose-ink-bleed') {
+    return (
+      <div className="concept-preview preview-rose-ink" aria-label="로즈 잉크 블리드 미리보기">
+        <img src={samplePhotoUrl} alt="" />
+        <div className="rose-ink-shade" aria-hidden="true" />
+        <span className="rose-ink-kicker">MINJUN · SEOYEON</span>
+        <div className="rose-preview-script" aria-label="We're getting married">
+          <span>We're getting</span>
+          <span>married</span>
+          <i aria-hidden="true" />
+        </div>
+        <div className="rose-ink-footer">
+          <time>15 MAY 2027</time>
+          <span>SEOUL · 1PM</span>
         </div>
       </div>
     )

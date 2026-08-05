@@ -87,6 +87,7 @@ const motionProfiles: Record<string, MotionProfile> = {
   'citrus-poster': 'editorial-wipe',
   'terracotta-reel': 'paper-settle',
   'lavender-glass': 'glass-focus',
+  'rose-ink-bleed': 'photo-drift',
 }
 
 function FullInvitation({ concept, concepts }: FullInvitationProps) {
@@ -113,6 +114,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     'citrus-poster',
     'terracotta-reel',
     'lavender-glass',
+    'rose-ink-bleed',
   ].includes(concept.id)
   const heroImageSrc =
     concept.id === 'moonlit-hanji'
@@ -261,6 +263,14 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
             label="MAIN PORTRAIT"
             imageSrc={heroImageSrc}
           />
+          {concept.id === 'rose-ink-bleed' && (
+            <div className="hero-script-mark" aria-label="We're getting married, 민준과 서연">
+              <span className="hero-script-line hero-script-line-one">We're getting</span>
+              <span className="hero-script-line hero-script-line-two">married</span>
+              <i aria-hidden="true" />
+              <small>MINJUN · SEOYEON</small>
+            </div>
+          )}
           {concept.id === 'ivory-diptych' && (
             <PhotoPlaceholder
               className="hero-portrait hero-portrait-secondary"
@@ -421,7 +431,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>22개 디자인 목록으로 돌아가기</a>
+        <a href={designLabUrl}>{totalConcepts}개 디자인 목록으로 돌아가기</a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>
