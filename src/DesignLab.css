@@ -1,9 +1,9 @@
 @font-face {
-  font-family: 'Kaushan Local';
+  font-family: 'Water Brush Local';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/kaushan-script-latin.woff2') format('woff2');
+  src: url('/fonts/water-brush-latin.woff2') format('woff2');
 }
 
 .design-lab {
@@ -1982,22 +1982,16 @@
   display: block;
   width: max-content;
   max-width: 100%;
-  color: transparent;
-  background:
-    radial-gradient(circle, rgba(99, 75, 0, 0.34) 0 0.7px, transparent 1.1px) 0 0 / 11px 9px,
-    radial-gradient(circle, rgba(111, 78, 0, 0.28) 0 0.6px, transparent 1px) 4px 3px / 13px 12px,
-    #f2d84f;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font: 400 clamp(2.7rem, 7.8vw, 5.2rem)/0.9 'Kaushan Local', cursive;
+  color: #f2d84f;
+  font: 400 clamp(3.15rem, 8.6vw, 5.75rem)/0.82 'Water Brush Local', cursive;
   font-synthesis: none;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.018em;
+  text-shadow: none;
 }
 
 .rose-preview-script span:nth-child(2) {
-  margin: 2% 0 0 14%;
-  font-size: clamp(3.3rem, 9.2vw, 6rem);
+  margin: 5% 0 0 16%;
+  font-size: clamp(3.9rem, 10.2vw, 6.7rem);
 }
 
 .concept-card:hover .rose-preview-script span:first-child {

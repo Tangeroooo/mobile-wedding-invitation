@@ -3739,17 +3739,11 @@
   display: block;
   width: max-content;
   max-width: 100%;
-  color: transparent;
-  background:
-    radial-gradient(circle, rgba(100, 73, 0, 0.4) 0 0.8px, transparent 1.2px) 0 0 / 12px 10px,
-    radial-gradient(circle, rgba(120, 82, 0, 0.3) 0 0.7px, transparent 1.1px) 5px 4px / 15px 13px,
-    #f2d84f;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font: 400 clamp(3.35rem, 15.5vw, 4.7rem)/0.92 'Kaushan Local', cursive;
+  color: #f2d84f;
+  font: 400 clamp(4rem, 18vw, 5.4rem)/0.82 'Water Brush Local', cursive;
   font-synthesis: none;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.018em;
+  text-shadow: none;
   clip-path: inset(0 100% 0 0);
 }
 
@@ -3760,8 +3754,8 @@
 
 .hero-script-line-two {
   --ink-tilt: 1.5deg;
-  margin: 4px 0 0 42px;
-  font-size: clamp(4rem, 18vw, 5.5rem);
+  margin: 10px 0 0 42px;
+  font-size: clamp(4.8rem, 21vw, 6.4rem);
   animation: rose-ink-write 1.35s 1.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
