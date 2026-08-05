@@ -185,7 +185,9 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
   }, [concept.id, motionProfile])
 
   return (
-    <main className="invitation-preview-page">
+    <main
+      className={`invitation-preview-page${concept.id === 'rose-ink-bleed' ? ' preview-page-edge-to-edge' : ''}`}
+    >
       <header className="preview-toolbar">
         <a href={designLabUrl} className="preview-back">
           <span aria-hidden="true">←</span>
@@ -267,7 +269,6 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
             <div className="hero-script-mark" aria-label="We're getting married, 민준과 서연">
               <span className="hero-script-line hero-script-line-one">We're getting</span>
               <span className="hero-script-line hero-script-line-two">married</span>
-              <i aria-hidden="true" />
               <small>MINJUN · SEOYEON</small>
             </div>
           )}

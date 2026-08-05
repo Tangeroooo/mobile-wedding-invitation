@@ -9,6 +9,36 @@
     'Noto Sans KR', 'Segoe UI', sans-serif;
 }
 
+.invitation-preview-page.preview-page-edge-to-edge {
+  padding-top: 0;
+  background: #24211d;
+}
+
+.preview-page-edge-to-edge .preview-toolbar {
+  min-height: calc(var(--toolbar-height) + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  color: #fffdf2;
+  border-bottom: 0;
+  background: linear-gradient(to bottom, rgba(20, 19, 16, 0.62), transparent);
+  backdrop-filter: none;
+}
+
+.preview-page-edge-to-edge .preview-identity span {
+  color: rgba(255, 253, 242, 0.7);
+}
+
+.preview-page-edge-to-edge .preview-toolbar nav a {
+  border-color: rgba(255, 253, 242, 0.42);
+}
+
+.preview-page-edge-to-edge .demo-notice {
+  display: none;
+}
+
+.preview-page-edge-to-edge .full-invitation {
+  box-shadow: none;
+}
+
 .preview-toolbar {
   position: fixed;
   inset: 0 0 auto;
@@ -3632,8 +3662,9 @@
 /* 23 · Rose Ink Bleed */
 [data-concept='rose-ink-bleed'] .invitation-hero {
   isolation: isolate;
-  min-height: min(900px, 100svh);
-  padding: 38px 30px 32px;
+  min-height: 100svh;
+  padding: calc(38px + env(safe-area-inset-top)) 30px
+    calc(32px + env(safe-area-inset-bottom));
   overflow: hidden;
   color: #fff4f6;
   background: #38352f;
@@ -3652,7 +3683,7 @@
 
 [data-concept='rose-ink-bleed'] .hero-overline {
   position: absolute;
-  top: 40px;
+  top: calc(88px + env(safe-area-inset-top));
   right: 30px;
   left: 30px;
   margin: 0;
@@ -3692,14 +3723,14 @@
 
 .hero-script-mark {
   position: absolute;
-  top: 18%;
+  top: calc(18% + env(safe-area-inset-top));
   right: 20px;
   left: 20px;
   z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #efa0b6;
+  color: #f2d84f;
   pointer-events: none;
   transform: rotate(-4deg);
 }
@@ -3708,34 +3739,34 @@
   display: block;
   width: max-content;
   max-width: 100%;
-  font: 400 clamp(3.9rem, 18vw, 5.25rem)/0.82 'Allura Local', cursive;
+  color: transparent;
+  background:
+    radial-gradient(circle, rgba(100, 73, 0, 0.4) 0 0.8px, transparent 1.2px) 0 0 / 12px 10px,
+    radial-gradient(circle, rgba(120, 82, 0, 0.3) 0 0.7px, transparent 1.1px) 5px 4px / 15px 13px,
+    #f2d84f;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font: 400 clamp(3.35rem, 15.5vw, 4.7rem)/0.92 'Kaushan Local', cursive;
   font-synthesis: none;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.045em;
   clip-path: inset(0 100% 0 0);
 }
 
 .hero-script-line-one {
+  --ink-tilt: -1deg;
   animation: rose-ink-write 1.55s 0.5s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
 .hero-script-line-two {
-  margin: 0 0 0 60px;
-  font-size: clamp(4.8rem, 22vw, 6.35rem);
+  --ink-tilt: 1.5deg;
+  margin: 4px 0 0 42px;
+  font-size: clamp(4rem, 18vw, 5.5rem);
   animation: rose-ink-write 1.35s 1.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
-.hero-script-mark > i {
-  width: 60%;
-  height: 2px;
-  margin: 10px 0 0 52px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, currentColor 10% 90%, transparent);
-  transform-origin: left;
-  animation: rose-ink-flourish 0.75s 2.85s ease-out both;
-}
-
 .hero-script-mark > small {
-  margin: 22px 0 0 44px;
+  margin: 24px 0 0 36px;
   font: 700 0.58rem/1 var(--inv-sans);
   letter-spacing: 0.24em;
   color: rgba(255, 244, 246, 0.9);
@@ -3745,7 +3776,7 @@
 [data-concept='rose-ink-bleed'] .hero-date {
   position: absolute;
   right: 30px;
-  bottom: 32px;
+  bottom: calc(32px + env(safe-area-inset-bottom));
   left: 30px;
   z-index: 5;
   color: #fff4f6;
@@ -3830,23 +3861,12 @@
   from {
     opacity: 0.16;
     clip-path: inset(0 100% 0 0);
-    transform: translateX(-8px);
+    transform: translateX(-8px) rotate(var(--ink-tilt, 0deg));
   }
   to {
     opacity: 1;
     clip-path: inset(0);
-    transform: none;
-  }
-}
-
-@keyframes rose-ink-flourish {
-  from {
-    opacity: 0;
-    transform: rotate(-4deg) scaleX(0);
-  }
-  to {
-    opacity: 1;
-    transform: rotate(-4deg) scaleX(1);
+    transform: rotate(var(--ink-tilt, 0deg));
   }
 }
 
@@ -3922,7 +3942,6 @@
   }
 
   .hero-script-line,
-  .hero-script-mark > i,
   .hero-script-mark > small {
     animation: none !important;
     clip-path: inset(0) !important;

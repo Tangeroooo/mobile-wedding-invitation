@@ -786,7 +786,6 @@ function ConceptPreview({ conceptId }: { conceptId: string }) {
         <div className="rose-preview-script" aria-label="We're getting married">
           <span>We're getting</span>
           <span>married</span>
-          <i aria-hidden="true" />
         </div>
         <div className="rose-ink-footer">
           <time>15 MAY 2027</time>
