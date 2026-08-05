@@ -78,6 +78,10 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
     'cinema-still',
     'cover-story',
     'ivory-diptych',
+    'mist-blue-bleed',
+    'forest-veil-bleed',
+    'bordeaux-bleed',
+    'champagne-night-bleed',
   ].includes(concept.id)
   const heroImageSrc =
     concept.id === 'moonlit-hanji'
@@ -329,7 +333,7 @@ function FullInvitation({ concept, concepts }: FullInvitationProps) {
       </article>
 
       <footer className="preview-footer">
-        <a href={designLabUrl}>18개 디자인 목록으로 돌아가기</a>
+        <a href={designLabUrl}>22개 디자인 목록으로 돌아가기</a>
         <p>{concept.number} · {concept.koreanName}</p>
       </footer>
     </main>

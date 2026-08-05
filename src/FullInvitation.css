@@ -287,6 +287,60 @@
   --inv-serif: var(--inv-sans);
 }
 
+.full-invitation[data-concept='mist-blue-bleed'] {
+  --inv-bg: #dce4e7;
+  --inv-paper: #e8edef;
+  --inv-text: #2d414a;
+  --inv-muted: #6c7f87;
+  --inv-accent: #627f8c;
+  --inv-line: rgba(45, 65, 74, 0.2);
+  --inv-serif: var(--inv-sans);
+  --bleed-hero-overlay: rgba(33, 57, 70, 0.82);
+  --bleed-hero-accent: #d4e2e7;
+  --bleed-photo-filter: grayscale(0.2) saturate(0.58) hue-rotate(155deg) contrast(0.95);
+  --bleed-gallery-filter: grayscale(0.28) saturate(0.55) hue-rotate(155deg);
+}
+
+.full-invitation[data-concept='forest-veil-bleed'] {
+  --inv-bg: #d9ded3;
+  --inv-paper: #e7eadf;
+  --inv-text: #29382d;
+  --inv-muted: #6d7a6f;
+  --inv-accent: #4c6551;
+  --inv-line: rgba(41, 56, 45, 0.2);
+  --bleed-hero-overlay: rgba(17, 42, 26, 0.83);
+  --bleed-hero-accent: #dbe2ce;
+  --bleed-photo-filter: saturate(0.62) hue-rotate(20deg) contrast(0.96);
+  --bleed-gallery-filter: saturate(0.56) hue-rotate(18deg);
+}
+
+.full-invitation[data-concept='bordeaux-bleed'] {
+  --inv-bg: #e6d7d9;
+  --inv-paper: #efe2e3;
+  --inv-text: #4c2932;
+  --inv-muted: #88676f;
+  --inv-accent: #7c3548;
+  --inv-line: rgba(76, 41, 50, 0.2);
+  --bleed-hero-overlay: rgba(75, 20, 39, 0.84);
+  --bleed-hero-accent: #efd1d8;
+  --bleed-photo-filter: sepia(0.1) saturate(0.74) hue-rotate(306deg) contrast(0.98);
+  --bleed-gallery-filter: sepia(0.08) saturate(0.68) hue-rotate(306deg);
+}
+
+.full-invitation[data-concept='champagne-night-bleed'] {
+  --inv-bg: #171513;
+  --inv-paper: #1d1b19;
+  --inv-text: #f0eadf;
+  --inv-muted: #aaa297;
+  --inv-accent: #d1b27a;
+  --inv-line: rgba(240, 234, 223, 0.21);
+  --inv-serif: var(--inv-sans);
+  --bleed-hero-overlay: rgba(16, 14, 12, 0.9);
+  --bleed-hero-accent: #d8ba84;
+  --bleed-photo-filter: grayscale(0.48) sepia(0.2) saturate(0.7) contrast(1.08) brightness(0.75);
+  --bleed-gallery-filter: grayscale(0.52) sepia(0.16) saturate(0.65) contrast(1.05);
+}
+
 .invitation-hero,
 .invitation-section,
 .invitation-footer {
@@ -2655,6 +2709,185 @@
 
 [data-concept='coming-modern-expanded'] .rsvp-section > button {
   color: var(--inv-paper);
+}
+
+/* 19–22 · Full Bleed Palette Studies */
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .invitation-hero {
+  isolation: isolate;
+  justify-content: flex-end;
+  min-height: calc(100svh - var(--toolbar-height, 0px));
+  padding: 46px 28px 28px;
+  text-align: left;
+  color: #fff;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .invitation-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, color-mix(in srgb, var(--bleed-hero-overlay) 66%, transparent), transparent 36%),
+    linear-gradient(to top, var(--bleed-hero-overlay), transparent 58%);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) :is(.hero-heading, .hero-date) {
+  position: relative;
+  z-index: 2;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-heading h1 {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  font-size: 4.2rem;
+  font-style: italic;
+  line-height: 0.76;
+  color: #fff;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-heading h1 i {
+  margin-block: 8px;
+  color: var(--bleed-hero-accent);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) :is(.hero-overline, .hero-heading > p, .hero-date span) {
+  color: rgba(255, 255, 255, 0.79);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-heading > p {
+  margin-bottom: 25px;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: auto;
+  min-height: 0;
+  border-radius: 0;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-portrait::before,
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-portrait span {
+  display: none;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-portrait > img {
+  filter: var(--bleed-photo-filter);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-date {
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .hero-ornament {
+  display: none;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .invitation-section {
+  padding-block: 104px;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .gallery-layout {
+  display: block;
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .gallery-photo {
+  height: 520px;
+  margin-bottom: 12px;
+  border-radius: 0;
+  filter: var(--bleed-gallery-filter);
+}
+
+:is(
+  [data-concept='mist-blue-bleed'],
+  [data-concept='forest-veil-bleed'],
+  [data-concept='bordeaux-bleed'],
+  [data-concept='champagne-night-bleed']
+) .rsvp-section > button {
+  border-radius: 999px;
 }
 
 .preview-footer {

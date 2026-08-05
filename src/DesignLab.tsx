@@ -177,6 +177,42 @@ const concepts: Concept[] = [
     description: '현재 Coming Soon의 직선 프레임과 격자를 이어가는 모던 시안',
     keywords: ['Coming Soon 연계', '직선 프레임', '모노톤'],
   },
+  {
+    id: 'mist-blue-bleed',
+    number: '19',
+    name: 'Mist Blue Bleed',
+    koreanName: '미스트 블루 블리드',
+    mood: 'modern',
+    description: '안개 낀 푸른 회색과 실버 포인트를 더한 차분한 풀블리드',
+    keywords: ['풀블리드', '미스트 블루', '쿨톤'],
+  },
+  {
+    id: 'forest-veil-bleed',
+    number: '20',
+    name: 'Forest Veil Bleed',
+    koreanName: '포레스트 베일 블리드',
+    mood: 'warm',
+    description: '딥 포레스트와 리넨 아이보리로 구성한 자연스러운 풀블리드',
+    keywords: ['풀블리드', '포레스트', '내추럴'],
+  },
+  {
+    id: 'bordeaux-bleed',
+    number: '21',
+    name: 'Bordeaux Bleed',
+    koreanName: '보르도 블리드',
+    mood: 'warm',
+    description: '와인빛 그림자와 더스티 로즈를 조합한 깊고 로맨틱한 풀블리드',
+    keywords: ['풀블리드', '보르도', '로맨틱'],
+  },
+  {
+    id: 'champagne-night-bleed',
+    number: '22',
+    name: 'Champagne Night Bleed',
+    koreanName: '샴페인 나이트 블리드',
+    mood: 'modern',
+    description: '에스프레소 블랙과 샴페인 골드가 대비되는 야간 풀블리드',
+    keywords: ['풀블리드', '샴페인 골드', '나이트'],
+  },
 ]
 
 const filterOptions: Array<{ id: Mood; label: string }> = [
@@ -246,7 +282,7 @@ function DesignLab() {
           <span aria-hidden="true">←</span>
           Coming Soon
         </a>
-        <span className="lab-edition">DESIGN STUDY · 01—18</span>
+        <span className="lab-edition">DESIGN STUDY · 01—22</span>
       </header>
 
       <section className="lab-intro" aria-labelledby="lab-title">
@@ -373,6 +409,48 @@ function DesignLab() {
 function ConceptPreview({ conceptId }: { conceptId: string }) {
   const samplePhotoUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-wedding-hero.jpg`
   const moonlitHanjiUrl = `${import.meta.env.BASE_URL}images/design-lab/sample-moonlit-hanji.jpg`
+  const fullBleedPalettes = {
+    'mist-blue-bleed': {
+      className: 'preview-bleed-mist',
+      label: 'MIST BLUE',
+    },
+    'forest-veil-bleed': {
+      className: 'preview-bleed-forest',
+      label: 'FOREST VEIL',
+    },
+    'bordeaux-bleed': {
+      className: 'preview-bleed-bordeaux',
+      label: 'BORDEAUX',
+    },
+    'champagne-night-bleed': {
+      className: 'preview-bleed-champagne',
+      label: 'CHAMPAGNE NIGHT',
+    },
+  } as const
+  const fullBleedPalette =
+    fullBleedPalettes[conceptId as keyof typeof fullBleedPalettes]
+
+  if (fullBleedPalette) {
+    return (
+      <div
+        className={`concept-preview preview-palette-bleed ${fullBleedPalette.className}`}
+        aria-label={`${fullBleedPalette.label} 풀블리드 미리보기`}
+      >
+        <img src={samplePhotoUrl} alt="" />
+        <span className="palette-bleed-label">{fullBleedPalette.label}</span>
+        <strong>
+          민준
+          <i>&amp;</i>
+          서연
+        </strong>
+        <p>OUR WEDDING DAY</p>
+        <div className="palette-bleed-bottom">
+          <time>15 MAY 2027</time>
+          <span>SEOUL · 1PM</span>
+        </div>
+      </div>
+    )
+  }
 
   if (conceptId === 'linen-letter') {
     return (
