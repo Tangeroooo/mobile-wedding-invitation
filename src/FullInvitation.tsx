@@ -354,7 +354,11 @@ function FullInvitation({
             imageSrc={heroImageSrc}
           />
           {concept.id === 'rose-ink-bleed' && (
-            <div className="hero-script-mark" aria-label="We're getting married, 민준과 서연">
+            <div
+              key={`hero-script-${brushFontId}`}
+              className="hero-script-mark"
+              aria-label="We're getting married, 민준과 서연"
+            >
               <img
                 key={`${brushFontId}-were-getting`}
                 className="hero-script-line hero-script-line-one"

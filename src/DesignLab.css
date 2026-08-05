@@ -2135,6 +2135,10 @@
   animation: rose-preview-write 0.9s 0.75s cubic-bezier(0.62, 0.02, 0.35, 1) both;
 }
 
+.concept-card:hover .rose-ink-kicker {
+  animation: rose-preview-caption 0.55s 1.75s ease-out both;
+}
+
 .rose-ink-footer {
   display: flex;
   justify-content: space-between;
@@ -2154,6 +2158,17 @@
   to {
     opacity: 1;
     clip-path: inset(0);
+  }
+}
+
+@keyframes rose-preview-caption {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

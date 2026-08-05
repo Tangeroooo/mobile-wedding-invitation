@@ -3832,7 +3832,8 @@
   font: 700 0.58rem/1 var(--inv-sans);
   letter-spacing: 0.24em;
   color: rgba(255, 244, 246, 0.9);
-  animation: rose-ink-caption 0.8s 3.2s ease-out both;
+  opacity: 0;
+  animation: rose-ink-caption 0.8s 3.35s ease-out both;
 }
 
 [data-concept='rose-ink-bleed'] .hero-date {
