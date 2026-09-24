@@ -34,6 +34,7 @@ export default function DraftStudio() {
   const [saveState, setSaveState] = useState('이 브라우저에 자동 저장')
   const [history, setHistory] = useState<DraftConfig[]>([])
   const [inline, setInline] = useState(false)
+  const [typing, setTyping] = useState(false)
   const [toolsOpen, setToolsOpen] = useState(false)
   const [lightbox, setLightbox] = useState<Scene | null>(null)
   const [replay, setReplay] = useState(0)
@@ -44,11 +45,14 @@ export default function DraftStudio() {
   const importInput = useRef<HTMLInputElement>(null)
   const drag = useRef<{ id: number; x: number; y: number; block: DraftConfig['intro']; w: number; h: number; bw: number; bh: number; mode: 'move' | 'resize' | 'rotate'; cx: number; cy: number; angle: number } | null>(null)
   const liveConfig = useRef(config)
+  const constrainNextLayout = useRef(false)
   liveConfig.current = config
   const block = config[scene]
 
   useLayoutEffect(() => {
-    if (preview || !stage.current || !selection.current) return
+    // A reload must restore saved percentages, not overwrite them from a loading
+    // placeholder or a different viewport. Constrain only deliberate edits.
+    if (preview || inline || typing || !outlines || !constrainNextLayout.current || !stage.current || !selection.current) return
     const keepInFrame = () => {
       const frame = stage.current?.getBoundingClientRect()
       const text = selection.current?.getBoundingClientRect()
@@ -60,14 +64,12 @@ export default function DraftStudio() {
         const fit = Math.min(1, frame.width / text.width, frame.height / text.height)
         if (fit < .998 && value.width > 25) return { ...current, [scene]: { ...value, width: Math.max(25, value.width * fit * .98) } }
         const x = clamp(value.x, halfW, 100 - halfW), y = clamp(value.y, halfH, 100 - halfH)
+        constrainNextLayout.current = false
         return Math.abs(x - value.x) < .01 && Math.abs(y - value.y) < .01 ? current : { ...current, [scene]: { ...value, x, y } }
       })
     }
     keepInFrame()
-    const observer = new ResizeObserver(keepInFrame)
-    observer.observe(stage.current); observer.observe(selection.current)
-    return () => observer.disconnect()
-  }, [scene, preview, block.text, block.width, block.x, block.y, block.rotation, outlines])
+  }, [scene, preview, inline, typing, block.text, block.width, block.x, block.y, block.rotation, outlines])
 
   useEffect(() => {
     const abort = new AbortController()
@@ -78,14 +80,22 @@ export default function DraftStudio() {
     return () => abort.abort()
   }, [])
 
+  const persist = useCallback((value: DraftConfig) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(parseConfig(value)))
+      setSaveState(`이 브라우저에 저장됨 · ${new Date().toLocaleTimeString('ko-KR', { hour12: false })}`)
+      return true
+    } catch {
+      setSaveState('저장하지 못했어요 · 설정 파일로 보관해주세요')
+      return false
+    }
+  }, [])
+  useLayoutEffect(() => { persist(config) }, [config, persist])
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      try { parseConfig(config) } catch { setSaveState('문구를 채우면 자동 저장돼요'); return }
-      try { localStorage.setItem(storageKey, JSON.stringify(config)); setSaveState('이 브라우저에 저장됨') }
-      catch { setSaveState('자동 저장 불가 · 설정 파일로 보관해주세요') }
-    }, 250)
-    return () => window.clearTimeout(timer)
-  }, [config])
+    const flush = () => persist(liveConfig.current)
+    window.addEventListener('pagehide', flush)
+    return () => window.removeEventListener('pagehide', flush)
+  }, [persist])
 
   useEffect(() => {
     if (!preview || !outlines || !mainReady || phase !== 'intro') return
@@ -119,15 +129,16 @@ export default function DraftStudio() {
   }, [preview, replay])
 
   const remember = useCallback(() => setHistory(current => [...current.slice(-49), structuredClone(liveConfig.current)]), [])
-  const update = (next: DraftConfig, record = true) => { if (record) remember(); setConfig(next) }
+  const update = (next: DraftConfig, record = true) => { if (record) remember(); constrainNextLayout.current = true; liveConfig.current = next; persist(next); setConfig(next) }
   const updateBlock = (patch: Partial<DraftConfig['intro']>, record = true) => {
     update({ ...liveConfig.current, [scene]: { ...liveConfig.current[scene], ...patch } }, record)
   }
   const updateText = (value: string) => {
-    if (!isSupportedText(value) || value.length > 100 || value.split('\n').length > 3) {
-      setNotice('Black Rush 문구는 영문·숫자·기호로 3줄, 100자까지 입력할 수 있어요.'); return
+    if (value.length > 100 || value.split('\n').length > 3) {
+      setNotice('문구는 3줄, 100자까지 입력할 수 있어요.'); return
     }
-    setNotice(''); updateBlock({ text: normalizeText(value) })
+    setNotice(isSupportedText(value) ? '' : 'Black Rush에 없는 한글·기호는 기본 글꼴로 표시합니다. 입력한 문구는 그대로 저장돼요.')
+    updateBlock({ text: normalizeText(value) })
   }
   const undo = () => {
     const previous = history.at(-1)
@@ -181,7 +192,7 @@ export default function DraftStudio() {
       const link = document.createElement('a'); link.href = url; link.download = 'wedding-draft.json'; link.click()
       window.setTimeout(() => URL.revokeObjectURL(url), 1000)
       setNotice('설정을 내보냈어요. 다른 기기에서 불러오거나 최종 반영할 때 사용할 수 있습니다.')
-    } catch { setNotice('빈 문구를 채운 뒤 내보내주세요.') }
+    } catch { setNotice('설정값을 확인한 뒤 다시 내보내주세요.') }
   }
 
   const renderPhoto = (value: Scene, isMainPreview = false) => <img
@@ -214,7 +225,7 @@ export default function DraftStudio() {
         <div className="draft-tabs" role="group" aria-label="편집할 장면">
           {(['intro', 'main'] as const).map(value => <button key={value} aria-pressed={scene === value} onClick={() => chooseScene(value)}>{sceneLabel[value]}</button>)}
         </div>
-        <label className="draft-field"><span>사진 위 문구 <small>BLACK RUSH</small></span><textarea aria-label="사진 위 문구" value={block.text} rows={3} onChange={event => updateText(event.target.value)} /></label>
+        <label className="draft-field"><span>사진 위 문구 <small>BLACK RUSH</small></span><textarea aria-label="사진 위 문구" value={block.text} rows={3} onFocus={() => setTyping(true)} onBlur={() => setTyping(false)} onChange={event => updateText(event.target.value)} /></label>
         <p className="draft-help">줄바꿈으로 행을 나눌 수 있어요. 사진 위 문구를 드래그해 이동하고, 더블클릭해 편집하세요.</p>
         <label className="draft-field"><span>글자 크기 <small>{Math.round(block.width)}%</small></span><input aria-label="글자 크기" type="range" min="25" max="94" value={block.width} onChange={event => updateBlock({ width: Number(event.target.value) })} /></label>
         <label className="draft-field"><span>회전 <small>{block.rotation}°</small></span><input aria-label="문구 회전" type="range" min="-180" max="180" step="1" value={block.rotation} onChange={event => updateBlock({ rotation: Number(event.target.value) })} /></label>
@@ -229,7 +240,7 @@ export default function DraftStudio() {
         {(['background', 'blue', 'pink'] as const).map((key, index) => <label key={key} className="draft-color-field">{['본문 배경', '블루 글자', '핑크 포인트'][index]}<span>{config.palette[key]}<input aria-label={['본문 배경', '블루 글자', '핑크 포인트'][index]} type="color" value={config.palette[key]} onChange={event => update({ ...config, palette: { ...config.palette, [key]: event.target.value } })} /></span></label>)}
         <div className="draft-swatches">{[['쿨 아이보리', '#F4F4F0'], ['미스트 블루', '#EAF0F5'], ['블러시 화이트', '#FAF0F2']].map(([label, color]) => <button key={color} aria-label={`${label} 배경`} title={label} onClick={() => update({ ...config, palette: { ...config.palette, background: color } })}><i style={{ background: color }} />{label}</button>)}</div>
         <button className="draft-body-link" onClick={() => { setToolsOpen(false); document.getElementById('draft-body')?.scrollIntoView({ behavior: 'smooth' }) }}>본문에서 색상 확인 ↓</button>
-        <div className="draft-save-tools"><p role="status">● {saveState}</p><p>자동 저장은 이 기기에만 적용돼요.<br />설정 파일을 옮기면 다른 기기에서도 이어갈 수 있어요.</p><div><button onClick={undo} disabled={!history.length}>되돌리기</button><button onClick={exportConfig}>설정 내보내기</button><button onClick={() => importInput.current?.click()}>불러오기</button></div></div>
+        <div className="draft-save-tools"><p role="status">● {saveState}</p><p>자동 저장은 이 기기에만 적용돼요.<br />설정 파일을 옮기면 다른 기기에서도 이어갈 수 있어요.</p><div><button onClick={() => { if (persist(liveConfig.current)) setNotice('문구·위치·회전을 저장했어요. 새로고침해도 유지됩니다.') }}>지금 저장</button><button onClick={undo} disabled={!history.length}>되돌리기</button><button onClick={exportConfig}>설정 내보내기</button><button onClick={() => importInput.current?.click()}>불러오기</button></div></div>
         <input ref={importInput} type="file" accept="application/json,.json" hidden onChange={async event => {
           const file = event.target.files?.[0]; event.target.value = ''; if (!file) return
           try { if (file.size > 30000) throw new Error('설정 파일이 너무 큽니다.'); update(parseConfig(JSON.parse(await file.text()))); setNotice('설정을 불러왔어요.') }
@@ -247,6 +258,7 @@ export default function DraftStudio() {
               {phase !== 'main' && <div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">TOGETHER, A NEW BEGINNING</span><button className="draft-skip" onClick={() => setPhase('leaving')}>건너뛰기 →</button></div>}
             </> : <>
               {renderPhoto(scene)}
+              <button className="draft-edit-text-button" onClick={() => { setInline(value => !value); setToolsOpen(false) }}>{inline ? '편집 완료 ✓' : '문구 편집 ✎'}</button>
               <div ref={selection} className={`draft-letter-position draft-selection ${inline ? 'is-typing' : ''}`} style={position(scene)} tabIndex={0} role="group" aria-label="문구 이동 및 크기 조절"
                 onPointerDown={event => startDrag(event)} onPointerMove={move} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onLostPointerCapture={() => { drag.current = null }}
                 onDoubleClick={() => setInline(true)} onKeyDown={event => {
@@ -257,13 +269,15 @@ export default function DraftStudio() {
                   if (offsets[event.key]) { event.preventDefault(); const [dx, dy] = offsets[event.key]; updateBlock({ x: clamp(block.x + dx, 0, 100), y: clamp(block.y + dy, 0, 100) }) }
                 }}>
                 {renderLetters(scene, false)}
-                {inline && <textarea ref={inlineInput} className="draft-inline-input" aria-label="사진 위에서 문구 편집" value={block.text} onChange={event => updateText(event.target.value)} onBlur={() => setInline(false)} onKeyDown={event => { if (event.key === 'Escape') setInline(false) }} />}
+                {inline && <textarea ref={inlineInput} className="draft-inline-input" aria-label="사진 위에서 문구 편집" value={block.text} onPointerDown={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()} onChange={event => updateText(event.target.value)} onKeyDown={event => { event.stopPropagation(); if (event.key === 'Escape' || (event.key === 'Enter' && (event.ctrlKey || event.metaKey))) setInline(false) }} />}
                 {!inline && <><span className="draft-selection-label">BLACK RUSH · 이동</span>
                   <span className="draft-rotate-handle" role="slider" aria-label="문구 회전 핸들" aria-valuemin={-180} aria-valuemax={180} aria-valuenow={block.rotation} tabIndex={0} onDoubleClick={event => event.stopPropagation()} onPointerDown={event => startDrag(event, 'rotate')} onKeyDown={event => {
                     if (event.key.startsWith('Arrow')) { event.stopPropagation(); event.preventDefault(); const step = event.shiftKey ? 15 : 1; updateBlock({ rotation: clamp(block.rotation + (['ArrowRight', 'ArrowUp'].includes(event.key) ? step : -step), -180, 180) }) }
                   }}>↻</span>
                   <span className="draft-handle" role="slider" aria-label="문구 크기 핸들" aria-valuemin={25} aria-valuemax={94} aria-valuenow={Math.round(block.width)} tabIndex={0} onPointerDown={event => startDrag(event, 'resize')} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.stopPropagation(); event.preventDefault(); updateBlock({ width: clamp(block.width + (event.key === 'ArrowRight' ? 1 : -1), 25, 94) }) } }} /></>}
               </div>
+              {inline && notice && <p className="draft-inline-notice" role="status">{notice}</p>}
+              <span className="draft-canvas-save" role="status">{saveState}</span>
               <span className="draft-stage-footnote">{scene === 'intro' ? '인트로 → 메인 커버로 부드럽게 전환' : '이 장면 아래로 초대장이 이어집니다'}</span>
             </>}
           </section>

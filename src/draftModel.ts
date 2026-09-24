@@ -30,11 +30,11 @@ export function parseConfig(raw: unknown): DraftConfig {
     if (block?.rotation !== undefined && (typeof block.rotation !== 'number' || !Number.isFinite(block.rotation) || Math.abs(block.rotation) > 180)) {
       throw new Error('회전 각도는 -180°에서 180° 사이여야 합니다.')
     }
-    if (!block || typeof block.text !== 'string' || block.text.length > 100 || !block.text.trim()
-      || block.text.split('\n').length > 3 || !isSupportedText(block.text) || !color(block.color)
+    if (!block || typeof block.text !== 'string' || block.text.length > 100
+      || block.text.split('\n').length > 3 || !color(block.color)
       || ![block.x, block.y, block.width].every(value => typeof value === 'number' && Number.isFinite(value))
       || block.x < 0 || block.x > 100 || block.y < 0 || block.y > 100 || block.width < 25 || block.width > 94) {
-      throw new Error('문구는 영문·숫자·기호 100자 / 3줄 이내로 입력해주세요.')
+      throw new Error('문구는 100자 / 3줄 이내로 입력하고 위치·색상을 확인해주세요.')
     }
   }
   return {

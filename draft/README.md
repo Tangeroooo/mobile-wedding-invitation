@@ -10,7 +10,8 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - Generated photos: public/images/draft/*.webp; originals are ignored by Git.
 - Black Rush: SVG outlines composed in the browser. The editor supports printable
   English letters, numbers and symbols, up to 100 characters / 3 lines. Curly quotes
-  are normalized. Unsupported characters produce a visible message.
+  are normalized. Korean and other unsupported characters use a system-font SVG
+  fallback and show a notice; input is never discarded for missing font glyphs.
 - Select and drag lettering; double-click or Enter to edit in place. Arrow keys move
   it by 1%, Shift + arrow by 5%. Drag the corner to resize, or use the slider.
 - Rotate via the top round handle, angle slider or numeric field (-180° to 180°).
@@ -18,9 +19,14 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   Older settings without rotation load at 0°; old default ivory intro lettering
   automatically upgrades to the Design Lab yellow (#F4D84F) when loading local storage.
 - Mobile editing controls open from the bottom-right button.
+- Use the visible photo-level Edit/Done button for touch editing. Moving focus no
+  longer dismisses the text editor. Empty text is a valid, saved hidden caption.
 - Colors, text and percentage positions are saved only in localStorage, per browser.
   Export JSON and import it on another device to reproduce the draft. This does not
   update the shared defaults or any production invitation.
+- Changes save synchronously, including empty captions and on page exit. A Save Now
+  action and timestamps expose the result. Reload and font loading never rewrite
+  the saved geometry; only deliberate edits trigger in-frame fitting.
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
 - Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
