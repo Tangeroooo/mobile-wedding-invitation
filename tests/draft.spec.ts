@@ -1,4 +1,49 @@
 import { test, expect } from '@playwright/test'
+import { defaults } from '../src/draftModel'
+
+test('legacy yellow migration, rotation handle, persistence and playback', async ({ page }) => {
+  await page.setViewportSize({ width:1440, height:1000 })
+  await page.goto('draft/')
+  const legacy = JSON.parse(JSON.stringify(defaults))
+  delete legacy.intro.rotation; delete legacy.main.rotation
+  legacy.intro.color = '#FFF5DE'; legacy.intro.text = 'Our\nWedding'; legacy.intro.y = 26
+  await page.evaluate(value => localStorage.setItem('wedding-draft-v1', JSON.stringify(value)), legacy)
+  await page.reload()
+  await expect(page.getByLabel('레터링 색상')).toHaveValue('#f4d84f')
+  await expect(page.getByLabel('사진 위 문구', {exact:true})).toHaveValue('Our\nWedding')
+  await expect(page.getByLabel('세로 위치', {exact:true})).toHaveValue('26')
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('0')
+  const selection = page.locator('.draft-selection')
+  const rotator = page.getByRole('slider', {name:'문구 회전 핸들'})
+  await rotator.scrollIntoViewIfNeeded()
+  const handle = (await rotator.boundingBox())!, block = (await selection.boundingBox())!
+  const cx = block.x + block.width/2, cy = block.y + block.height/2
+  const radius = cy - (handle.y + handle.height/2)
+  await page.mouse.move(handle.x + handle.width/2, handle.y + handle.height/2)
+  await page.mouse.down(); await page.mouse.move(cx + radius*.5, cy - radius*Math.sqrt(3)/2, {steps:8}); await page.mouse.up()
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('30')
+  await page.getByRole('button', {name:'되돌리기', exact:true}).click()
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('0')
+  await page.getByLabel('회전 각도', {exact:true}).fill('-18')
+  await expect(selection).toHaveAttribute('style', /rotate\(-18deg\)/)
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('wedding-draft-v1')!).intro.rotation)).toBe(-18)
+  await page.reload()
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('-18')
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', {name:'설정 내보내기'}).click()
+  const exported = await download
+  await page.getByRole('button', {name:'수평으로', exact:true}).click()
+  await page.locator('input[type=file]').setInputFiles((await exported.path())!)
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('-18')
+  await page.getByRole('button', {name:'메인 커버', exact:true}).click()
+  await expect(page.getByLabel('회전 각도', {exact:true})).toHaveValue('0')
+  await page.getByLabel('회전 각도', {exact:true}).fill('12')
+  await page.getByRole('button', {name:'전체 재생'}).click()
+  await expect(page.locator('.draft-intro-layer .draft-letter-position')).toHaveAttribute('style', /rotate\(-18deg\)/)
+  await page.getByRole('button', {name:'건너뛰기'}).click()
+  await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
+  await expect(page.locator('.draft-cover-layer .draft-letter-position')).toHaveAttribute('style', /rotate\(12deg\)/)
+})
 
 test('edit, drag, resize, save, export/import and independent scene settings', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })

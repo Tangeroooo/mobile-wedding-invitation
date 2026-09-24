@@ -1,5 +1,5 @@
 export type Scene = 'intro' | 'main'
-export type Lettering = { text: string; x: number; y: number; width: number; color: string }
+export type Lettering = { text: string; x: number; y: number; width: number; color: string; rotation: number }
 export type DraftConfig = {
   version: 1
   intro: Lettering
@@ -9,8 +9,8 @@ export type DraftConfig = {
 export const storageKey = 'wedding-draft-v1'
 export const defaults: DraftConfig = {
   version: 1,
-  intro: { text: "We're getting\nmarried", x: 50, y: 22, width: 86, color: '#FFF5DE' },
-  main: { text: 'Wedding\nInvitation', x: 65, y: 77, width: 64, color: '#203F76' },
+  intro: { text: "We're getting\nmarried", x: 50, y: 22, width: 86, color: '#F4D84F', rotation: 0 },
+  main: { text: 'Wedding\nInvitation', x: 65, y: 77, width: 64, color: '#203F76', rotation: 0 },
   palette: { background: '#F4F4F0', blue: '#274D85', pink: '#B94470' },
 }
 export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
@@ -27,6 +27,9 @@ export function parseConfig(raw: unknown): DraftConfig {
   }
   for (const scene of ['intro', 'main'] as const) {
     const block = item[scene]
+    if (block?.rotation !== undefined && (typeof block.rotation !== 'number' || !Number.isFinite(block.rotation) || Math.abs(block.rotation) > 180)) {
+      throw new Error('회전 각도는 -180°에서 180° 사이여야 합니다.')
+    }
     if (!block || typeof block.text !== 'string' || block.text.length > 100 || !block.text.trim()
       || block.text.split('\n').length > 3 || !isSupportedText(block.text) || !color(block.color)
       || ![block.x, block.y, block.width].every(value => typeof value === 'number' && Number.isFinite(value))
@@ -36,8 +39,8 @@ export function parseConfig(raw: unknown): DraftConfig {
   }
   return {
     version: 1,
-    intro: { ...item.intro, text: normalizeText(item.intro.text) },
-    main: { ...item.main, text: normalizeText(item.main.text) },
+    intro: { ...item.intro, text: normalizeText(item.intro.text), rotation: item.intro.rotation ?? 0 },
+    main: { ...item.main, text: normalizeText(item.main.text), rotation: item.main.rotation ?? 0 },
     palette: { background: item.palette.background, blue: item.palette.blue, pink: item.palette.pink },
   }
 }

@@ -13,6 +13,10 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   are normalized. Unsupported characters produce a visible message.
 - Select and drag lettering; double-click or Enter to edit in place. Arrow keys move
   it by 1%, Shift + arrow by 5%. Drag the corner to resize, or use the slider.
+- Rotate via the top round handle, angle slider or numeric field (-180° to 180°).
+  Shift-drag snaps rotation to 15°. Rotation persists per scene, including exports.
+  Older settings without rotation load at 0°; old default ivory intro lettering
+  automatically upgrades to the Design Lab yellow (#F4D84F) when loading local storage.
 - Mobile editing controls open from the bottom-right button.
 - Colors, text and percentage positions are saved only in localStorage, per browser.
   Export JSON and import it on another device to reproduce the draft. This does not

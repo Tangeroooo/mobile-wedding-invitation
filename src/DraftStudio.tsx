@@ -13,7 +13,12 @@ const sceneLabel = { intro: '인트로', main: '메인 커버' }
 function readSaved() {
   try {
     const saved = localStorage.getItem(storageKey)
-    return saved ? parseConfig(JSON.parse(saved)) : defaults
+    if (!saved) return defaults
+    const raw = JSON.parse(saved)
+    const parsed = parseConfig(raw)
+    // Upgrade only the old default ivory; keep custom colors and all edits.
+    if (raw.intro.rotation === undefined && parsed.intro.color.toUpperCase() === '#FFF5DE') parsed.intro.color = defaults.intro.color
+    return parsed
   } catch { return defaults }
 }
 
@@ -37,7 +42,7 @@ export default function DraftStudio() {
   const inlineInput = useRef<HTMLTextAreaElement>(null)
   const dialog = useRef<HTMLDialogElement>(null)
   const importInput = useRef<HTMLInputElement>(null)
-  const drag = useRef<{ id: number; x: number; y: number; block: DraftConfig['intro']; w: number; h: number; bw: number; bh: number; resize: boolean } | null>(null)
+  const drag = useRef<{ id: number; x: number; y: number; block: DraftConfig['intro']; w: number; h: number; bw: number; bh: number; mode: 'move' | 'resize' | 'rotate'; cx: number; cy: number; angle: number } | null>(null)
   const liveConfig = useRef(config)
   liveConfig.current = config
   const block = config[scene]
@@ -52,6 +57,8 @@ export default function DraftStudio() {
       const halfH = Math.min(49, text.height / frame.height * 50)
       setConfig(current => {
         const value = current[scene]
+        const fit = Math.min(1, frame.width / text.width, frame.height / text.height)
+        if (fit < .998 && value.width > 25) return { ...current, [scene]: { ...value, width: Math.max(25, value.width * fit * .98) } }
         const x = clamp(value.x, halfW, 100 - halfW), y = clamp(value.y, halfH, 100 - halfH)
         return Math.abs(x - value.x) < .01 && Math.abs(y - value.y) < .01 ? current : { ...current, [scene]: { ...value, x, y } }
       })
@@ -60,7 +67,7 @@ export default function DraftStudio() {
     const observer = new ResizeObserver(keepInFrame)
     observer.observe(stage.current); observer.observe(selection.current)
     return () => observer.disconnect()
-  }, [scene, preview, block.text, block.width, block.x, block.y, outlines])
+  }, [scene, preview, block.text, block.width, block.x, block.y, block.rotation, outlines])
 
   useEffect(() => {
     const abort = new AbortController()
@@ -134,7 +141,7 @@ export default function DraftStudio() {
     setScene(value); setInline(false); stage.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
 
-  const startDrag = (event: ReactPointerEvent<HTMLElement>, resize = false) => {
+  const startDrag = (event: ReactPointerEvent<HTMLElement>, mode: 'move' | 'resize' | 'rotate' = 'move') => {
     if (preview || inline || event.button !== 0) return
     const rect = stage.current?.getBoundingClientRect()
     const letterRect = selection.current?.getBoundingClientRect()
@@ -142,14 +149,24 @@ export default function DraftStudio() {
     event.preventDefault(); event.stopPropagation()
     event.currentTarget.focus(); event.currentTarget.setPointerCapture(event.pointerId)
     remember()
-    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, block: { ...block }, w: rect.width, h: rect.height, bw: letterRect.width, bh: letterRect.height, resize }
+    const cx = letterRect.x + letterRect.width / 2, cy = letterRect.y + letterRect.height / 2
+    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, block: { ...block }, w: rect.width, h: rect.height, bw: letterRect.width, bh: letterRect.height, mode, cx, cy, angle: Math.atan2(event.clientY - cy, event.clientX - cx) }
   }
   const move = (event: ReactPointerEvent<HTMLDivElement>) => {
     const current = drag.current
     if (!current || current.id !== event.pointerId) return
     const dx = (event.clientX - current.x) / current.w * 100
     const dy = (event.clientY - current.y) / current.h * 100
-    if (current.resize) updateBlock({ width: clamp(current.block.width + dx * 2, 25, 94) }, false)
+    if (current.mode === 'rotate') {
+      const angle = Math.atan2(event.clientY - current.cy, event.clientX - current.cx)
+      const degrees = current.block.rotation + (angle - current.angle) * 180 / Math.PI
+      const rotation = (degrees + 540) % 360 - 180
+      updateBlock({ rotation: event.shiftKey ? Math.round(rotation / 15) * 15 : Math.round(rotation) }, false)
+    } else if (current.mode === 'resize') {
+      const radians = current.block.rotation * Math.PI / 180
+      const localDx = (event.clientX - current.x) * Math.cos(radians) + (event.clientY - current.y) * Math.sin(radians)
+      updateBlock({ width: clamp(current.block.width + localDx / current.w * 200, 25, 94) }, false)
+    }
     else {
       const halfW = Math.min(49, current.bw / current.w * 50)
       const halfH = Math.min(49, current.bh / current.h * 50)
@@ -179,7 +196,7 @@ export default function DraftStudio() {
     return outlines ? <DraftLettering text={content.text || ' '} color={content.color} outlines={outlines} animate={animate} />
       : <span className="draft-loading">{fontError ? '레터링을 불러오지 못했어요. 새로고침해주세요.' : '레터링 준비 중…'}</span>
   }
-  const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%` })
+  const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
 
   return <main className={`draft-studio ${preview ? 'is-preview' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
     {!preview && <>
@@ -200,6 +217,9 @@ export default function DraftStudio() {
         <label className="draft-field"><span>사진 위 문구 <small>BLACK RUSH</small></span><textarea aria-label="사진 위 문구" value={block.text} rows={3} onChange={event => updateText(event.target.value)} /></label>
         <p className="draft-help">줄바꿈으로 행을 나눌 수 있어요. 사진 위 문구를 드래그해 이동하고, 더블클릭해 편집하세요.</p>
         <label className="draft-field"><span>글자 크기 <small>{Math.round(block.width)}%</small></span><input aria-label="글자 크기" type="range" min="25" max="94" value={block.width} onChange={event => updateBlock({ width: Number(event.target.value) })} /></label>
+        <label className="draft-field"><span>회전 <small>{block.rotation}°</small></span><input aria-label="문구 회전" type="range" min="-180" max="180" step="1" value={block.rotation} onChange={event => updateBlock({ rotation: Number(event.target.value) })} /></label>
+        <div className="draft-rotation-tools"><label>각도 <input aria-label="회전 각도" type="number" min="-180" max="180" value={block.rotation} onChange={event => updateBlock({ rotation: clamp(Number(event.target.value), -180, 180) })} />°</label><button onClick={() => updateBlock({ rotation: 0 })}>수평으로</button></div>
+        <p className="draft-help">문구 위의 ↻ 핸들을 끌어 회전하세요. Shift를 누르면 15°씩 맞춰집니다.</p>
         <div className="draft-coordinate-fields">
           {(['x', 'y'] as const).map((axis, index) => <label key={axis}>{index ? '세로 위치' : '가로 위치'}<input aria-label={index ? '세로 위치' : '가로 위치'} type="number" min="0" max="100" step="1" value={Math.round(block[axis])} onChange={event => updateBlock({ [axis]: clamp(Number(event.target.value), 0, 100) })} /></label>)}
         </div>
@@ -238,7 +258,11 @@ export default function DraftStudio() {
                 }}>
                 {renderLetters(scene, false)}
                 {inline && <textarea ref={inlineInput} className="draft-inline-input" aria-label="사진 위에서 문구 편집" value={block.text} onChange={event => updateText(event.target.value)} onBlur={() => setInline(false)} onKeyDown={event => { if (event.key === 'Escape') setInline(false) }} />}
-                {!inline && <><span className="draft-selection-label">BLACK RUSH · 이동</span><span className="draft-handle" role="slider" aria-label="문구 크기 핸들" aria-valuemin={25} aria-valuemax={94} aria-valuenow={Math.round(block.width)} tabIndex={0} onPointerDown={event => startDrag(event, true)} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.stopPropagation(); event.preventDefault(); updateBlock({ width: clamp(block.width + (event.key === 'ArrowRight' ? 1 : -1), 25, 94) }) } }} /></>}
+                {!inline && <><span className="draft-selection-label">BLACK RUSH · 이동</span>
+                  <span className="draft-rotate-handle" role="slider" aria-label="문구 회전 핸들" aria-valuemin={-180} aria-valuemax={180} aria-valuenow={block.rotation} tabIndex={0} onDoubleClick={event => event.stopPropagation()} onPointerDown={event => startDrag(event, 'rotate')} onKeyDown={event => {
+                    if (event.key.startsWith('Arrow')) { event.stopPropagation(); event.preventDefault(); const step = event.shiftKey ? 15 : 1; updateBlock({ rotation: clamp(block.rotation + (['ArrowRight', 'ArrowUp'].includes(event.key) ? step : -step), -180, 180) }) }
+                  }}>↻</span>
+                  <span className="draft-handle" role="slider" aria-label="문구 크기 핸들" aria-valuemin={25} aria-valuemax={94} aria-valuenow={Math.round(block.width)} tabIndex={0} onPointerDown={event => startDrag(event, 'resize')} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.stopPropagation(); event.preventDefault(); updateBlock({ width: clamp(block.width + (event.key === 'ArrowRight' ? 1 : -1), 25, 94) }) } }} /></>}
               </div>
               <span className="draft-stage-footnote">{scene === 'intro' ? '인트로 → 메인 커버로 부드럽게 전환' : '이 장면 아래로 초대장이 이어집니다'}</span>
             </>}
