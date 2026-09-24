@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import './App.css'
 import DesignLab from './DesignLab'
+
+const DraftStudio = lazy(() => import('./DraftStudio'))
 
 type Theme = 'warm' | 'modern'
 
@@ -11,6 +13,10 @@ const themeOptions: Array<{ id: Theme; label: string }> = [
 
 function App() {
   const currentPath = window.location.pathname.replace(/\/+$/, '')
+
+  if (currentPath.endsWith('/draft')) {
+    return <Suspense fallback={<p role="status">초안을 불러오고 있어요.</p>}><DraftStudio /></Suspense>
+  }
 
   if (currentPath.endsWith('/design-lab')) {
     return <DesignLab />

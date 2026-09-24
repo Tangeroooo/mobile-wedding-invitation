@@ -349,6 +349,7 @@ function DesignLab() {
           Coming Soon
         </a>
         <div className="lab-header-actions">
+          <a href={`${import.meta.env.BASE_URL}draft/`}>초안 스튜디오 ↗</a>
           <a href={`${import.meta.env.BASE_URL}design-lab/?view=brush-fonts`}>
             FONT LAB
           </a>

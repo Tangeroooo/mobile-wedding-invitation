@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         main: `${projectRoot}index.html`,
         designLab: `${projectRoot}design-lab/index.html`,
+        draft: `${projectRoot}draft/index.html`,
         invitationA: `${projectRoot}invitation-a/index.html`,
         invitationB: `${projectRoot}invitation-b/index.html`,
       },
