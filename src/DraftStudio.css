@@ -72,14 +72,17 @@
 .draft-photo-pin { position:absolute; }
 .draft-photo-pin:nth-child(odd) { --pin-turn:-7deg; --pin-x:-130px; --pin-y:-120px; --pin-entry-turn:-28deg; --pin-delay:0s; }
 .draft-photo-pin:nth-child(even) { z-index:2; --pin-turn:8deg; --pin-x:150px; --pin-y:150px; --pin-entry-turn:32deg; --pin-delay:.16s; }
-.draft-photo-pin.pin-slot-01 { width:34%; left:3%; top:8%; }
-.draft-photo-pin.pin-slot-02 { width:32%; right:3%; top:6%; }
-.draft-photo-pin.pin-slot-03 { width:26%; top:3%; left:37%; --pin-turn:6deg; --pin-x:70px; --pin-y:-170px; --pin-entry-turn:24deg; --pin-delay:.24s; }
-.draft-photo-pin.pin-slot-04 { width:35%; top:40%; left:33%; --pin-turn:-5deg; --pin-x:140px; --pin-y:60px; --pin-entry-turn:-22deg; --pin-delay:.32s; }
-.draft-photo-pin.pin-slot-05 { width:24%; left:4%; top:60%; --pin-turn:-4deg; --pin-x:-160px; --pin-y:45px; --pin-delay:.4s; }
-.draft-photo-pin.pin-slot-06 { width:29%; left:35%; top:66%; --pin-turn:9deg; --pin-x:60px; --pin-y:170px; --pin-delay:.48s; }
-.draft-photo-pin.pin-slot-07 { width:31%; right:2%; top:46%; --pin-turn:-8deg; --pin-x:-70px; --pin-y:-150px; --pin-delay:.56s; }
-.draft-photo-pin.pin-slot-08 { width:23%; top:64%; right:5%; --pin-turn:5deg; --pin-x:150px; --pin-y:-60px; --pin-delay:.64s; }
+.draft-photo-pin.pin-slot-01 { width:34%; left:2%; top:3%; }
+.draft-photo-pin.pin-slot-02 { width:31%; right:2%; top:7%; }
+.draft-photo-pin.pin-slot-03 { width:27%; top:0; left:36%; --pin-turn:6deg; --pin-x:70px; --pin-y:-170px; --pin-entry-turn:24deg; --pin-delay:.18s; }
+.draft-photo-pin.pin-slot-04 { width:32%; top:29%; left:17%; --pin-turn:-5deg; --pin-x:140px; --pin-y:60px; --pin-entry-turn:-22deg; --pin-delay:.24s; }
+.draft-photo-pin.pin-slot-05 { width:27%; left:1%; top:42%; --pin-turn:-9deg; --pin-x:-160px; --pin-y:45px; --pin-delay:.3s; }
+.draft-photo-pin.pin-slot-06 { width:30%; left:47%; top:31%; --pin-turn:9deg; --pin-x:60px; --pin-y:170px; --pin-delay:.36s; }
+.draft-photo-pin.pin-slot-07 { width:27%; right:0; top:42%; --pin-turn:-8deg; --pin-x:-70px; --pin-y:-150px; --pin-delay:.42s; }
+.draft-photo-pin.pin-slot-08 { width:29%; top:65%; left:3%; --pin-turn:5deg; --pin-x:150px; --pin-y:-60px; --pin-delay:.48s; }
+.draft-photo-pin.pin-slot-09 { width:29%; top:61%; left:36%; --pin-turn:-6deg; --pin-x:-100px; --pin-y:160px; --pin-delay:.54s; }
+.draft-photo-pin.pin-slot-10 { width:28%; top:67%; right:1%; --pin-turn:7deg; --pin-x:130px; --pin-y:140px; --pin-delay:.6s; }
+.draft-photo-pin:focus-within { z-index:4; }
 .draft-studio .draft-photo-pin .draft-photo-print { position:relative; display:block; width:100%; padding:5px; border:0; border-radius:1px; background:#fff; color:var(--draft-blue); transform:rotate(var(--pin-turn)); box-shadow:1px 4px 9px #172f4928,0 1px 2px #172f491c; }
 .draft-studio .draft-photo-pin button:hover { background:#fff; }
 .draft-photo-pin img { display:block; width:100%; height:auto; aspect-ratio:2/3; object-fit:cover; }
@@ -211,9 +214,9 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
 .draft-lightbox-arrow.is-next { right:8px; }
 .draft-studio .draft-lightbox-close { right:5px; top:5px; }
 /* Touch browsers retain :hover after a tap; keep that state just as transparent. */
-.draft-studio .draft-lightbox button,.draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff0e; box-shadow:inset 0 0 0 1px #ffffff14; }
+.draft-studio .draft-lightbox button,.draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff06; box-shadow:inset 0 0 0 1px #ffffff0d; }
 .draft-studio .draft-lightbox button:focus-visible { outline:1px solid #ffffff80; outline-offset:2px; }
-@media (hover:hover) and (pointer:fine) { .draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff20; } }
+@media (hover:hover) and (pointer:fine) { .draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff12; } }
 @media (max-width:1050px) { .draft-workspace { padding-inline:28px; gap:30px; grid-template-columns:290px minmax(0,1fr); }.draft-introduction { padding-inline:28px; }.draft-introduction>p { max-width:230px; } }
 @media (max-width:720px) { .draft-header { height:66px; padding:0 18px; }.draft-header>span { display:none; }.draft-introduction { display:block; padding:32px 22px 24px; }.draft-introduction>p { max-width:none; margin-top:18px; font-size:11px; }.draft-workspace { display:flex; flex-direction:column; padding:0 16px 30px; gap:26px; }.draft-inspector { width:100%; max-height:none; position:static; padding:18px; }.draft-preview-column { max-width:100%; }.draft-inspector { order:2; }.draft-preview-column { order:1; }.draft-invitation { max-width:430px; }.draft-stage { height:calc(100svh - 100px); min-height:520px; max-height:820px; }.draft-inspector::before { content:'편집 도구 · 위쪽 사진에 바로 반영됩니다'; display:block; font-size:11px; margin-bottom:22px; color:#778270; }.draft-preview-column .draft-bottom-note { padding:0 12px; }.is-preview .draft-stage { max-height:none; min-height:100svh; }.is-preview .draft-invitation { max-width:480px; }.draft-preview-controls { right:10px; } }
 @media (prefers-reduced-motion:reduce) { .draft-write,.draft-intro-caption { animation:none; }.draft-intro-layer { transition:opacity .15s; } }

@@ -18,12 +18,9 @@ import './DraftStudio.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
-const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square' }[] = [
-  { scene:'intro', shape:'portrait' }, { scene:'main', shape:'portrait' },
-  { shape:'square' }, { shape:'landscape' },
-  { shape:'portrait' }, { shape:'square' },
-  { shape:'landscape' }, { shape:'portrait' },
-]
+const galleryPhotos = Array.from({ length:25 }, (_, index) => index + 1)
+const galleryBoard = galleryPhotos.slice(0, 10)
+const galleryPhoto = (number: number, width: 320 | 1200 = 320) => asset(`gallery/${String(number).padStart(2, '0')}-${width}.webp`)
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
 // Preserve the original glyph and its metrics; VS15 requests text, not emoji.
@@ -66,7 +63,7 @@ export default function DraftStudio() {
   const [inline, setInline] = useState(false)
   const [typing, setTyping] = useState(false)
   const [toolsOpen, setToolsOpen] = useState(false)
-  const [lightbox, setLightbox] = useState<Scene | null>(null)
+  const [lightbox, setLightbox] = useState<number | null>(null)
   const [replay, setReplay] = useState(0)
   const stage = useRef<HTMLElement>(null)
   const dateCard = useRef<HTMLDivElement>(null)
@@ -171,13 +168,15 @@ export default function DraftStudio() {
       dialog.current.showModal()
       // Set the selected photo only on opening; never snap back during a swipe.
       const rail = photoRail.current
-      if (rail) rail.scrollLeft = (lightbox === 'main' ? 1 : 0) * rail.clientWidth
+      if (rail) rail.scrollLeft = (lightbox - 1) * rail.clientWidth
     } else if (!lightbox) dialog.current?.close()
   }, [lightbox])
-  const changePhoto = () => {
+  const changePhoto = (direction: -1 | 1) => {
     const rail = photoRail.current
-    if (!rail) return
-    rail.scrollTo({ left:(lightbox === 'intro' ? 1 : 0) * rail.clientWidth, behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+    if (!rail || lightbox === null) return
+    const next = (lightbox - 1 + direction + galleryPhotos.length) % galleryPhotos.length + 1
+    const instant = Math.abs(next - lightbox) > 1 || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    rail.scrollTo({ left:(next - 1) * rail.clientWidth, behavior:instant ? 'instant' : 'smooth' })
   }
   const photoViewerOpen = lightbox !== null
   useEffect(() => {
@@ -415,14 +414,11 @@ export default function DraftStudio() {
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
-                  {galleryFrames.map(({ scene: value, shape }, index) => {
-                    const number = String(index + 1).padStart(2, '0')
-                    return <div key={number} className={`draft-photo-pin pin-slot-${number} frame-${shape}`}>
-                      {value ? <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 보기`}>
-                        <img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" draggable={false} alt={value === 'main' ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} />
-                      </button> : <div className="draft-photo-print draft-empty-frame" role="img" aria-label={`${Number(number)}번 사진 자리 · ${shape === 'portrait' ? '세로' : shape === 'landscape' ? '가로' : '정사각형'} 빈 액자`}>
-                        <div className="draft-photo-empty" aria-hidden="true" />
-                      </div>}
+                  {galleryBoard.map(number => {
+                    return <div key={number} className={`draft-photo-pin pin-slot-${String(number).padStart(2,'0')} frame-portrait`}>
+                      <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(number)} aria-label={`${number}번 사진 보기`}>
+                        <img src={galleryPhoto(number)} width="320" height="480" loading="lazy" decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
+                      </button>
                     </div>
                   })}
               </div>
@@ -446,16 +442,18 @@ export default function DraftStudio() {
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
     {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
-    <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); changePhoto() } }}>
+    <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); changePhoto(event.key === 'ArrowRight' ? 1 : -1) } }}>
       <div className="draft-lightbox-stage">
         <div ref={photoRail} className="draft-lightbox-rail" aria-label="좌우로 넘기는 사진" onScroll={event => {
           const rail = event.currentTarget
-          if (dialog.current?.open && rail.clientWidth) setLightbox(Math.round(rail.scrollLeft / rail.clientWidth) === 0 ? 'intro' : 'main')
+          if (dialog.current?.open && rail.clientWidth) setLightbox(clamp(Math.round(rail.scrollLeft / rail.clientWidth) + 1, 1, galleryPhotos.length))
         }}>
-          {lightbox && (['intro', 'main'] as const).map(value => <div className="draft-lightbox-slide" key={value} aria-hidden={lightbox !== value}><img src={photo(value, 1400)} draggable={false} alt={`${sceneLabel[value]} 사진 보기`} /></div>)}
+          {lightbox !== null && galleryPhotos.map(number => <div className="draft-lightbox-slide" key={number} aria-hidden={lightbox !== number}>
+            <img src={galleryPhoto(number, Math.abs(number - lightbox) <= 1 ? 1200 : 320)} width="1200" height="1800" loading={Math.abs(number - lightbox) <= 1 ? 'eager' : 'lazy'} decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
+          </div>)}
         </div>
-        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={changePhoto}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
+        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => changePhoto(direction === 'previous' ? -1 : 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
       </div>
     </dialog>
   </main>

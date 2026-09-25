@@ -11,6 +11,12 @@ links to the source. Refresh from the source if roads or venue information chang
 intro-*.webp and main-*.webp are optimized derivatives of the photographs supplied
 by the user in images/intro.jpg and images/main.jpg. Originals are excluded from Git.
 
+gallery/01-*.webp through gallery/25-*.webp are optimized derivatives of the user's
+images/1.jpg through images/25.jpg, added at the user's request. The 320px files are
+board thumbnails; 1200px files are for the swipe viewer. EXIF/GPS and original camera
+metadata are omitted. The JPEG originals remain local and excluded from Git.
+Regenerate these derivatives with node scripts/prepare-gallery.mjs.
+
 black-rush-outlines.json contains Latin lettering outlines for the personal,
 non-profit wedding draft editor, rendered as SVG paths, not an embedded font file.
 Black Rush by Basni.std: https://www.dafont.com/blackrush.font

@@ -34,13 +34,17 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   `?mode=preview&source=published` always shows deployed defaults on every device,
   ignoring (but never deleting) local edits. Returning to edit restores local edits.
   Later local changes still require exporting and publishing to update this snapshot.
-- Gallery is a compact eight-slot memory board using the two supplied photos and
-  six empty frames, mixing portrait, landscape and square shapes in unequal sizes.
+- Gallery is a compact ten-photo memory board using images/1.jpg through 10.jpg,
+  with unequal sizes and overlapping tilted white frames. The swipe viewer includes
+  all 25 user-supplied numbered photos in numeric order. Original JPEGs stay local;
+  scripts/prepare-gallery.mjs generates metadata-free 320px/1200px WebP derivatives.
+  Only the current and adjacent slides request large versions; other slides stay lazy
+  thumbnails. The large images are not requested before the viewer is opened.
   White borders only: no tape, captions or separate board backdrop. The viewport-aware collage fits a single
   mobile screen with its heading. Each print flies in and settles with a small
   bounce. Real photos retain lazy thumbnails and a viewport-fitted photo viewer.
   Translucent icon-only arrows sit halfway down each side of the photo. Arrows and
-  close share 5.5% white glass on touch devices (no sticky opaque hover), with 44px
+  close share 2.4% white glass and a light 2px blur on touch devices (no sticky opaque hover), with 44px
   hit areas. A native horizontal scroll-snap rail supports finger swipes; arrows
   and keyboard controls use the same rail and keep the current-photo state in sync.
   Photo surfaces discourage context-menu saving, copy, drag and touch callouts;
