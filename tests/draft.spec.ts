@@ -4,6 +4,24 @@ import { parseConfig } from '../src/draftModel'
 import { parseCeremonyDate, ceremonyLabel, ceremonyCountdown } from '../src/draftDate'
 import { createWeddingCalendar } from '../src/draftCalendarFile'
 
+test('published defaults preserve the approved Zen lettering layout', () => {
+  expect(defaults.intro).toEqual({text:"We're getting\nmarried",x:51,y:24.209302325581397,width:94,color:'#F4D84F',rotation:-8})
+  expect(defaults.main).toEqual({text:'Wedding\nInvitation',x:50,y:16.88372093023256,width:76.32558139534883,color:'#203F76',rotation:0})
+})
+
+test('published preview ignores local edits without deleting them', async ({ page }) => {
+  const custom = structuredClone(defaults)
+  custom.intro.rotation = 22
+  custom.copy.greetingTitle = '이 기기의 편집값'
+  await page.addInitScript(value => localStorage.setItem('wedding-draft-v1',JSON.stringify(value)),custom)
+  await page.goto('draft/?mode=preview&source=published')
+  await expect(page.locator('.draft-greeting h2')).toContainText(defaults.copy.greetingTitle)
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('wedding-draft-v1')!).intro.rotation)).toBe(22)
+  await page.getByRole('button',{name:'← 편집으로'}).click()
+  await expect(page.getByLabel('회전 각도',{exact:true})).toHaveValue('22')
+  await expect(page.locator('.draft-greeting h2')).toContainText('이 기기의 편집값')
+})
+
 test('calendar file uses edited details and the Korean ceremony instant', () => {
   const ics = createWeddingCalendar(defaults.copy, new Date('2026-09-25T00:00:00Z'))!
   const unfolded = ics.replace(/\r\n /g, '')
@@ -282,15 +300,57 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   }
   const sizes = await board.locator('.draft-photo-pin').evaluateAll(els => els.map(el => el.clientWidth))
   expect(sizes[0]).toBeGreaterThan(sizes[1])
-  await board.getByRole('button', {name:'메인 커버 사진 크게 보기'}).click()
+  await expect(board).toHaveCSS('background-image','none')
+  await expect(board).toHaveCSS('background-color','rgba(0, 0, 0, 0)')
+  await board.getByRole('button', {name:'메인 커버 사진 보기'}).click()
   await expect(page.locator('.draft-lightbox')).toBeVisible()
-  await page.getByRole('button', {name:'닫기 ×'}).click()
+  const viewer = page.locator('.draft-lightbox')
+  await expect(viewer).toHaveCSS('touch-action','none')
+  await expect(viewer.locator('img')).toHaveAttribute('draggable','false')
+  await expect(viewer.locator('img')).toHaveCSS('user-select','none')
+  await expect(viewer.locator('[download]')).toHaveCount(0)
+  for (const label of ['이전 사진','다음 사진']) {
+    const arrow = viewer.getByRole('button', {name:label})
+    await expect(arrow).toHaveText('')
+    const centers = await arrow.evaluate(el => ({button:el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2, photo:el.parentElement!.getBoundingClientRect().top + el.parentElement!.getBoundingClientRect().height / 2}))
+    expect(Math.abs(centers.button - centers.photo)).toBeLessThan(1)
+  }
+  await viewer.getByRole('button', {name:'다음 사진'}).click()
+  await expect(viewer.locator('img')).toHaveAttribute('alt','인트로 사진 보기')
+  await viewer.getByRole('button', {name:'이전 사진'}).click()
+  await expect(viewer.locator('img')).toHaveAttribute('alt','메인 커버 사진 보기')
+  await page.getByRole('button', {name:'사진 보기 닫기'}).click()
   await page.emulateMedia({reducedMotion:'reduce'})
   await expect(board.locator('.will-pin')).toHaveCount(0)
   for (const button of await board.locator('button').all()) {
     await expect(button).toHaveCSS('animation-name','none')
     await expect(button).toHaveCSS('opacity','1')
   }
+})
+
+test('each section plays its own motion only when its content enters view', async ({ page }) => {
+  await page.setViewportSize({width:390,height:844})
+  await page.goto('draft/?mode=preview')
+  await page.getByRole('button', {name:'건너뛰기'}).click()
+  const card = page.locator('.draft-date-card')
+  await expect(card).not.toHaveClass(/is-in-view/)
+  for (const [selector, animation] of [
+    ['.draft-greeting h2','draft-title-land'],
+    ['.draft-flower','draft-flower-turn'],
+    ['.draft-date-card','draft-card-drop'],
+    ['.draft-location-card','draft-card-drop'],
+    ['.draft-accounts','draft-card-drop'],
+    ['.draft-poster-footer strong','draft-body-rise'],
+  ]) {
+    const item = page.locator(selector)
+    await item.scrollIntoViewIfNeeded()
+    await expect(item).toHaveClass(/is-in-view/)
+    await expect(item).toHaveCSS('animation-name',animation)
+    await expect(item).toHaveCSS('opacity','1')
+  }
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await expect(page.locator('.draft-motion-item')).toHaveCount(0)
+  await expect(card).toHaveCSS('opacity','1')
 })
 
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
@@ -469,7 +529,7 @@ test('intro transitions, replay, gallery and mobile editing', async ({ page }) =
   await page.getByRole('button', { name:'다시 재생' }).click()
   await expect(page.locator('.draft-intro-layer')).toBeVisible()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0, {timeout:10000})
-  await page.getByRole('button', { name:'메인 커버 사진 크게 보기' }).click()
+  await page.getByRole('button', { name:'메인 커버 사진 보기' }).click()
   await expect(page.locator('dialog')).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page.locator('dialog')).not.toBeVisible()

@@ -29,13 +29,25 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   the saved geometry; only deliberate edits trigger in-frame fitting.
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
+- The 2026-09-25 defaults reproduce the user's Zen export, including exact lettering
+  positions, sizes and intro rotation. Copy and palette matched existing defaults.
+  `?mode=preview&source=published` always shows deployed defaults on every device,
+  ignoring (but never deleting) local edits. Returning to edit restores local edits.
+  Later local changes still require exporting and publishing to update this snapshot.
 - Gallery is a compact eight-slot memory board using the two supplied photos and
   six empty frames, mixing portrait, landscape and square shapes in unequal sizes.
-  White borders only: no tape or captions. The viewport-aware board fits a single
+  White borders only: no tape, captions or separate board backdrop. The viewport-aware collage fits a single
   mobile screen with its heading. Each print flies in and settles with a small
-  bounce. Real photos retain lazy thumbnails and the existing lightbox.
+  bounce. Real photos retain lazy thumbnails and a viewport-fitted photo viewer.
+  Translucent icon-only arrows sit halfway down each side of the photo.
+  Photo surfaces discourage context-menu saving, copy, drag and touch callouts;
+  the viewer blocks pinch/double-tap zoom. Text editing, account copying and page
+  zoom outside photos stay available. These are UI deterrents, not access control:
+  screenshots, browser tools, direct asset URLs and public Git assets remain accessible.
 - Preview scroll entrances combine masked heading reveals, scale/rotation on cards,
-  a turning flower and staggered copy. Each element enters once per preview replay;
+  a turning flower and staggered copy. Elements are observed separately so lower
+  content does not animate before it enters view. Previously scrolled-past content
+  can replay on re-entry; specialized animations override the generic entrance.
   editor mode shows the resting layout. Reduced-motion changes are handled live.
 - Section 02 shows a small D-Day badge to the right of its title (D-Day on the day,
   D+N afterwards). The date and time text share the same size.

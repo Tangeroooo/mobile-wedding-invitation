@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
+import type { CSSProperties, PointerEvent as ReactPointerEvent, SyntheticEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
 import DraftCopyEditor from './DraftCopyEditor'
@@ -25,8 +25,15 @@ const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square'
   { shape:'landscape' }, { shape:'portrait' },
 ]
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
+const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
+// Discourage ordinary image saving without disabling selection in the editor.
+const protectPhoto = (event: SyntheticEvent) => {
+  if (event.target instanceof Element && event.target.closest('input, textarea, [contenteditable="true"]')) return
+  event.preventDefault()
+}
 
 function readSaved() {
+  if (isPublishedPreview()) return defaults
   try {
     const saved = localStorage.getItem(storageKey)
     if (!saved) return defaults
@@ -119,12 +126,12 @@ export default function DraftStudio() {
     return () => window.removeEventListener('pagehide', flush)
   }, [persist, preview])
   useEffect(() => {
-    const syncMode = () => { setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setInline(false) }
+    const syncMode = () => { setConfig(readSaved()); setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setInline(false) }
     window.addEventListener('popstate', syncMode)
     return () => window.removeEventListener('popstate', syncMode)
   }, [])
   useEffect(() => {
-    if (!preview) return
+    if (!preview || isPublishedPreview()) return
     const syncCopy = (event: StorageEvent) => {
       if (event.key === storageKey && event.newValue) {
         try { setConfig(parseConfig(JSON.parse(event.newValue))) } catch { /* Keep the last valid preview. */ }
@@ -155,28 +162,51 @@ export default function DraftStudio() {
     if (lightbox) dialog.current?.showModal()
     else dialog.current?.close()
   }, [lightbox])
+  const photoViewerOpen = lightbox !== null
+  useEffect(() => {
+    if (!photoViewerOpen) return
+    const viewer = dialog.current
+    if (!viewer) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const stopGesture = (event: Event) => event.preventDefault()
+    const stopPinch = (event: TouchEvent) => { if (event.touches.length > 1) event.preventDefault() }
+    viewer.addEventListener('gesturestart', stopGesture, { passive:false })
+    viewer.addEventListener('gesturechange', stopGesture, { passive:false })
+    viewer.addEventListener('touchstart', stopPinch, { passive:false })
+    return () => {
+      document.body.style.overflow = original
+      viewer.removeEventListener('gesturestart', stopGesture)
+      viewer.removeEventListener('gesturechange', stopGesture)
+      viewer.removeEventListener('touchstart', stopPinch)
+    }
+  }, [photoViewerOpen])
   useEffect(() => {
     if (!preview) return
     const invitation = stage.current?.closest('.draft-invitation')
     if (!invitation) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const sections = invitation.querySelectorAll('.draft-poster-section')
+    const items = invitation.querySelectorAll('.draft-poster-section > :not(.draft-gallery-grid):not(.draft-copy-editor), .draft-poster-footer > :not(.draft-copy-editor)')
     const pins = invitation.querySelectorAll('.draft-photo-pin')
     const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('draft-revealed'); observer.unobserve(entry.target) }
-    }, { threshold: .08, rootMargin:'0px 0px -5% 0px' })
+      for (const entry of entries) {
+        if (entry.isIntersecting) entry.target.classList.add('is-in-view')
+        else if (entry.boundingClientRect.bottom <= 0 || entry.boundingClientRect.top >= window.innerHeight) entry.target.classList.remove('is-in-view')
+      }
+    }, { threshold:0, rootMargin:'0px 0px -6% 0px' })
     const pinObserver = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-pinned'); pinObserver.unobserve(entry.target) }
     }, { threshold: .18, rootMargin:'0px 0px -8% 0px' })
     const clear = () => {
       observer.disconnect(); pinObserver.disconnect()
-      for (const section of sections) section.classList.remove('draft-reveal', 'draft-revealed')
+      for (const item of items) item.classList.remove('draft-motion-item', 'is-in-view')
       for (const pin of pins) pin.classList.remove('will-pin', 'is-pinned')
     }
     const start = () => {
       clear()
       if (reduced.matches) return
-      for (const section of sections) { section.classList.add('draft-reveal'); observer.observe(section) }
+      // Observe each item: a tall section must not play its lower content early.
+      for (const item of items) { item.classList.add('draft-motion-item'); observer.observe(item) }
       // Observe stable photo wrappers, not their transformed flying images.
       for (const pin of pins) { pin.classList.add('will-pin'); pinObserver.observe(pin) }
     }
@@ -212,7 +242,9 @@ export default function DraftStudio() {
     setScene(value); setInline(false); stage.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
   const stopPreview = () => {
-    const url = new URL(window.location.href); url.searchParams.delete('mode'); window.history.pushState(null, '', url)
+    const published = isPublishedPreview()
+    const url = new URL(window.location.href); url.searchParams.delete('mode'); url.searchParams.delete('source'); window.history.pushState(null, '', url)
+    if (published) setConfig(readSaved())
     setPreview(false); setInline(false); setToolsOpen(false); window.scrollTo({ top:0, behavior:'instant' })
   }
 
@@ -305,7 +337,7 @@ export default function DraftStudio() {
         {(['background', 'blue', 'pink'] as const).map((key, index) => <label key={key} className="draft-color-field">{['본문 배경', '블루 글자', '핑크 포인트'][index]}<span>{config.palette[key]}<input aria-label={['본문 배경', '블루 글자', '핑크 포인트'][index]} type="color" value={config.palette[key]} onChange={event => update({ ...config, palette: { ...config.palette, [key]: event.target.value } })} /></span></label>)}
         <div className="draft-swatches">{[['쿨 아이보리', '#F4F4F0'], ['미스트 블루', '#EAF0F5'], ['블러시 화이트', '#FAF0F2']].map(([label, color]) => <button key={color} aria-label={`${label} 배경`} title={label} onClick={() => update({ ...config, palette: { ...config.palette, background: color } })}><i style={{ background: color }} />{label}</button>)}</div>
         <button className="draft-body-link" onClick={() => { setToolsOpen(false); document.getElementById('draft-body')?.scrollIntoView({ behavior: 'smooth' }) }}>본문에서 색상 확인 ↓</button>
-        <div className="draft-save-tools"><p role="status">● {saveState}</p><p>자동 저장은 이 기기에만 적용돼요.<br />설정 파일을 옮기면 다른 기기에서도 이어갈 수 있어요.</p><div><button onClick={() => { if (persist(liveConfig.current)) setNotice('문구·위치·회전을 저장했어요. 새로고침해도 유지됩니다.') }}>지금 저장</button><button onClick={undo} disabled={!history.length}>되돌리기</button><button onClick={exportConfig}>설정 내보내기</button><button onClick={() => importInput.current?.click()}>불러오기</button></div></div>
+        <div className="draft-save-tools"><p role="status">● {saveState}</p><p>자동 저장은 이 기기에만 적용돼요.<br />설정 파일을 옮기면 다른 기기에서도 이어갈 수 있어요.</p><p><a href="?mode=preview&source=published" target="_blank" rel="noopener noreferrer">공유용 미리보기 ↗</a><br />기기별 편집값 대신 마지막 배포본을 표시합니다.</p><div><button onClick={() => { if (persist(liveConfig.current)) setNotice('문구·위치·회전을 저장했어요. 새로고침해도 유지됩니다.') }}>지금 저장</button><button onClick={undo} disabled={!history.length}>되돌리기</button><button onClick={exportConfig}>설정 내보내기</button><button onClick={() => importInput.current?.click()}>불러오기</button></div></div>
         <input ref={importInput} type="file" accept="application/json,.json" hidden onChange={async event => {
           const file = event.target.files?.[0]; event.target.value = ''; if (!file) return
           try { if (file.size > 200000) throw new Error('설정 파일이 너무 큽니다.'); update(parseConfig(JSON.parse(await file.text()))); setNotice('설정을 불러왔어요.') }
@@ -321,7 +353,7 @@ export default function DraftStudio() {
             <DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} />
             <DraftEventFloat dateValue={copy.ceremonyDate} time={copy.ceremonyTime} venue={copy.venueName} hall={copy.venueHall} quietRegion={dateCard} />
           </div>
-          <section ref={stage} className="draft-stage" aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
+          <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
               <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
               {phase !== 'main' && <div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span><button className="draft-skip" onClick={() => setPhase('leaving')}>건너뛰기 →</button></div>}
@@ -367,8 +399,8 @@ export default function DraftStudio() {
                   {galleryFrames.map(({ scene: value, shape }, index) => {
                     const number = String(index + 1).padStart(2, '0')
                     return <div key={number} className={`draft-photo-pin pin-slot-${number} frame-${shape}`}>
-                      {value ? <button className="draft-photo-print" onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}>
-                        <img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={value === 'main' ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} />
+                      {value ? <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 보기`}>
+                        <img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" draggable={false} alt={value === 'main' ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} />
                       </button> : <div className="draft-photo-print draft-empty-frame" role="img" aria-label={`${Number(number)}번 사진 자리 · ${shape === 'portrait' ? '세로' : shape === 'landscape' ? '가로' : '정사각형'} 빈 액자`}>
                         <div className="draft-photo-empty" aria-hidden="true" />
                       </div>}
@@ -395,10 +427,12 @@ export default function DraftStudio() {
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
     {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
-    <dialog ref={dialog} className="draft-lightbox" onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') setLightbox(current => current === 'intro' ? 'main' : 'intro') }}>
-      <button className="draft-lightbox-close" autoFocus onClick={() => setLightbox(null)}>닫기 ×</button>
-      {lightbox && <img src={photo(lightbox, 1400)} alt={`${sceneLabel[lightbox]} 사진 확대`} />}
-      <div><button onClick={() => setLightbox('intro')}>← 정원 사진</button><button onClick={() => setLightbox('main')}>커버 사진 →</button></div>
+    <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); setLightbox(current => current === 'intro' ? 'main' : 'intro') } }}>
+      <div className="draft-lightbox-stage">
+        {lightbox && <img src={photo(lightbox, 1400)} draggable={false} alt={`${sceneLabel[lightbox]} 사진 보기`} />}
+        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={() => setLightbox(current => current === 'intro' ? 'main' : 'intro')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
+      </div>
     </dialog>
   </main>
 }

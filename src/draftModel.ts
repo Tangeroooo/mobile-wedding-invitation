@@ -13,8 +13,9 @@ export type DraftConfig = {
 export const storageKey = 'wedding-draft-v1'
 export const defaults: DraftConfig = {
   version: 1,
-  intro: { text: "We're getting\nmarried", x: 50, y: 22, width: 86, color: '#F4D84F', rotation: 0 },
-  main: { text: 'Wedding\nInvitation', x: 65, y: 77, width: 64, color: '#203F76', rotation: 0 },
+  // Approved snapshot exported from Zen on 2026-09-25; percentages stay exact.
+  intro: { text: "We're getting\nmarried", x: 51, y: 24.209302325581397, width: 94, color: '#F4D84F', rotation: -8 },
+  main: { text: 'Wedding\nInvitation', x: 50, y: 16.88372093023256, width: 76.32558139534883, color: '#203F76', rotation: 0 },
   palette: { background: '#F4F4F0', blue: '#274D85', pink: '#B94470' },
   copy: { ...copyDefaults },
 }
