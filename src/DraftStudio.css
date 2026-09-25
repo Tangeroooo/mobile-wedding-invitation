@@ -125,8 +125,10 @@
 .is-preview .draft-workspace { display:block; max-width:none; padding:0; }.is-preview .draft-preview-column { max-width:none; }.is-preview .draft-invitation { max-width:480px; }.is-preview .draft-stage { height:100svh; min-height:480px; }.is-preview { background:#dcded7; }
 .draft-preview-controls { position:fixed; z-index:10; top:max(12px,env(safe-area-inset-top)); right:16px; display:flex; gap:6px; }.draft-preview-controls button { padding:9px 12px; font-size:10px; background:#fffffff0; border-radius:24px; }
 .draft-mobile-tools { display:none; }
-.draft-reveal > * { opacity:0; transform:translateY(18px); transition:opacity .7s ease,transform .7s ease; }
-.draft-revealed > * { opacity:1; transform:none; }
+.draft-flower { opacity:1; }
+/* Reveal movement is independent of the artwork/calendar's own rotation. */
+.draft-reveal > * { opacity:0; translate:0 18px; transition:opacity .7s ease,translate .7s ease; }
+.draft-revealed > * { opacity:1; translate:0 0; }
 .draft-revealed > :nth-child(2) { transition-delay:.1s; }
 .draft-revealed > :nth-child(3) { transition-delay:.18s; }
 .draft-lightbox { width:min(94vw,850px); max-width:none; max-height:96svh; padding:40px 12px 12px; background:#18231b; color:#fff; border:0; border-radius:7px; }.draft-lightbox::backdrop { background:#0d150de8; }.draft-lightbox img { display:block; max-width:100%; max-height:calc(96svh - 110px); margin:auto; object-fit:contain; }.draft-lightbox>div { display:flex; justify-content:space-between; gap:12px; margin-top:8px; }.draft-studio .draft-lightbox button { border:0; color:#fff; background:transparent; }.draft-lightbox-close { position:absolute; right:8px; top:2px; }

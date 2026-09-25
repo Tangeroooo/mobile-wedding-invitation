@@ -123,6 +123,28 @@ test('compact account rows, animated accessible disclosure and single-line venue
   await expect(panel).toHaveCSS('transition-duration', '0s')
 })
 
+test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
+  await page.goto('draft/')
+  const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')
+  await expect(flower).toHaveCSS('opacity', '1')
+  const color = await flower.evaluate(el => getComputedStyle(el).color)
+  const rotation = await calendar.evaluate(el => getComputedStyle(el).transform)
+  expect(rotation).not.toBe('none')
+  await page.getByRole('button', {name:'미리보기 ▶'}).click()
+  await page.getByRole('button', {name:'건너뛰기'}).click()
+  await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
+  await page.locator('.draft-greeting').scrollIntoViewIfNeeded()
+  await expect(flower).toHaveCSS('opacity', '1')
+  await expect(flower).toHaveCSS('color', color)
+  await page.locator('.draft-date').scrollIntoViewIfNeeded()
+  await expect(calendar).toHaveCSS('transform', rotation)
+  await expect(calendar).toHaveCSS('opacity', '1')
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await page.reload()
+  await expect(flower).toHaveCSS('opacity', '1')
+  await expect(calendar).toHaveCSS('transform', rotation)
+})
+
 test('map heart stays centered on the source hotel icon at every screen size', async ({ page }) => {
   await page.goto('draft/')
   for (const width of [320, 390, 1440]) {
