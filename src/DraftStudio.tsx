@@ -269,7 +269,9 @@ export default function DraftStudio() {
     const invitation = stage.current?.closest('.draft-invitation')
     if (!invitation) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const items = invitation.querySelectorAll('.draft-poster-section > :not(.draft-gallery-grid):not(.draft-copy-editor), .draft-poster-footer > :not(.draft-copy-editor)')
+    const items = invitation.querySelectorAll('.draft-poster-section > :not(.draft-gallery-grid):not(.draft-copy-editor)')
+    const footer = invitation.querySelector('.draft-poster-footer')
+    const footerItems = invitation.querySelectorAll('.draft-poster-footer > :not(.draft-copy-editor)')
     const pins = invitation.querySelectorAll('.draft-photo-pin')
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -279,12 +281,20 @@ export default function DraftStudio() {
         }
       }
     }, { threshold:0, rootMargin:'0px 0px -6% 0px' })
+    // The last line cannot always reach the inset body trigger at scroll-end.
+    // Reveal the footer's children together from its stable, untransformed box.
+    const footerObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        for (const item of footerItems) item.classList.add('is-in-view')
+        footerObserver.disconnect()
+      }
+    }, { threshold:0 })
     const pinObserver = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-pinned'); pinObserver.unobserve(entry.target) }
     }, { threshold: .18, rootMargin:'0px 0px -8% 0px' })
     const clear = () => {
-      observer.disconnect(); pinObserver.disconnect()
-      for (const item of items) item.classList.remove('draft-motion-item', 'is-in-view')
+      observer.disconnect(); pinObserver.disconnect(); footerObserver.disconnect()
+      for (const item of [...items, ...footerItems]) item.classList.remove('draft-motion-item', 'is-in-view')
       for (const pin of pins) pin.classList.remove('will-pin', 'is-pinned')
     }
     const start = () => {
@@ -292,6 +302,8 @@ export default function DraftStudio() {
       if (reduced.matches) return
       // Observe each item: a tall section must not play its lower content early.
       for (const item of items) { item.classList.add('draft-motion-item'); observer.observe(item) }
+      for (const item of footerItems) item.classList.add('draft-motion-item')
+      if (footer) footerObserver.observe(footer)
       // Observe stable photo wrappers, not their transformed flying images.
       for (const pin of pins) { pin.classList.add('will-pin'); pinObserver.observe(pin) }
     }

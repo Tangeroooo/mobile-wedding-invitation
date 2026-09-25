@@ -582,6 +582,27 @@ test('each section plays its own motion once, without restarting on upward scrol
   await expect(card).toHaveCSS('opacity','1')
 })
 
+test('footer reveals every line together at scroll-end on wide and narrow screens', async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width,height:900})
+    await page.goto('draft/?mode=preview&source=published')
+    await page.getByRole('button',{name:'건너뛰기'}).click()
+    await expect(page.locator('#draft-body')).not.toHaveAttribute('inert','')
+    await page.evaluate(() => window.scrollTo(0,document.documentElement.scrollHeight))
+    const lines = page.locator('.draft-poster-footer > :not(.draft-copy-editor)')
+    await expect(lines).toHaveCount(3)
+    for (const line of await lines.all()) {
+      await expect(line).toHaveClass(/is-in-view/)
+      await expect(line).toHaveCSS('opacity','1')
+    }
+    const note = lines.last()
+    const finishedTime = await note.evaluate(el => el.getAnimations()[0].currentTime)
+    await page.evaluate(() => window.scrollTo(0,0))
+    await page.evaluate(() => window.scrollTo(0,document.documentElement.scrollHeight))
+    expect(await note.evaluate(el => el.getAnimations()[0].currentTime)).toBe(finishedTime)
+  }
+})
+
 test('calendar paper, compact add button and venue typography stay consistent', async ({ page }) => {
   for (const mode of ['draft/', 'draft/?mode=preview&source=published']) {
     await page.goto(mode)
