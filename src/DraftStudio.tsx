@@ -4,6 +4,7 @@ import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
 import DraftCopyEditor from './DraftCopyEditor'
 import DraftCalendar from './DraftCalendar'
+import DraftDirections from './DraftDirections'
 import { ceremonyLabel } from './draftDate'
 import DraftAccounts from './DraftAccounts'
 import DraftBgm from './DraftBgm'
@@ -87,6 +88,7 @@ export default function DraftStudio() {
   liveConfig.current = config
   const block = config[scene]
   const copy = config.copy
+  const coverScrollLocked = preview && (phase !== 'main' || (!mainLetteringReady && !fontError))
   const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
   useEffect(() => { document.title = preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [preview])
@@ -179,21 +181,41 @@ export default function DraftStudio() {
   }, [preview])
 
   useEffect(() => {
-    if (!preview || !outlines || !mainReady || phase !== 'intro') return
+    if (!preview || (!outlines && !fontError) || !mainReady || phase !== 'intro') return
     const timer = window.setTimeout(() => setPhase('leaving'), 4200)
     return () => window.clearTimeout(timer)
-  }, [preview, outlines, mainReady, phase, replay])
+  }, [preview, outlines, fontError, mainReady, phase, replay])
   useEffect(() => {
     if (phase !== 'leaving') return
     const timer = window.setTimeout(() => setPhase('main'), 900)
     return () => window.clearTimeout(timer)
   }, [phase])
-  useEffect(() => {
-    if (!preview || phase === 'main') return
-    const original = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = original }
-  }, [preview, phase])
+  useLayoutEffect(() => {
+    if (!coverScrollLocked) return
+    const root = document.documentElement, body = document.body
+    const original = { root:root.style.overflow, body:body.style.overflow, overscroll:root.style.overscrollBehavior }
+    root.style.overflow = body.style.overflow = 'hidden'
+    root.style.overscrollBehavior = 'none'
+    window.scrollTo({ top:0, behavior:'instant' })
+    const keepAtCover = () => { if (window.scrollY !== 0) window.scrollTo({ top:0, behavior:'instant' }) }
+    const stopWheel = (event: WheelEvent) => { if (!event.ctrlKey) event.preventDefault() }
+    const stopTouchScroll = (event: TouchEvent) => { if (event.touches.length === 1) event.preventDefault() }
+    const stopKeys = (event: KeyboardEvent) => {
+      if (event.target instanceof Element && event.target.closest('button,a,input,textarea,select,[contenteditable="true"]')) return
+      if (['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(event.key)) event.preventDefault()
+    }
+    window.addEventListener('wheel', stopWheel, { passive:false })
+    window.addEventListener('touchmove', stopTouchScroll, { passive:false })
+    window.addEventListener('keydown', stopKeys)
+    window.addEventListener('scroll', keepAtCover, { passive:true })
+    return () => {
+      root.style.overflow = original.root; body.style.overflow = original.body; root.style.overscrollBehavior = original.overscroll
+      window.removeEventListener('wheel', stopWheel)
+      window.removeEventListener('touchmove', stopTouchScroll)
+      window.removeEventListener('keydown', stopKeys)
+      window.removeEventListener('scroll', keepAtCover)
+    }
+  }, [coverScrollLocked])
   useEffect(() => { if (inline) inlineInput.current?.focus() }, [inline])
   useEffect(() => {
     if (lightbox && dialog.current && !dialog.current.open) {
@@ -458,7 +480,7 @@ export default function DraftStudio() {
             </>}
           </section>
 
-          <div className="draft-poster-body" id="draft-body">
+          <div className="draft-poster-body" id="draft-body" inert={coverScrollLocked}>
             <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftTickerAsterisk /></b><span>{copy.tickerRight}</span><b><DraftTickerAsterisk /></b></div>
             <section className="draft-poster-section draft-greeting">
               <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>{copy.groomParents}</small><strong>{copy.groom}</strong></span><i aria-hidden="true">&</i><span><small>{copy.brideParents}</small><strong>{copy.bride}</strong></span></div>{editCopy('greeting')}
@@ -486,7 +508,7 @@ export default function DraftStudio() {
               <nav className="draft-map-links" aria-label="예식장 지도 앱">
                 <a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://ssl.pstatic.net/static/maps/assets/icons/apple-icon-180x180.png" width="22" height="22" alt="" loading="lazy" />네이버지도 ↗</a>
                 <a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://map.kakao.com/favicon.ico" width="22" height="22" alt="" loading="lazy" />카카오맵 ↗</a>
-              </nav>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
+              </nav><DraftDirections stop={copy.transitStop} />{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
             </section>
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}

@@ -1,5 +1,11 @@
 # Private wedding draft assets
 
+venue-directions.webp is a lossless raster rendering of the single-page hotel
+directions PDF supplied by the user, “2604 더링크호텔 약도 오시는길 (1).pdf”.
+The hotel artwork and directions are retained without rewriting or cropping.
+Rendered with scripts/render-venue.swift to preserve embedded Korean text, then
+converted with scripts/prepare-directions.mjs. The original PDF is not published.
+
 venue-naver-map.png is the unmodified PNG saved using Naver Map's official
 Download button on 2026-09-25, for the search “더링크호텔” at zoom 15.
 Source: https://map.naver.com/p/search/%EB%8D%94%EB%A7%81%ED%81%AC%ED%98%B8%ED%85%94

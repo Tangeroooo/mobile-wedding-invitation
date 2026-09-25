@@ -91,6 +91,16 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   by the user: event preview → Add to Calendar → destination calendar selection.
   The static ICS link includes the date/time revision to avoid an older cached range.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
+- Preview scrolling stays locked from the intro through the main title's final
+  writing animation. The body is inert until completion; wheel, touch-scroll and
+  scrolling keys are blocked without disabling pinch zoom or the cover controls.
+  Replay resets the lock; editor mode, reduced motion, blank lettering and font
+  errors do not trap guests. No fixed-position photo/backdrop layout is introduced.
+- Directions include editable “신도림역 1번 출구에서 800m” and compact outlined
+  “셔틀버스 영상” / “약도” buttons. A native dialog plays the provided YouTube
+  embed only after opening; closing removes the iframe and restores page scroll
+  and focus. A YouTube link is available if embedding is blocked. The map modal
+  loads the user-supplied PDF's lossless image on demand, with zoom and panning.
 - Black Rush names Juhyeon and Hani sit below the people in the main cover at 78%
   height. Their enlarged lettering follows the edited palette: groom pink, bride blue.
   They mount with the main title and share its first-line writing delay/duration,
