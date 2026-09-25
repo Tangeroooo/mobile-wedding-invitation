@@ -23,7 +23,7 @@ export const copyDefaults = {
   groomFamily1Name: '정우선', groomFamily1Bank: '국민은행', groomFamily1Number: '703-21-0347-405',
   groomFamily2Name: '김인숙', groomFamily2Bank: '국민은행', groomFamily2Number: '444401-01-290683',
   brideAccountName: '임하니', brideAccountBank: '신한은행', brideAccountNumber: '110-401-127905',
-  footerLabel: '이 모든 것 위에 사랑을 더하라\n이는 온전하게 매는 띠니라\n\n골로새서 3:14', footerTitle: 'Better, together.', footerNote: 'OUR WEDDING INVITATION',
+  footerLabel: '이 모든 것 위에 사랑을 더하라\n이는 온전하게 매는 띠니라\n골로새서 3:14', footerTitle: 'Better, together.', footerNote: 'OUR WEDDING INVITATION',
 }
 export type DraftCopy = typeof copyDefaults
 export type CopyKey = keyof DraftCopy
