@@ -52,7 +52,7 @@ export default function DraftShare({ variant }: { variant?: InvitationVariant })
         }
       } else if (navigator.share) {
         setStatus('공유 목록에서 카카오톡 등 원하는 앱을 선택해주세요.')
-        await navigator.share({ title: share.title, text: share.text, url: share.url })
+        await navigator.share(share.native)
         setStatus('')
       } else {
         setManual(true)
