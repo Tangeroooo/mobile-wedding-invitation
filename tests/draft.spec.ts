@@ -22,11 +22,13 @@ test('published defaults preserve the approved Zen lettering layout', () => {
   expect(defaults.copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
   const oldCopy = Object.fromEntries(Object.entries(defaults.copy).filter(([key]) => !['coverGroomName','coverBrideName','groomParents','brideParents'].includes(key)))
   expect(parseConfig({...defaults,copy:oldCopy}).copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
-  expect(defaults.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들.'})
+  expect(defaults.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들'})
   expect(defaults.copy.greetingMessage).toBe('아내를 사랑하는 남편\n남편을 위로하는 아내가 되어\n하나님이 기뻐하시는\n아름다운 가정을 이루겠습니다.')
   expect(defaults.copy.greetingInvite).toBe('따뜻한 마음으로 오셔서\n저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.')
   const migrated = parseConfig({...defaults,copy:{...defaults.copy,greetingTitle:'우리의',greetingAccent:'가장 좋은 날.',dateTitle:'함께할',dateAccent:'그날의 약속.',galleryTitle:'우리라는',galleryAccent:'장면들.',greetingMessage:'직접 편집한 문구'}})
-  expect(migrated.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들.',greetingMessage:'직접 편집한 문구'})
+  expect(migrated.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들',greetingMessage:'직접 편집한 문구'})
+  expect(parseConfig({...defaults,copy:{...defaults.copy,galleryAccent:'빛나는 순간들.'}}).copy.galleryAccent).toBe('빛나는 순간들')
+  expect(parseConfig({...defaults,copy:{...defaults.copy,galleryAccent:'직접 편집한 제목.'}}).copy.galleryAccent).toBe('직접 편집한 제목.')
 })
 
 test('intro and main writing lock scroll until completion, including replay', async ({ page }) => {

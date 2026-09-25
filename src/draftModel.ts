@@ -63,6 +63,7 @@ export function parseConfig(raw: unknown): DraftConfig {
   for (const key of Object.keys(previousCopy) as CopyKey[]) {
     if (copy[key] === previousCopy[key]) copy[key] = copyDefaults[key]
   }
+  if (copy.galleryAccent === '빛나는 순간들.') copy.galleryAccent = copyDefaults.galleryAccent
   if (copy.groom === '신랑 이름') copy.groom = copyDefaults.groom
   if (copy.bride === '신부 이름') copy.bride = copyDefaults.bride
   if (copy.venueName === '더링크호텔') copy.venueName = copyDefaults.venueName

@@ -9,7 +9,7 @@ export const copyDefaults = {
   dateLabel: 'SAVE THE DATE', dateTitle: '정중히', dateAccent: '초대합니다.',
   dateYear: '2026 · OUR DAY', dateStamp: '11. 07. SAT', dateText: '2026년 11월 7일 토요일\n오후 7시 20분',
   ceremonyDate: '2026-11-07', ceremonyTime: '19:20', ceremonyEndTime: '21:00',
-  galleryLabel: 'MOMENTS OF US', galleryTitle: '우리의', galleryAccent: '빛나는 순간들.',
+  galleryLabel: 'MOMENTS OF US', galleryTitle: '우리의', galleryAccent: '빛나는 순간들',
   galleryMessage: '함께 웃던 순간을 모아.', galleryFirst: 'IN THE GARDEN', gallerySecond: 'SIDE BY SIDE',
   galleryNote: '갤러리 구성은 사진을 추가하며 다듬을 예정입니다.',
   locationLabel: 'MEET US HERE', locationTitle: '오시는 길',
