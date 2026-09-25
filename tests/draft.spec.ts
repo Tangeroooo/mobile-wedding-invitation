@@ -642,10 +642,19 @@ test('map heart stays centered on the source hotel icon at every screen size', a
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({width, height:844})
     await page.locator('.draft-location-map').scrollIntoViewIfNeeded()
-    const map = (await page.locator('.draft-naver-map>img').boundingBox())!
+    const map = (await page.locator('.draft-naver-canvas>img').boundingBox())!
+    const frame = (await page.locator('.draft-naver-map').boundingBox())!
     const heart = (await page.locator('.draft-naver-heart').boundingBox())!
     expect(Math.abs(heart.x + heart.width / 2 - (map.x + map.width * 883 / 1377))).toBeLessThan(1)
     expect(Math.abs(heart.y + heart.height / 2 - (map.y + map.height * 425 / 850))).toBeLessThan(1)
+    expect(frame.width / frame.height).toBeCloseTo(640 / 500, 2)
+    // Source bounds include both station labels and nearby numbered exits.
+    for (const [left, top, right, bottom] of [[1180,175,1270,295],[725,540,835,640]]) {
+      expect(map.x + map.width * left / 1377).toBeGreaterThan(frame.x)
+      expect(map.y + map.height * top / 850).toBeGreaterThan(frame.y)
+      expect(map.x + map.width * right / 1377).toBeLessThan(frame.x + frame.width)
+      expect(map.y + map.height * bottom / 850).toBeLessThan(frame.y + frame.height)
+    }
   }
 })
 

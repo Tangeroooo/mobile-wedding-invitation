@@ -166,8 +166,11 @@
 .draft-location-card address { font-style:normal; font-size:12px; line-height:1.8; }
 .draft-transit-stop { display:block; margin-top:3px; }
 .draft-location-map { width:100%; margin-top:22px; border:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); background:#e8e9e4; }
-.draft-naver-map { display:block; position:relative; }
-.draft-naver-map>img { display:block; width:100%; height:auto; aspect-ratio:1377/850; }
+/* Show source pixels (685, 150)–(1325, 650): both stations and their exits,
+   with the hotel between them. Keep the original image and attribution intact. */
+.draft-naver-map { display:block; position:relative; aspect-ratio:640/500; overflow:hidden; }
+.draft-naver-canvas { position:absolute; left:-107.03125%; top:-30%; width:215.15625%; height:170%; }
+.draft-naver-canvas>img { display:block; width:100%; height:100%; }
 .draft-naver-marker { position:absolute; left:64.1249%; top:50%; width:24px; height:26px; transform:translate(-50%,-50%); pointer-events:none; }
 .draft-naver-marker strong { position:absolute; bottom:calc(100% + 4px); left:50%; transform:translateX(-50%); font-size:11px; padding:5px 8px; background:#fff; color:#274D85; box-shadow:0 1px 5px #0003; white-space:nowrap; border-radius:3px; }
 .draft-naver-marker>span { width:100%; height:100%; display:grid; place-items:center; color:#fff; background:#B94470; border:2px solid white; border-radius:50%; font-size:13px; }
