@@ -56,6 +56,7 @@ export default function DraftStudio() {
   liveConfig.current = config
   const block = config[scene]
   const copy = config.copy
+  const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
   useEffect(() => { document.title = preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [preview])
 
@@ -322,7 +323,7 @@ export default function DraftStudio() {
               <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
             <section className="draft-poster-section draft-date">
-              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}>{ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime)}</time></p><span>{[copy.venueName, copy.venueHall].filter(Boolean).join(' · ')}</span></div>{editCopy('date')}
+              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><span className="draft-ceremony-venue">{[copy.venueName, copy.venueHall].filter(Boolean).join(' · ')}</span></div></div>{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? copy.gallerySecond : copy.galleryFirst} ↗</span></button>)}</div><small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}

@@ -66,7 +66,11 @@
 .draft-location-card { border-block:1px solid var(--draft-blue); padding:25px 0; }.draft-location-card>span { float:right; font-size:36px; color:var(--draft-pink); }.draft-location-card strong { font-size:16px; }.draft-location-card p { font-size:11px; }.draft-rsvp { border-bottom:0; }.draft-rsvp h2 { font-size:clamp(27px,7.3vw,32px); }
 .draft-date-card .draft-date-year { display:block; font-size:10px; letter-spacing:.2em; margin-bottom:15px; }
 .draft-date-card strong { display:block; font-size:clamp(26px,7vw,38px); }
-.draft-date-card .draft-date-text { display:block; margin:18px 0; font-size:14px; line-height:1.9; }
+.draft-ceremony-details { margin-top:22px; padding-top:22px; border-top:1px solid color-mix(in srgb,var(--draft-blue) 30%,transparent); }
+.draft-date-card .draft-date-text { display:block; margin:0; font-size:clamp(14px,4vw,17px); line-height:1.6; font-weight:650; letter-spacing:-.035em; white-space:normal; }
+.draft-date-text time>span { display:block; }
+.draft-date-text .draft-ceremony-hour { margin-top:6px; font-size:clamp(20px,5.5vw,24px); line-height:1.5; font-weight:750; color:var(--draft-pink); }
+.draft-ceremony-venue { display:block; margin-top:14px; font-size:clamp(13px,3.7vw,16px); line-height:1.6; font-weight:650; letter-spacing:-.035em; overflow-wrap:anywhere; }
 .draft-couple { display:flex; align-items:center; justify-content:center; gap:12px; letter-spacing:.02em; font-size:26px; font-weight:600; }
 .draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:8px; }
 .draft-couple small { font-size:11px; font-weight:400; letter-spacing:.08em; }
