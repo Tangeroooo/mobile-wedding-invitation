@@ -388,7 +388,7 @@ export default function DraftStudio() {
           </section>
 
           <div className="draft-poster-body" id="draft-body">
-            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftAsterisk /></b><span>{copy.tickerRight}</span><b><DraftAsterisk /></b></div>
+            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b>✳</b><span>{copy.tickerRight}</span><b>✳</b></div>
             <section className="draft-poster-section draft-greeting">
               <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
