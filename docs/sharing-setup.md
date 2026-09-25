@@ -14,10 +14,6 @@ JavaScript 키는 브라우저에 공개되는 키입니다. Admin 키, REST API
 
 공식 문서: https://developers.kakao.com/docs/ko/kakaotalk-share/js-link
 
-## 조작 가능한 네이버지도 (연결 대기)
+## 지도
 
-현재 정적 지도는 유지했습니다. 네이버 Cloud Maps의 Dynamic Map 사용 설정 및 공개 Client ID(`ncpKeyId`)가 필요합니다. 웹 서비스 URL에 `https://tangeroooo.github.io`를 등록합니다. Client Secret은 필요하지 않습니다. 발급 시 약관과 현재 요금·무료 한도는 계정 소유자가 확인해야 합니다.
-
-키 연결 후 별도 흰색 하단 띠 없이 SDK 기본 지도 및 출처 표시, 하트 위치 마커와 더링크호텔 라벨을 유지하는 방식으로 교체할 예정입니다.
-
-공식 문서: https://navermaps.github.io/maps.js.en/docs/tutorial-1-Getting-Client-ID.html
+사용자 결정에 따라 조작 가능한 지도 전환은 진행하지 않습니다. 현재 정적 네이버지도, 하트 마커, 더링크호텔 라벨 및 외부 지도 열기 버튼을 유지합니다. 네이버 API 키 발급은 필요하지 않습니다.
