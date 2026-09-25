@@ -26,6 +26,8 @@ const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square'
 ]
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
+// A drawn asterisk keeps the pink ink on devices that render ✳ as a color emoji.
+const DraftAsterisk = () => <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M50 4v92M4 50h92M17.5 17.5l65 65M17.5 82.5l65-65" fill="none" stroke="currentColor" strokeWidth="3" /></svg>
 // Discourage ordinary image saving without disabling selection in the editor.
 const protectPhoto = (event: SyntheticEvent) => {
   if (event.target instanceof Element && event.target.closest('input, textarea, [contenteditable="true"]')) return
@@ -190,8 +192,10 @@ export default function DraftStudio() {
     const pins = invitation.querySelectorAll('.draft-photo-pin')
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
-        if (entry.isIntersecting) entry.target.classList.add('is-in-view')
-        else if (entry.boundingClientRect.bottom <= 0 || entry.boundingClientRect.top >= window.innerHeight) entry.target.classList.remove('is-in-view')
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in-view')
+          observer.unobserve(entry.target)
+        }
       }
     }, { threshold:0, rootMargin:'0px 0px -6% 0px' })
     const pinObserver = new IntersectionObserver(entries => {
@@ -384,9 +388,9 @@ export default function DraftStudio() {
           </section>
 
           <div className="draft-poster-body" id="draft-body">
-            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b>✳</b><span>{copy.tickerRight}</span><b>✳</b></div>
+            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftAsterisk /></b><span>{copy.tickerRight}</span><b><DraftAsterisk /></b></div>
             <section className="draft-poster-section draft-greeting">
-              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
+              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
             <section className="draft-poster-section draft-date">
               <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div>

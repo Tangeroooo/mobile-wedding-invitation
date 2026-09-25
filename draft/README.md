@@ -46,9 +46,11 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   screenshots, browser tools, direct asset URLs and public Git assets remain accessible.
 - Preview scroll entrances combine masked heading reveals, scale/rotation on cards,
   a turning flower and staggered copy. Elements are observed separately so lower
-  content does not animate before it enters view. Previously scrolled-past content
-  can replay on re-entry; specialized animations override the generic entrance.
-  editor mode shows the resting layout. Reduced-motion changes are handled live.
+  content does not animate before it enters view. Each element plays once and stays
+  settled when scrolling back; only an explicit preview replay resets entrances.
+  Specialized animations override the generic entrance. Editor mode shows the
+  resting layout. Reduced-motion changes are handled live. Pink asterisk decorations
+  use drawn SVG strokes rather than an emoji-prone Unicode glyph.
 - Section 02 shows a small D-Day badge to the right of its title (D-Day on the day,
   D+N afterwards). The date and time text share the same size.
 - A small glass-blurred schedule summary follows the invitation's center-right edge.

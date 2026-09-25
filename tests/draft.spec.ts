@@ -328,7 +328,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   }
 })
 
-test('each section plays its own motion only when its content enters view', async ({ page }) => {
+test('each section plays its own motion once, without restarting on upward scroll', async ({ page }) => {
   await page.setViewportSize({width:390,height:844})
   await page.goto('draft/?mode=preview')
   await page.getByRole('button', {name:'건너뛰기'}).click()
@@ -348,6 +348,13 @@ test('each section plays its own motion only when its content enters view', asyn
     await expect(item).toHaveCSS('animation-name',animation)
     await expect(item).toHaveCSS('opacity','1')
   }
+  // Offscreen items keep their settled animation; returning must not restart it.
+  const title = page.locator('.draft-greeting h2')
+  await expect(title).toHaveClass(/is-in-view/)
+  const finishedTime = await title.evaluate(el => el.getAnimations()[0].currentTime)
+  await title.scrollIntoViewIfNeeded()
+  expect(await title.evaluate(el => el.getAnimations()[0].currentTime)).toBe(finishedTime)
+  await expect(title).toHaveCSS('opacity','1')
   await page.emulateMedia({reducedMotion:'reduce'})
   await expect(page.locator('.draft-motion-item')).toHaveCount(0)
   await expect(card).toHaveCSS('opacity','1')
@@ -356,6 +363,8 @@ test('each section plays its own motion only when its content enters view', asyn
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
   await page.goto('draft/')
   const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')
+  await expect(flower.locator('svg path')).toHaveAttribute('stroke','currentColor')
+  await expect(flower).toHaveText('')
   await expect(flower).toHaveCSS('opacity', '1')
   const color = await flower.evaluate(el => getComputedStyle(el).color)
   const rotation = await calendar.evaluate(el => getComputedStyle(el).transform)
