@@ -6,6 +6,8 @@ import DraftCopyEditor from './DraftCopyEditor'
 import DraftCalendar from './DraftCalendar'
 import { ceremonyLabel } from './draftDate'
 import DraftAccounts from './DraftAccounts'
+import DraftBgm from './DraftBgm'
+import { draftMusicSrc } from './draftMusic'
 import type { CopyKey } from './draftCopy'
 import type { Outlines } from './DraftLettering'
 import { clamp, defaults, isSupportedText, normalizeText, parseConfig, storageKey } from './draftModel'
@@ -348,6 +350,7 @@ export default function DraftStudio() {
       </div>
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
+    <DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} />
     {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
     <dialog ref={dialog} className="draft-lightbox" onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') setLightbox(current => current === 'intro' ? 'main' : 'intro') }}>
       <button className="draft-lightbox-close" autoFocus onClick={() => setLightbox(null)}>닫기 ×</button>

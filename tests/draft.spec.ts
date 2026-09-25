@@ -119,7 +119,9 @@ test('compact account rows, animated accessible disclosure and readable full ven
   for (const account of await page.locator('.groom .draft-account-copy').all()) expect(await account.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
   const name = (await row.locator('strong').boundingBox())!
   const number = (await row.locator('.draft-account-number').boundingBox())!
-  await expect(row.locator('.draft-account-number')).toHaveCSS('font-size','13px')
+  await expect(row.locator('.draft-account-number')).toHaveCSS('font-size','15px')
+  await expect(row.locator('.draft-account-number')).toHaveCSS('font-weight','700')
+  await expect(trigger).toHaveCSS('font-size','14px')
   await expect(row.locator('.draft-account-copy-icon')).toBeVisible()
   expect(Math.abs(name.y + name.height/2 - number.y - number.height/2)).toBeLessThan(2)
   await trigger.press('Enter')
@@ -131,6 +133,22 @@ test('compact account rows, animated accessible disclosure and readable full ven
   await expect(page.locator('.draft-couple')).toHaveCSS('font-size', '24px')
   await page.emulateMedia({reducedMotion:'reduce'})
   await expect(panel).toHaveCSS('transition-duration', '0s')
+})
+
+test('pink hall, floating caption and honest pending BGM control', async ({ page }) => {
+  await page.setViewportSize({width:320,height:700})
+  await page.goto('draft/?mode=preview')
+  const toggle = page.getByRole('button', {name:'배경음악 준비 중',exact:true})
+  await expect(toggle).toHaveAttribute('aria-pressed','false')
+  await expect(toggle).toContainText('BGM OFF')
+  await expect(page.locator('audio')).toHaveCount(0)
+  await expect(page.locator('.draft-bgm')).toHaveCSS('position','fixed')
+  const bgm = (await toggle.boundingBox())!, controls = (await page.locator('.draft-preview-controls').boundingBox())!
+  expect(controls.x + controls.width).toBeLessThanOrEqual(bgm.x)
+  await expect(page.locator('.draft-ceremony-hall')).toHaveCSS('color','rgb(185, 68, 112)')
+  await expect(page.locator('.draft-scroll-note')).toHaveCSS('animation-name','draft-scroll-float')
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await expect(page.locator('.draft-scroll-note')).toHaveCSS('animation-name','none')
 })
 
 test('English section labels are larger and titles smaller in both modes', async ({ page }) => {

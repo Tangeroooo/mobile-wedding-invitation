@@ -54,7 +54,8 @@
 .draft-cover-layer,.draft-intro-layer { position:absolute; inset:0; }.draft-intro-layer { z-index:4; transition:opacity .9s ease,transform .9s cubic-bezier(.2,.65,.2,1); }.draft-intro-layer.is-leaving { opacity:0; transform:scale(1.035); pointer-events:none; }
 .draft-intro-caption { position:absolute; left:0; right:0; bottom:70px; text-align:center; font-size:9px; letter-spacing:.22em; color:#fff; animation:draft-caption 1s 3.3s both; }
 .draft-studio .draft-skip { position:absolute; right:18px; bottom:24px; color:#fff; background:#25352966; border:1px solid #ffffff60; border-radius:30px; font-size:10px; }
-.draft-scroll-note { position:absolute; bottom:24px; left:0; right:0; text-align:center; letter-spacing:.2em; font-size:8px; color:#213f6d; }.draft-scroll-note span { display:block; font-size:20px; margin-top:6px; }
+.draft-scroll-note { position:absolute; bottom:24px; left:0; right:0; text-align:center; letter-spacing:.2em; font-size:8px; color:#213f6d; animation:draft-scroll-float 2.4s ease-in-out infinite; }.draft-scroll-note span { display:block; font-size:20px; margin-top:6px; }
+@keyframes draft-scroll-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
 .draft-write { animation:draft-write 1.25s cubic-bezier(.42,0,.24,1) both; transform-box:fill-box; }
 @keyframes draft-write { 0% { clip-path:inset(-10% 100% -10% -10%); } 99% { clip-path:inset(-10% -10% -10% -10%); } 100% { clip-path:none; } }
 @keyframes draft-caption { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
@@ -71,7 +72,7 @@
 .draft-date-text time>span { display:block; }
 .draft-date-text .draft-ceremony-hour { margin-top:6px; font-size:clamp(20px,5.5vw,24px); line-height:1.5; font-weight:750; color:var(--draft-pink); }
 .draft-ceremony-venue { display:block; margin-top:14px; font-size:clamp(13px,3.7vw,16px); line-height:1.6; font-weight:650; letter-spacing:-.035em; word-break:keep-all; overflow-wrap:anywhere; }
-.draft-ceremony-hall { display:block; margin-top:4px; }
+.draft-ceremony-hall { display:block; margin-top:4px; color:var(--draft-pink); }
 .draft-ceremony-venue>span:first-child { display:block; text-wrap:balance; }
 .draft-couple { display:flex; align-items:center; justify-content:center; gap:12px; letter-spacing:.02em; font-size:26px; font-weight:600; }
 .draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:8px; }
@@ -91,7 +92,7 @@
 .draft-accounts-section h2 { font-size:clamp(27px,7.3vw,32px); }
 .draft-accounts { margin-top:28px; }
 .draft-account-group { border:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); border-radius:6px; margin-top:12px; }
-.draft-studio .draft-account-trigger { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 12px; min-height:48px; border:0; font-size:12px; font-weight:700; color:var(--draft-blue); background:color-mix(in srgb,var(--draft-blue) 5%,var(--draft-paper)); }
+.draft-studio .draft-account-trigger { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 12px; min-height:48px; border:0; font-size:14px; font-weight:700; color:var(--draft-blue); background:color-mix(in srgb,var(--draft-blue) 5%,var(--draft-paper)); }
 .draft-studio .bride .draft-account-trigger { color:var(--draft-pink); background:color-mix(in srgb,var(--draft-pink) 5%,var(--draft-paper)); }
 .draft-account-toggle { font-size:18px; font-weight:400; transition:transform .45s cubic-bezier(.22,1,.36,1); }
 .draft-account-group.is-open .draft-account-toggle { transform:rotate(45deg); }
@@ -104,7 +105,7 @@
 .draft-studio .draft-account-copy { display:flex; width:100%; align-items:center; gap:6px; min-height:48px; padding:10px 0; border:0; border-radius:0; background:transparent; color:var(--draft-blue); white-space:nowrap; letter-spacing:0; font-weight:400; text-align:left; }
 .draft-account-copy strong { font-size:12px; font-weight:500; flex-shrink:0; }
 .draft-account-bank { font-size:11px; flex-shrink:0; }
-.draft-account-number { font-size:13px; font-variant-numeric:tabular-nums; user-select:text; }
+.draft-account-number { font-size:15px; font-weight:700; flex-shrink:0; font-variant-numeric:tabular-nums; user-select:text; }
 .draft-account-copy-icon { margin-left:auto; flex-shrink:0; width:18px; height:18px; opacity:.8; }
 .draft-studio .draft-account-trigger:focus-visible,.draft-studio .draft-account-copy:focus-visible { outline:2px solid var(--draft-pink); outline-offset:-2px; }
 .draft-accounts .draft-account-status { font-size:11px; margin:14px 0 0; }
@@ -161,5 +162,14 @@
 .draft-poster-section :is(p,h2,em,strong,small,address):empty { display:none; }
 .draft-transport { border-top:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); padding-top:20px; margin-top:24px; }
 @media (max-width:380px) { .draft-header { padding-inline:12px; }.draft-mode-switch { gap:7px; }.draft-mode-switch>span { display:none; }.draft-mode-switch .draft-primary { padding:11px 14px; } }
-@media (max-width:380px) { .draft-accounts-section { padding-inline:20px; }.draft-account-group ul { padding-inline:10px; }.draft-studio .draft-account-copy { gap:4px; }.draft-couple { font-size:24px; gap:8px; } }
+@media (max-width:380px) { .draft-accounts-section { padding-inline:12px; }.draft-account-group ul { padding-inline:6px; }.draft-studio .draft-account-copy { gap:3px; }.draft-couple { font-size:24px; gap:8px; } }
 @media (prefers-reduced-motion:reduce) { .draft-account-panel,.draft-account-toggle,.draft-account-group ul { transition:none; } }
+.draft-bgm { position:fixed; z-index:12; top:max(78px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); }
+.is-preview .draft-bgm { top:max(12px,env(safe-area-inset-top)); }
+.draft-studio .draft-bgm-toggle { display:flex; align-items:center; justify-content:center; gap:7px; width:102px; min-height:44px; padding:8px 10px; border:1px solid #ffffff80; border-radius:24px; background:#ffffff9e; color:#274D85; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 2px 12px #182b4514; font-size:10px; letter-spacing:.06em; }
+.draft-bgm-toggle small { display:block; margin-top:2px; font-size:8px; font-weight:400; letter-spacing:0; }
+.draft-bgm-message { position:absolute; top:calc(100% + 8px); right:0; width:min(250px,calc(100vw - 24px)); display:flex; align-items:start; padding:12px; border-radius:10px; background:#ffffffed; color:#274D85; box-shadow:0 3px 16px #182b451a; }
+.draft-bgm-message p { flex:1; margin:0; font-size:11px; line-height:1.7; }
+.draft-studio .draft-bgm-message button { border:0; padding:0 4px; background:transparent; font-size:20px; color:inherit; }
+.is-preview .draft-preview-controls { right:calc(max(12px,env(safe-area-inset-right)) + 112px); }
+@media (prefers-reduced-motion:reduce) { .draft-scroll-note { animation:none; } }
