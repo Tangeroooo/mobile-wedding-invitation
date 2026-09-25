@@ -70,12 +70,13 @@
 .draft-location-card .draft-location-hall { margin:10px 0 14px; font-size:15px; color:var(--draft-pink); }
 .draft-location-card address { font-style:normal; font-size:12px; line-height:1.8; }
 .draft-location-map { width:100%; margin-top:22px; border:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); background:#e8e9e4; }
-.draft-kakao-map { display:block; position:relative; }
-.draft-kakao-map>img { display:block; width:100%; height:auto; aspect-ratio:504/310; }
-.draft-kakao-marker { position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); display:grid; justify-items:center; pointer-events:none; }
-.draft-kakao-marker strong { font-size:11px; padding:5px 8px; background:#fff; color:#274D85; box-shadow:0 1px 5px #0003; white-space:nowrap; border-radius:3px; }
-.draft-kakao-marker>span { width:24px; height:26px; display:grid; place-items:center; color:#fff; background:#B94470; border:2px solid white; border-radius:50% 50% 50% 0; margin-top:4px; font-size:13px; }
-.draft-kakao-credit { display:flex; align-items:center; justify-content:space-between; padding:10px; background:#f9f9f9; color:#222 !important; font-size:10px; }
+.draft-naver-map { display:block; position:relative; }
+.draft-naver-map>img { display:block; width:100%; height:auto; aspect-ratio:1377/850; }
+.draft-naver-marker { position:absolute; left:64.15%; top:50%; transform:translate(-50%,-100%); display:grid; justify-items:center; pointer-events:none; }
+.draft-naver-marker strong { font-size:11px; padding:5px 8px; background:#fff; color:#274D85; box-shadow:0 1px 5px #0003; white-space:nowrap; border-radius:3px; }
+.draft-naver-marker>span { width:24px; height:26px; display:grid; place-items:center; color:#fff; background:#B94470; border:2px solid white; border-radius:50% 50% 50% 0; margin-top:4px; font-size:13px; }
+.draft-naver-credit { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; background:#f9f9f9; color:#222 !important; font-size:10px; }
+.draft-map-source { display:flex; align-items:center; gap:5px; }.draft-map-source img { border-radius:4px; }.draft-map-source>span { font-size:8px; color:#666; }
 .draft-map-error { padding:10px; background:#fffefa; color:#274D85; font-size:11px; line-height:1.6; }
 .draft-map-links { display:flex; gap:10px; margin-top:14px; }
 .draft-map-links a { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; min-height:46px; padding:12px 6px; border:1px solid var(--draft-blue); border-radius:4px; font-size:12px; }

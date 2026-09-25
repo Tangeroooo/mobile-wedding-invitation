@@ -1,5 +1,13 @@
 # Private wedding draft assets
 
+venue-naver-map.png is the unmodified PNG saved using Naver Map's official
+Download button on 2026-09-25, for the search “더링크호텔” at zoom 15.
+Source: https://map.naver.com/p/search/%EB%8D%94%EB%A7%81%ED%81%AC%ED%98%B8%ED%85%94
+Official export instructions: https://help.naver.com/service/5637/contents/18762?osType=PC
+Map content belongs to NAVER and its data providers; it is not an original project
+asset or a freely licensed map. The draft retains explicit NAVER attribution and
+links to the source. Refresh from the source if roads or venue information change.
+
 intro-*.webp and main-*.webp are optimized derivatives of the photographs supplied
 by the user in images/intro.jpg and images/main.jpg. Originals are excluded from Git.
 

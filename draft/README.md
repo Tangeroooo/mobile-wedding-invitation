@@ -34,9 +34,9 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   Year assumed to be the upcoming November; confirm before final publication.
 - Venue address: 서울특별시 구로구 경인로 610, verified against the official listing:
   https://www.marriott.com/en-us/hotels/seltx-the-link-seoul-a-tribute-portfolio-hotel/overview/
-  A lazy-loaded Kakao static map (official HTML export) and Naver/Kakao map links
+  A lazy-loaded Naver static map (official image download) and Naver/Kakao map links
   are included in the draft only. Buttons use the providers' official site/app icons.
-  The map image retains Kakao attribution and opens the interactive Kakao map on tap.
+  The unmodified map image has a visible Naver credit and opens Naver Map on tap.
   Map pin (37.5052943, 126.8838555) comes from the official listing's View Map link.
 - Event names, RSVP and account information are not yet supplied.
 - Every body section has a collapsible copy editor, including labels, headings,
