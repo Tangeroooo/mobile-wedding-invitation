@@ -11,12 +11,12 @@ export default function DraftAccounts({ copy }: { copy: DraftCopy }) {
     ] },
     { label: '신부측', side: 'bride', accounts: [[copy.brideAccountName, copy.brideAccountBank, copy.brideAccountNumber]] },
   ]
-  const copyAccount = async (name: string, account: string) => {
+  const copyAccount = async (name: string, bank: string, account: string) => {
     try {
-      await navigator.clipboard.writeText(account.replace(/[\s-]/g, ''))
-      setStatus(`${name}님의 계좌번호를 복사했어요.`)
+      await navigator.clipboard.writeText([bank.trim(), account.trim()].filter(Boolean).join(' '))
+      setStatus(`${name}님의 은행명과 계좌번호를 복사했어요.`)
     } catch {
-      setStatus('자동 복사가 지원되지 않아요. 계좌번호를 길게 눌러 복사해주세요.')
+      setStatus('자동 복사가 지원되지 않아요. 은행명과 계좌번호를 직접 선택해 복사해주세요.')
     }
   }
   return <div className="draft-accounts">
@@ -24,7 +24,7 @@ export default function DraftAccounts({ copy }: { copy: DraftCopy }) {
       <summary><span>{label} 계좌 안내</span><span className="draft-account-toggle" aria-hidden="true">＋</span></summary>
       <ul>{accounts.filter(([, , number]) => number.trim()).map(([name, bank, number], index) => <li key={index}>
         <div><strong>{name}</strong><span className="draft-account-bank">{bank}</span><span className="draft-account-number">{number}</span></div>
-        <button type="button" aria-label={`${name} 계좌번호 복사`} onClick={() => copyAccount(name, number)}>복사</button>
+        <button type="button" aria-label={`${name} 은행명과 계좌번호 복사`} onClick={() => copyAccount(name, bank, number)}>복사</button>
       </li>)}</ul>
     </details>)}
     <p className="draft-account-status" role="status" aria-live="polite">{status}</p>

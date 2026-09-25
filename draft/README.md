@@ -39,7 +39,7 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   The unmodified map image has a visible Naver credit and opens Naver Map on tap.
   Map pin (37.5052943, 126.8838555) comes from the official listing's View Map link.
 - Couple: 정주현 & 임하니. The accounts section has separate expandable groom/bride
-  groups and per-account copy buttons (digits only); a failed clipboard request gives
+  groups and per-account copy buttons (bank name + account number, preserving hyphens); a failed clipboard request gives
   manual-copy guidance. All account fields remain editable and are included in JSON
   exports. Publishing the supplied names/accounts to the public repository and draft
   page was explicitly approved by the user. RSVP details are still pending.

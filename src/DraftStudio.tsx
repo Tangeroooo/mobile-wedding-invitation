@@ -332,7 +332,7 @@ export default function DraftStudio() {
               <nav className="draft-map-links" aria-label="예식장 지도 앱">
                 <a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://ssl.pstatic.net/static/maps/assets/icons/apple-icon-180x180.png" width="22" height="22" alt="" loading="lazy" />네이버지도 ↗</a>
                 <a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://map.kakao.com/favicon.ico" width="22" height="22" alt="" loading="lazy" />카카오맵 ↗</a>
-              </nav><p className="draft-map-help">{copy.mapHelp}</p>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
+              </nav>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
             </section>
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}

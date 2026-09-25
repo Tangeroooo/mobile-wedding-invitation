@@ -19,7 +19,7 @@ test('calendar dates are valid and original placeholders migrate without losing 
   expect(() => parseConfig({ ...defaults, copy: { ...defaults.copy, ceremonyDate: '2026-02-30' } })).toThrow()
 })
 
-test('calendar and account editing persist, and accounts copy without hyphens', async ({ page, context }) => {
+test('calendar and account editing persist, and copying includes bank and account', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.setViewportSize({width:390, height:844})
   await page.goto('draft/')
@@ -36,9 +36,9 @@ test('calendar and account editing persist, and accounts copy without hyphens', 
   await expect(page.locator('.draft-date-text')).toContainText('오후 12시')
   await page.locator('.draft-account-group.groom summary').click()
   await expect(page.locator('.draft-account-group.groom li')).toHaveCount(3)
-  await page.getByRole('button', {name:'정주현 계좌번호 복사', exact:true}).click()
+  await page.getByRole('button', {name:'정주현 은행명과 계좌번호 복사', exact:true}).click()
   await expect(page.locator('.draft-account-status')).toContainText('복사했어요')
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(defaults.copy.groomAccountNumber.replaceAll('-', ''))
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`${defaults.copy.groomAccountBank} ${defaults.copy.groomAccountNumber}`)
   await page.locator('#edit-accounts summary').click()
   await page.getByLabel('마음 전하실 곳 · 신랑측 2 · 계좌번호').fill('')
   await page.reload()
@@ -85,6 +85,7 @@ test('draft contains ceremony details and a deferred venue map', async ({ page }
   await expect(page.locator('.draft-date-card')).toContainText('오후 7시 20분')
   await expect(page.locator('.draft-location-card')).toContainText('3층 베일리홀')
   await expect(page.locator('.draft-location-card address')).toHaveText('서울특별시 구로구 경인로 610')
+  await expect(page.getByText('지도가 보이지 않으면 위 버튼으로 열어주세요.', {exact:true})).toHaveCount(0)
   await expect(page.getByAltText('더링크호텔 주변 네이버지도')).toHaveAttribute('loading', 'lazy')
   await page.locator('.draft-location').scrollIntoViewIfNeeded()
   await expect(page.getByRole('region', {name:'더링크호텔 네이버지도 미리보기'})).toBeVisible()
@@ -93,6 +94,18 @@ test('draft contains ceremony details and a deferred venue map', async ({ page }
   await expect(page.locator('.draft-map-links img')).toHaveCount(2)
   await expect(page.getByRole('link', {name:'네이버지도 ↗'})).toHaveAttribute('href', /map\.naver\.com/)
   await expect(page.getByRole('link', {name:'카카오맵 ↗'})).toHaveAttribute('href', /map\.kakao\.com/)
+})
+
+test('map heart stays centered on the source hotel icon at every screen size', async ({ page }) => {
+  await page.goto('draft/')
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({width, height:844})
+    await page.locator('.draft-location-map').scrollIntoViewIfNeeded()
+    const map = (await page.locator('.draft-naver-map>img').boundingBox())!
+    const heart = (await page.locator('.draft-naver-heart').boundingBox())!
+    expect(Math.abs(heart.x + heart.width / 2 - (map.x + map.width * 883 / 1377))).toBeLessThan(1)
+    expect(Math.abs(heart.y + heart.height / 2 - (map.y + map.height * 425 / 850))).toBeLessThan(1)
+  }
 })
 
 test('legacy yellow migration, rotation handle, persistence and playback', async ({ page }) => {
