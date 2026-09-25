@@ -54,6 +54,15 @@ export function parseConfig(raw: unknown): DraftConfig {
     }
   }
   // Replace only the original placeholders, preserving custom copy and layout.
+  const previousCopy: Partial<DraftCopy> = {
+    greetingTitle:'우리의', greetingAccent:'가장 좋은 날.',
+    greetingMessage:'서로의 일상에 가장 다정한 사람이 되어\n이제, 함께하는 내일을 시작합니다.',
+    greetingInvite:'소중한 여러분을\n우리의 시작에 초대합니다.',
+    dateTitle:'함께할', dateAccent:'그날의 약속.', galleryTitle:'우리라는', galleryAccent:'장면들.',
+  }
+  for (const key of Object.keys(previousCopy) as CopyKey[]) {
+    if (copy[key] === previousCopy[key]) copy[key] = copyDefaults[key]
+  }
   if (copy.groom === '신랑 이름') copy.groom = copyDefaults.groom
   if (copy.bride === '신부 이름') copy.bride = copyDefaults.bride
   if (copy.venueName === '더링크호텔') copy.venueName = copyDefaults.venueName

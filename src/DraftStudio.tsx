@@ -369,7 +369,7 @@ export default function DraftStudio() {
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
   const renderCoverNames = (animate: boolean) => outlines && <div className="draft-cover-names" key={`names-${replay}`}>
     {([['groom', copy.coverGroomName], ['bride', copy.coverBrideName]] as const).map(([side, text]) => text.trim() && <div className={`draft-cover-name is-${side}`} key={side}>
-      <DraftLettering text={text} color={side === 'groom' ? '#FFF3D6' : '#203F76'} outlines={outlines} animate={animate} />
+      <DraftLettering text={text} color={side === 'groom' ? config.palette.pink : config.palette.blue} outlines={outlines} animate={animate} />
     </div>)}
   </div>
 
@@ -461,7 +461,7 @@ export default function DraftStudio() {
           <div className="draft-poster-body" id="draft-body">
             <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftTickerAsterisk /></b><span>{copy.tickerRight}</span><b><DraftTickerAsterisk /></b></div>
             <section className="draft-poster-section draft-greeting">
-              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>{copy.groomParents}</small><strong>{copy.groom}</strong></span><span><small>{copy.brideParents}</small><strong>{copy.bride}</strong></span></div>{editCopy('greeting')}
+              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>{copy.groomParents}</small><strong>{copy.groom}</strong></span><i aria-hidden="true">&</i><span><small>{copy.brideParents}</small><strong>{copy.bride}</strong></span></div>{editCopy('greeting')}
             </section>
             <section className="draft-poster-section draft-date">
               <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div>

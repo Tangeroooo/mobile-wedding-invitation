@@ -60,7 +60,7 @@
 .draft-cover-names { position:absolute; inset:0; pointer-events:none; }
 .draft-cover-name { position:absolute; top:78%; width:34%; transform:translate(-50%,-50%); }
 .draft-cover-name.is-groom { left:26%; }.draft-cover-name.is-bride { left:74%; }
-.draft-cover-name .draft-letter-svg { height:clamp(28px,7.7cqw,36px); max-height:none; }
+.draft-cover-name .draft-letter-svg { height:clamp(38px,10.5cqw,48px); max-height:none; }
 @keyframes draft-scroll-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
 .draft-write { animation:draft-write 1.25s cubic-bezier(.42,0,.24,1) both; transform-box:fill-box; }
 @keyframes draft-write { 0% { clip-path:inset(-10% 100% -10% -10%); } 99% { clip-path:inset(-10% -10% -10% -10%); } 100% { clip-path:none; } }
@@ -116,10 +116,11 @@
 .draft-countdown>span { font-size:8px; font-weight:650; letter-spacing:.1em; }
 .draft-countdown>strong { font-size:22px; line-height:1.2; letter-spacing:-.025em; white-space:nowrap; font-variant-numeric:tabular-nums; }
 @media (max-width:350px) { .draft-date-heading { gap:7px; }.draft-countdown { padding:10px 7px; }.draft-countdown>strong { font-size:19px; } }
-.draft-couple { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:16px; text-align:center; letter-spacing:.02em; font-size:26px; font-weight:600; }
+.draft-couple { position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:16px; text-align:center; letter-spacing:.02em; font-size:26px; font-weight:600; }
 .draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:10px; min-width:0; }
-.draft-couple small { font-size:clamp(10px,2.7vw,12px); line-height:1.7; font-weight:400; letter-spacing:-.045em; word-break:keep-all; }
+.draft-couple small { font-size:clamp(12px,3.35vw,14px); line-height:1.7; font-weight:400; letter-spacing:-.045em; word-break:keep-all; }
 .draft-couple strong { font-size:inherit; font-weight:600; line-height:1.5; }
+.draft-couple i { position:absolute; left:50%; bottom:0; transform:translateX(-50%); display:grid; place-items:center; height:1.5em; margin:0; color:var(--draft-pink); font:italic 1em/1.5 Georgia,serif; }
 .draft-calendar { width:100%; table-layout:fixed; border-collapse:collapse; text-align:center; font-variant-numeric:tabular-nums; }
 .draft-calendar caption { text-align:left; margin-bottom:22px; }
 .draft-calendar caption>span { font-size:11px; letter-spacing:.18em; }

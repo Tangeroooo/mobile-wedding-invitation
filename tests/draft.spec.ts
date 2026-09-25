@@ -10,6 +10,11 @@ test('published defaults preserve the approved Zen lettering layout', () => {
   expect(defaults.copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
   const oldCopy = Object.fromEntries(Object.entries(defaults.copy).filter(([key]) => !['coverGroomName','coverBrideName','groomParents','brideParents'].includes(key)))
   expect(parseConfig({...defaults,copy:oldCopy}).copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
+  expect(defaults.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들.'})
+  expect(defaults.copy.greetingMessage).toBe('아내를 사랑하는 남편\n남편을 위로하는 아내가 되어\n하나님이 기뻐하시는\n아름다운 가정을 이루겠습니다.')
+  expect(defaults.copy.greetingInvite).toBe('따뜻한 마음으로 오셔서\n저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.')
+  const migrated = parseConfig({...defaults,copy:{...defaults.copy,greetingTitle:'우리의',greetingAccent:'가장 좋은 날.',dateTitle:'함께할',dateAccent:'그날의 약속.',galleryTitle:'우리라는',galleryAccent:'장면들.',greetingMessage:'직접 편집한 문구'}})
+  expect(migrated.copy).toMatchObject({greetingTitle:'우리',greetingAccent:'결혼합니다.',dateTitle:'정중히',dateAccent:'초대합니다.',galleryTitle:'우리의',galleryAccent:'빛나는 순간들.',greetingMessage:'직접 편집한 문구'})
 })
 
 test('cover names start writing with the title and family names are centered', async ({ page }) => {
@@ -21,6 +26,9 @@ test('cover names start writing with the title and family names are centered', a
   await expect(names).toHaveCount(2)
   await expect(names.nth(0).getByRole('img')).toHaveAttribute('aria-label','Juhyeon')
   await expect(names.nth(1).getByRole('img')).toHaveAttribute('aria-label','Hani')
+  await expect(names.nth(0).locator('svg > g')).toHaveAttribute('fill',defaults.palette.pink)
+  await expect(names.nth(1).locator('svg > g')).toHaveAttribute('fill',defaults.palette.blue)
+  expect(await names.nth(0).locator('svg').evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThanOrEqual(38)
   const titleLine = page.locator('.draft-cover-layer .draft-letter-position .draft-write').first()
   for (const name of await names.all()) {
     await expect(name.locator('.draft-write')).toHaveCSS('animation-delay','0.3s')
@@ -34,6 +42,8 @@ test('cover names start writing with the title and family names are centered', a
     await page.setViewportSize({width,height:844})
     await page.locator('.draft-couple').scrollIntoViewIfNeeded()
     await expect(page.locator('.draft-couple')).toHaveCSS('rotate','0deg')
+    await expect(page.locator('.draft-couple i')).toHaveText('&')
+    expect(await page.locator('.draft-couple small').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(12)
     const columns = await page.locator('.draft-couple>span').evaluateAll(elements => elements.map(el => {
       const parent = el.querySelector('small')!.getBoundingClientRect(), name = el.querySelector('strong')!.getBoundingClientRect()
       return {centerDelta:Math.abs(parent.x + parent.width/2 - name.x - name.width/2),nameTop:name.top,overflows:el.scrollWidth>el.clientWidth}

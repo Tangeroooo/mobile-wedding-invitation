@@ -84,12 +84,16 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   drafts use a text/calendar Blob. No download attribute forces a download; the
   device/browser decides whether to open its calendar handler or save the file.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
-- Small Black Rush names Juhyeon and Hani sit below the people in the main cover.
+- Black Rush names Juhyeon and Hani sit below the people in the main cover at 78%
+  height. Their enlarged lettering follows the edited palette: groom pink, bride blue.
   They mount with the main title and share its first-line writing delay/duration,
-  replay with it and respect reduced motion. Ivory over the blue suit and navy over
-  the pink dress keep the two names legible without text shadows. Cover copy fields
+  replay with it and respect reduced motion, without text shadows. Cover copy fields
   edit the English names. Greeting copy also edits each parents/relationship line;
-  two equal-width centered columns put parents above the larger Korean names.
+  two equal-width centered columns put enlarged parents above the larger Korean names,
+  with a pink ampersand centered between the names. The user-supplied greeting is
+  split into the promise and blessing-request paragraphs, preserving line breaks.
+  Section headings are 우리 / 결혼합니다., 정중히 / 초대합니다., and the suggested
+  우리의 / 빛나는 순간들. Exact previous defaults migrate; custom local edits remain intact.
 - Preview photos use 100lvh (at least 100dvh) with edge-to-edge cover cropping and no
   safe-area padding on the photo itself. Separate 100dvh layers anchor lettering and
   controls to the currently visible viewport. The root canvas also uses the active
