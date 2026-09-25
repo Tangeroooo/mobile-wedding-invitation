@@ -67,7 +67,7 @@ export function parseConfig(raw: unknown): DraftConfig {
   if (copy.bride === '신부 이름') copy.bride = copyDefaults.bride
   if (copy.venueName === '더링크호텔') copy.venueName = copyDefaults.venueName
   if (copy.rsvpMessage === '참석 여부와 마음 전하실 곳은\n정보가 정해지면 연결할 예정입니다.') copy.rsvpMessage = copyDefaults.rsvpMessage
-  if (!parseCeremonyDate(copy.ceremonyDate) || !validCeremonyTime(copy.ceremonyTime)) throw new Error('예식 날짜와 시간을 확인해주세요.')
+  if (!parseCeremonyDate(copy.ceremonyDate) || !validCeremonyTime(copy.ceremonyTime) || !validCeremonyTime(copy.ceremonyEndTime)) throw new Error('예식 날짜와 시간을 확인해주세요.')
   return {
     version: 1,
     intro: { ...item.intro, text: normalizeText(item.intro.text), rotation: item.intro.rotation ?? 0 },

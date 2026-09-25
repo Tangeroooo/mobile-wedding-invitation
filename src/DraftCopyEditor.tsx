@@ -10,13 +10,13 @@ export default function DraftCopyEditor({ group, copy, onChange, saveState }: {
     <summary>{title} 문구 편집 ✎</summary>
     <div className="draft-copy-fields">
       <p>입력하면 바로 반영돼요. 빈칸으로 두면 해당 문구를 숨깁니다.</p>
-      {fields.map(([key, label]) => <label key={key}>{label}{key === 'ceremonyDate' || key === 'ceremonyTime'
+      {fields.map(([key, label]) => <label key={key}>{label}{key === 'ceremonyDate' || key === 'ceremonyTime' || key === 'ceremonyEndTime'
         ? <input aria-label={`${title} · ${label}`} type={key === 'ceremonyDate' ? 'date' : 'time'} value={copy[key]} required onInput={event => {
           const value = event.currentTarget.value
           if (key === 'ceremonyDate' ? parseCeremonyDate(value) : validCeremonyTime(value)) onChange(key, value)
         }} />
         : <textarea aria-label={`${title} · ${label}`} value={copy[key]} rows={copy[key].includes('\n') ? 3 : 2} maxLength={1000} onChange={event => onChange(key, event.target.value)} />}</label>)}
-      {group === 'date' && <p>날짜를 바꾸면 달력·강조 표시·요일이 함께 바뀝니다. 시간은 24시간제로 입력해주세요.</p>}
+      {group === 'date' && <p>날짜를 바꾸면 달력·강조 표시·요일이 함께 바뀝니다. 시간은 24시간제로 입력해주세요. 캘린더 종료 시간은 같은 날의 시작 시간 이후로 입력해주세요.</p>}
       {group === 'accounts' && <p>계좌번호를 비우면 해당 계좌를 숨깁니다. 설정 내보내기 파일에도 계좌정보가 포함돼요.</p>}
       {group === 'location' && <p>예식장·홀은 날짜 카드에도 반영됩니다. 지도 핀은 더링크호텔 위치로 고정되어 있어요. 다른 장소로 바꿀 때는 핀도 별도로 변경해야 합니다.</p>}
       <p role="status">{saveState}</p>

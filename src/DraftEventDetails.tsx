@@ -7,7 +7,7 @@ import { createWeddingCalendar } from './draftCalendarFile'
 
 export function DraftCalendarAdd({ copy }: { copy: DraftCopy }) {
   const calendar = useMemo(() => createWeddingCalendar(copy), [copy])
-  const isDefault = (['groom', 'bride', 'ceremonyDate', 'ceremonyTime', 'venueName', 'venueHall', 'venueAddress'] as const).every(key => copy[key] === copyDefaults[key])
+  const isDefault = (['groom', 'bride', 'ceremonyDate', 'ceremonyTime', 'ceremonyEndTime', 'venueName', 'venueHall', 'venueAddress'] as const).every(key => copy[key] === copyDefaults[key])
   const [editedUrl, setEditedUrl] = useState<string | null>(null)
   useEffect(() => {
     if (isDefault || !calendar) return
@@ -15,8 +15,9 @@ export function DraftCalendarAdd({ copy }: { copy: DraftCopy }) {
     setEditedUrl(url)
     return () => URL.revokeObjectURL(url)
   }, [calendar, isDefault])
-  if (!calendar) return null
-  const href = isDefault ? `${import.meta.env.BASE_URL}calendar/wedding.ics` : editedUrl
+  if (!calendar) return <p className="draft-calendar-error" role="status">캘린더 종료 시간을 시작 시간 이후로 설정해주세요.</p>
+  const revision = `${copy.ceremonyDate}-${copy.ceremonyTime}-${copy.ceremonyEndTime}`.replace(/[^\d-]/g, '')
+  const href = isDefault ? `${import.meta.env.BASE_URL}calendar/wedding.ics?v=${revision}` : editedUrl
   if (!href) return null
   return <a className="draft-calendar-add" href={href} type="text/calendar" aria-label="결혼식 일정 캘린더에 추가">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4m10-4v4M3 10h18m-9 3v5m-2.5-2.5h5" /></svg>

@@ -16,17 +16,28 @@ function foldLine(line: string) {
   return result
 }
 
-export function createWeddingCalendar(copy: DraftCopy, now = new Date()) {
-  if (!parseCeremonyDate(copy.ceremonyDate) || !validCeremonyTime(copy.ceremonyTime)) return null
+export function weddingCalendarEvent(copy: DraftCopy) {
+  if (!parseCeremonyDate(copy.ceremonyDate) || !validCeremonyTime(copy.ceremonyTime) || !validCeremonyTime(copy.ceremonyEndTime)) return null
   const start = new Date(`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`)
-  // An end time was not supplied: do not invent the ceremony's duration.
+  const end = new Date(`${copy.ceremonyDate}T${copy.ceremonyEndTime}:00+09:00`)
+  if (end <= start) return null
+  return {
+    start, end, title: `${copy.groom} ♥ ${copy.bride} 결혼식`,
+    location: [copy.venueName, copy.venueHall, copy.venueAddress].filter(Boolean).join(' · '),
+    description: '소중한 여러분을 우리의 결혼식에 초대합니다.',
+  }
+}
+
+export function createWeddingCalendar(copy: DraftCopy, now = new Date()) {
+  const event = weddingCalendarEvent(copy)
+  if (!event) return null
   return [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Our Wedding//Invitation//KO', 'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT', 'UID:our-wedding@tangeroooo.github.io', `DTSTAMP:${stamp(now)}`,
-    `DTSTART:${stamp(start)}`,
-    `SUMMARY:${escapeText(`${copy.groom} ♥ ${copy.bride} 결혼식`)}`,
-    `LOCATION:${escapeText([copy.venueName, copy.venueHall, copy.venueAddress].filter(Boolean).join(' · '))}`,
-    `DESCRIPTION:${escapeText('소중한 여러분을 우리의 결혼식에 초대합니다.')}`,
+    `DTSTART:${stamp(event.start)}`, `DTEND:${stamp(event.end)}`,
+    `SUMMARY:${escapeText(event.title)}`,
+    `LOCATION:${escapeText(event.location)}`,
+    `DESCRIPTION:${escapeText(event.description)}`,
     'END:VEVENT', 'END:VCALENDAR', '',
   ].map(foldLine).join('\r\n')
 }

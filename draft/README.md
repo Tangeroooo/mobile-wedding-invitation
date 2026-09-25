@@ -78,11 +78,18 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   headings do not trigger it. It stays visible over accounts and maps without
   intercepting taps. Account copy icons align immediately after the number column.
 - The small button below the calendar opens an ICS event using the edited
-  names, date/time and venue, with Korean time converted to UTC. No end time or
-  reminder is invented; saving the event is left to the visitor's calendar app.
+  names, date/time and venue, with Korean time converted to UTC. The approved
+  19:20–21:00 range includes DTEND; the end time is editable in the date editor.
+  An invalid or non-increasing same-day range shows a warning, not a broken file.
+  No reminder is invented; saving the event is left to the visitor's calendar app.
   Shared defaults are emitted as calendar/wedding.ics at build time. Edited local
   drafts use a text/calendar Blob. No download attribute forces a download; the
   device/browser decides whether to open its calendar handler or save the file.
+  No calendar/account identifier, subscription or meeting-response request is set.
+  Account/calendar selection belongs to the receiving app and cannot be forced
+  from a static website. There is no app-service picker. The iPhone flow was confirmed
+  by the user: event preview → Add to Calendar → destination calendar selection.
+  The static ICS link includes the date/time revision to avoid an older cached range.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - Black Rush names Juhyeon and Hani sit below the people in the main cover at 78%
   height. Their enlarged lettering follows the edited palette: groom pink, bride blue.
