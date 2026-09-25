@@ -123,6 +123,24 @@ test('compact account rows, animated accessible disclosure and single-line venue
   await expect(panel).toHaveCSS('transition-duration', '0s')
 })
 
+test('English section labels are larger and titles smaller in both modes', async ({ page }) => {
+  await page.setViewportSize({width:390,height:844})
+  await page.goto('draft/')
+  const verify = async () => {
+    for (const label of await page.locator('.draft-section-index>span').all()) await expect(label).toHaveCSS('font-size','12px')
+    for (const heading of await page.locator('.draft-poster-section h2').all()) {
+      const size = await heading.evaluate(el => parseFloat(getComputedStyle(el).fontSize))
+      expect(size).toBeGreaterThanOrEqual(27)
+      expect(size).toBeLessThanOrEqual(36)
+      const accent = heading.locator('em')
+      if (await accent.count()) expect(await accent.evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBe(size)
+    }
+  }
+  await verify()
+  await page.getByRole('button', {name:'미리보기 ▶'}).click()
+  await verify()
+})
+
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
   await page.goto('draft/')
   const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')
