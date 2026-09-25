@@ -10,11 +10,14 @@ import DraftAccounts from './DraftAccounts'
 import DraftBgm from './DraftBgm'
 import { DraftCalendarAdd, DraftCountdown, DraftEventFloat } from './DraftEventDetails'
 import { draftMusicSrc } from './draftMusic'
+import { invitationCopy } from './invitationVariants'
+import type { InvitationVariant } from './invitationVariants'
 import type { CopyKey } from './draftCopy'
 import type { Outlines } from './DraftLettering'
 import { clamp, defaults, isSupportedText, normalizeText, parseConfig, storageKey } from './draftModel'
 import type { DraftConfig, Scene } from './draftModel'
 import './DraftStudio.css'
+import './PublishedInvitation.css'
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
@@ -55,10 +58,12 @@ function readSaved() {
   } catch { return defaults }
 }
 
-export default function DraftStudio() {
-  const [config, setConfig] = useState<DraftConfig>(readSaved)
+export default function DraftStudio({ variant }: { variant?: InvitationVariant }) {
+  const published = variant !== undefined
+  const musicEnabled = !published || variant === 'main'
+  const [config, setConfig] = useState<DraftConfig>(() => variant ? { ...defaults, copy: invitationCopy(variant) } : readSaved())
   const [scene, setScene] = useState<Scene>('intro')
-  const [preview, setPreview] = useState(isPreviewUrl)
+  const [preview, setPreview] = useState(() => published || isPreviewUrl())
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'main'>('intro')
   const [mainReady, setMainReady] = useState(false)
   const [mainLetteringReady, setMainLetteringReady] = useState(false)
@@ -91,7 +96,7 @@ export default function DraftStudio() {
   const coverScrollLocked = preview && (phase !== 'main' || (!mainLetteringReady && !fontError))
   const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
-  useEffect(() => { document.title = preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [preview])
+  useEffect(() => { document.title = published ? `${copy.groom} ♥ ${copy.bride} 결혼합니다` : preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [published, copy.groom, copy.bride, preview])
 
   useLayoutEffect(() => {
     if (!preview) return
@@ -165,12 +170,13 @@ export default function DraftStudio() {
     return () => window.removeEventListener('pagehide', flush)
   }, [persist, preview])
   useEffect(() => {
+    if (published) return
     const syncMode = () => { setConfig(readSaved()); setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setMainLetteringReady(false); setInline(false) }
     window.addEventListener('popstate', syncMode)
     return () => window.removeEventListener('popstate', syncMode)
-  }, [])
+  }, [published])
   useEffect(() => {
-    if (!preview || isPublishedPreview()) return
+    if (published || !preview || isPublishedPreview()) return
     const syncCopy = (event: StorageEvent) => {
       if (event.key === storageKey && event.newValue) {
         try { setConfig(parseConfig(JSON.parse(event.newValue))) } catch { /* Keep the last valid preview. */ }
@@ -178,7 +184,7 @@ export default function DraftStudio() {
     }
     window.addEventListener('storage', syncCopy)
     return () => window.removeEventListener('storage', syncCopy)
-  }, [preview])
+  }, [preview, published])
 
   useEffect(() => {
     if (!preview || (!outlines && !fontError) || !mainReady || phase !== 'intro') return
@@ -407,7 +413,7 @@ export default function DraftStudio() {
     </div>)}
   </div>
 
-  return <main className={`draft-studio ${preview ? 'is-preview' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
+  return <main className={`draft-studio ${preview ? 'is-preview' : ''} ${published ? 'is-published' : ''} ${variant === 'a' || variant === 'b' ? 'is-large-type' : ''}`} data-invitation-variant={variant} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
     {!preview && <>
       <header className="draft-header">
         <a href={`${import.meta.env.BASE_URL}design-lab/`}>← DESIGN LAB</a>
@@ -452,7 +458,7 @@ export default function DraftStudio() {
         {!preview && <div className="draft-canvas-caption"><span>{scene === 'intro' ? '01 / THE PRELUDE' : '02 / THE COVER'}</span><span>드래그 · 더블클릭 · 방향키</span></div>}
         <article className="draft-invitation">
           <div className="draft-bgm-dock">
-            <DraftBgm src={draftMusicSrc} autoStart={preview} />
+            {musicEnabled && <DraftBgm src={draftMusicSrc} autoStart={preview} />}
             <DraftEventFloat dateValue={copy.ceremonyDate} time={copy.ceremonyTime} venue={copy.venueName} hall={copy.venueHall} quietRegion={dateCard} enabled={!preview || (phase === 'main' && (mainLetteringReady || fontError))} />
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
@@ -500,7 +506,7 @@ export default function DraftStudio() {
             <section className="draft-poster-section draft-date">
               <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div>
               <div className="draft-date-heading"><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><DraftCountdown dateValue={copy.ceremonyDate} /></div>
-              <div ref={dateCard} className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div><DraftCalendarAdd copy={copy} />{editCopy('date')}
+              <div ref={dateCard} className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div><DraftCalendarAdd copy={copy} variant={variant} />{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
@@ -524,14 +530,14 @@ export default function DraftStudio() {
               </nav>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
             </section>
             <section className="draft-poster-section draft-accounts-section">
-              <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}
+              <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} familyFirst={variant === 'a' || variant === 'b'} />{editCopy('accounts')}
             </section>
             <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}
-              <details className="draft-music-credit">
+              {musicEnabled && <details className="draft-music-credit">
                 <summary>음악 출처</summary>
                 <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a><br />
                   Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a> · 원본 음원, 편집 없음</p>
-              </details>
+              </details>}
             </footer>
           </div>
         </article>
@@ -539,7 +545,7 @@ export default function DraftStudio() {
       </div>
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
-    {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
+    {preview && !published && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
     <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); changePhoto(event.key === 'ArrowRight' ? 1 : -1) } }}>
       <div className="draft-lightbox-stage">
         <div ref={photoRail} className="draft-lightbox-rail" aria-label="좌우로 넘기는 사진" onScroll={event => {

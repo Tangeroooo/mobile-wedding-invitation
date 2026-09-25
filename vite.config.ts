@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
 import { createWeddingCalendar } from './src/draftCalendarFile.ts'
 import { copyDefaults } from './src/draftCopy.ts'
+import { invitationCopy } from './src/invitationVariants.ts'
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 
@@ -13,12 +14,17 @@ export default defineConfig({
     name: 'wedding-calendar-file',
     generateBundle() {
       this.emitFile({ type:'asset', fileName:'calendar/wedding.ics', source:createWeddingCalendar(copyDefaults)! })
+      for (const variant of ['main', 'a', 'b'] as const) {
+        this.emitFile({ type:'asset', fileName:`calendar/wedding-${variant}.ics`, source:createWeddingCalendar(invitationCopy(variant))! })
+      }
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.split('?')[0] !== '/mobile-wedding-invitation/calendar/wedding.ics') return next()
+        const path = req.url?.split('?')[0]
+        const variant = (['main', 'a', 'b'] as const).find(value => path === `/mobile-wedding-invitation/calendar/wedding-${value}.ics`)
+        if (!variant && path !== '/mobile-wedding-invitation/calendar/wedding.ics') return next()
         res.setHeader('Content-Type', 'text/calendar; charset=utf-8')
-        res.end(createWeddingCalendar(copyDefaults))
+        res.end(createWeddingCalendar(variant ? invitationCopy(variant) : copyDefaults))
       })
     },
   }],
