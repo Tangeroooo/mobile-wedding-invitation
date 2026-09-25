@@ -338,7 +338,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   expect(await page.locator('.draft-gallery').evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(844)
   await expect(board.locator('button')).toHaveCount(10)
   expect(await board.locator('button').evaluateAll(elements => elements.map(el => el.getAttribute('aria-label')))).toEqual(
-    [1,10,5,7,18,9,20,21,23,24].map(number => `${number}번 사진 보기`),
+    [1,17,6,7,18,9,20,21,23,24].map(number => `${number}번 사진 보기`),
   )
   for (let slot = 1; slot <= 10; slot++) {
     await expect(board.locator(`.pin-slot-${String(slot).padStart(2,'0')}`)).toHaveCount(1)
@@ -355,7 +355,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   expect(sizes[0]).toBeGreaterThan(sizes[1])
   await expect(board).toHaveCSS('background-image','none')
   await expect(board).toHaveCSS('background-color','rgba(0, 0, 0, 0)')
-  await board.getByRole('button', {name:'10번 사진 보기',exact:true}).click()
+  await board.getByRole('button', {name:'17번 사진 보기',exact:true}).click()
   await expect(page.locator('.draft-lightbox')).toBeVisible()
   const viewer = page.locator('.draft-lightbox')
   await expect(viewer.locator('.draft-lightbox-slide')).toHaveCount(25)
@@ -373,15 +373,15 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
     expect(Math.abs(centers.button - centers.photo)).toBeLessThan(1)
   }
   await viewer.getByRole('button', {name:'다음 사진'}).click()
-  await expect(currentImage).toHaveAttribute('alt','11번째 웨딩 사진')
+  await expect(currentImage).toHaveAttribute('alt','18번째 웨딩 사진')
   await viewer.getByRole('button', {name:'이전 사진'}).click()
-  await expect(currentImage).toHaveAttribute('alt','10번째 웨딩 사진')
+  await expect(currentImage).toHaveAttribute('alt','17번째 웨딩 사진')
   const rail = viewer.locator('.draft-lightbox-rail')
   await rail.hover()
   await page.mouse.wheel(-500,0)
-  await expect(currentImage).toHaveAttribute('alt','9번째 웨딩 사진')
+  await expect(currentImage).toHaveAttribute('alt','16번째 웨딩 사진')
   await page.mouse.wheel(500,0)
-  await expect(currentImage).toHaveAttribute('alt','10번째 웨딩 사진')
+  await expect(currentImage).toHaveAttribute('alt','17번째 웨딩 사진')
   await page.getByRole('button', {name:'사진 보기 닫기'}).click()
   await board.getByRole('button', {name:'1번 사진 보기',exact:true}).click()
   await viewer.getByRole('button', {name:'이전 사진'}).click()

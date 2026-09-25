@@ -35,7 +35,7 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   ignoring (but never deleting) local edits. Returning to edit restores local edits.
   Later local changes still require exporting and publishing to update this snapshot.
 - Gallery is a compact ten-photo memory board curated from images numbered
-  1, 10, 5, 7, 18, 9, 20, 21, 23 and 24 (floral, pink window, bubbles, groom portrait,
+  1, 17, 6, 7, 18, 9, 20, 21, 23 and 24 (floral, veil couple, garden, groom portrait,
   wood, solo pink, brick arch, black outfits, cake and night garden),
   with unequal sizes and overlapping tilted white frames. The swipe viewer includes
   all 25 user-supplied numbered photos in numeric order. Original JPEGs stay local;
