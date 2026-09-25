@@ -551,7 +551,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
     {preview && !published && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
     <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); changePhoto(event.key === 'ArrowRight' ? 1 : -1) } }}>
-      <div className="draft-lightbox-stage">
+      <div className={`draft-lightbox-stage${lightbox !== null && galleryOrder[lightbox - 1] === '21-2' ? ' is-landscape' : ''}`}>
         <div ref={photoRail} className="draft-lightbox-rail" aria-label="좌우로 넘기는 사진" onScroll={event => {
           const rail = event.currentTarget
           if (dialog.current?.open && rail.children.length > 1) {
@@ -564,7 +564,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
             <img src={galleryPhoto(id, Math.abs(index + 1 - lightbox) <= 1 ? 1200 : 320)} width="1200" height="1800" loading={Math.abs(index + 1 - lightbox) <= 1 ? 'eager' : 'lazy'} decoding="async" draggable={false} alt={`${id}번째 웨딩 사진`} />
           </div>)}
         </div>
-        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
         {(['previous', 'next'] as const).filter(direction => lightbox !== null && (direction === 'previous' ? lightbox > 1 : lightbox < galleryPhotos.length)).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => changePhoto(direction === 'previous' ? -1 : 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
       </div>
     </dialog>

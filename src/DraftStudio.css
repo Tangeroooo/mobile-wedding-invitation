@@ -244,11 +244,22 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
 .draft-studio .draft-lightbox-arrow { top:50%; translate:0 -50%; }
 .draft-lightbox-arrow.is-previous { left:8px; }
 .draft-lightbox-arrow.is-next { right:8px; }
-.draft-studio .draft-lightbox-close { right:5px; top:5px; }
+.draft-studio .draft-lightbox-close { right:6px; top:6px; }
 /* Touch browsers retain :hover after a tap; keep that state just as transparent. */
 .draft-studio .draft-lightbox button,.draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff06; box-shadow:inset 0 0 0 1px #ffffff0d; }
 .draft-studio .draft-lightbox button:focus-visible { outline:1px solid #ffffff80; outline-offset:2px; }
 @media (hover:hover) and (pointer:fine) { .draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff12; } }
+/* Keep a 44px touch target, but make the visible circle 32px with a 12px
+   image-edge inset. The focus ring stays inside the photograph as well. */
+.draft-studio .draft-lightbox .draft-lightbox-close,
+.draft-studio .draft-lightbox .draft-lightbox-close:hover:not(:disabled) { padding:0; background:transparent; box-shadow:none; }
+.draft-lightbox-close::before { content:''; position:absolute; inset:6px; border-radius:50%; background:#ffffff06; box-shadow:inset 0 0 0 1px #ffffff0d; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); pointer-events:none; }
+.draft-lightbox .draft-lightbox-close svg { position:relative; width:16px; height:16px; }
+.draft-studio .draft-lightbox .draft-lightbox-close:focus-visible { outline:none; }
+.draft-lightbox-close:focus-visible::before { outline:1px solid #ffffff80; outline-offset:2px; }
+@media (hover:hover) and (pointer:fine) { .draft-lightbox-close:hover::before { background:#ffffff12; } }
+/* 21-2 is 3:2, contained in a 2:3 rail: its top letterbox is 5/18 of the rail. */
+.draft-lightbox-stage.is-landscape .draft-lightbox-close { top:calc(27.777778% + 6px); }
 @media (max-width:1050px) { .draft-workspace { padding-inline:28px; gap:30px; grid-template-columns:290px minmax(0,1fr); }.draft-introduction { padding-inline:28px; }.draft-introduction>p { max-width:230px; } }
 @media (max-width:720px) { .draft-header { height:66px; padding:0 18px; }.draft-header>span { display:none; }.draft-introduction { display:block; padding:32px 22px 24px; }.draft-introduction>p { max-width:none; margin-top:18px; font-size:11px; }.draft-workspace { display:flex; flex-direction:column; padding:0 16px 30px; gap:26px; }.draft-inspector { width:100%; max-height:none; position:static; padding:18px; }.draft-preview-column { max-width:100%; }.draft-inspector { order:2; }.draft-preview-column { order:1; }.draft-invitation { max-width:430px; }.draft-stage { height:calc(100svh - 100px); min-height:520px; max-height:820px; }.draft-inspector::before { content:'편집 도구 · 위쪽 사진에 바로 반영됩니다'; display:block; font-size:11px; margin-bottom:22px; color:#778270; }.draft-preview-column .draft-bottom-note { padding:0 12px; }.is-preview .draft-stage { max-height:none; min-height:100svh; }.is-preview .draft-invitation { max-width:480px; }.draft-preview-controls { right:10px; } }
 @media (prefers-reduced-motion:reduce) { .draft-write,.draft-intro-caption { animation:none; }.draft-intro-layer { transition:opacity .15s; } }

@@ -57,3 +57,38 @@ test('gallery end buttons follow the clicked photo relative order', async ({page
   await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','7번째 웨딩 사진')
   await expect(page.getByRole('button',{name:'이전 사진',exact:true})).toHaveCount(0)
 })
+
+test('gallery close circle is small and stays inside portrait and landscape photos', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await page.setViewportSize({width:375,height:812})
+  await page.goto('draft/')
+  await page.getByRole('button',{name:'21번 사진 보기',exact:true}).click()
+  const checkCircle = async () => {
+    const metrics = await page.locator('.draft-lightbox-stage').evaluate(stage => {
+      const image = stage.querySelector<HTMLImageElement>('.draft-lightbox-slide[aria-hidden="false"] img')!
+      const close = stage.querySelector<HTMLButtonElement>('.draft-lightbox-close')!
+      const imageBox = image.getBoundingClientRect(), button = close.getBoundingClientRect()
+      const circle = getComputedStyle(close,'::before')
+      const scale = Math.min(imageBox.width / image.naturalWidth, imageBox.height / image.naturalHeight)
+      const imageTop = imageBox.top + (imageBox.height - image.naturalHeight * scale) / 2
+      const imageRight = imageBox.right - (imageBox.width - image.naturalWidth * scale) / 2
+      return { circleWidth:button.width - parseFloat(circle.left) - parseFloat(circle.right),
+        top:button.top + parseFloat(circle.top) - imageTop,
+        right:imageRight - button.right + parseFloat(circle.right), target:button.width }
+    })
+    expect(metrics.circleWidth).toBe(32)
+    expect(metrics.target).toBe(44)
+    expect(metrics.top).toBeCloseTo(12,0)
+    expect(metrics.right).toBeCloseTo(12,0)
+  }
+  await expect.poll(()=>page.locator('.draft-lightbox-slide[aria-hidden="false"] img').evaluate((img: HTMLImageElement)=>img.naturalWidth)).toBeGreaterThan(0)
+  await checkCircle()
+  for (const id of ['21-1','21-2']) {
+    await page.getByRole('button',{name:'다음 사진',exact:true}).click()
+    await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt',`${id}번째 웨딩 사진`)
+  }
+  await expect.poll(()=>page.locator('.draft-lightbox-slide[aria-hidden="false"] img').evaluate((img: HTMLImageElement)=>img.naturalWidth)).toBeGreaterThan(0)
+  await checkCircle()
+  await page.getByRole('button',{name:'사진 보기 닫기'}).click()
+  await expect(page.getByRole('dialog',{name:'갤러리 사진 보기'})).not.toBeVisible()
+})
