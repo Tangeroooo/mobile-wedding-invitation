@@ -452,7 +452,7 @@ export default function DraftStudio() {
         {!preview && <div className="draft-canvas-caption"><span>{scene === 'intro' ? '01 / THE PRELUDE' : '02 / THE COVER'}</span><span>드래그 · 더블클릭 · 방향키</span></div>}
         <article className="draft-invitation">
           <div className="draft-bgm-dock">
-            <DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} />
+            <DraftBgm src={draftMusicSrc} autoStart={preview} />
             <DraftEventFloat dateValue={copy.ceremonyDate} time={copy.ceremonyTime} venue={copy.venueName} hall={copy.venueHall} quietRegion={dateCard} enabled={!preview || (phase === 'main' && (mainLetteringReady || fontError))} />
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
@@ -526,7 +526,13 @@ export default function DraftStudio() {
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}
             </section>
-            <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}</footer>
+            <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}
+              <details className="draft-music-credit">
+                <summary>음악 출처</summary>
+                <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a><br />
+                  Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a> · 원본 음원, 편집 없음</p>
+              </details>
+            </footer>
           </div>
         </article>
         {!preview && <p className="draft-bottom-note">수정 사항은 이 브라우저에 자동 저장돼요. 미리보기 주소를 다른 기기에서 열면 기본 초안이 표시됩니다.<br />다른 기기로 옮길 때는 설정 내보내기·불러오기를 이용해주세요.</p>}

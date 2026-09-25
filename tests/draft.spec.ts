@@ -391,6 +391,17 @@ test('compact account rows, animated accessible disclosure and readable full ven
 })
 
 test('pink hall, floating caption and icon-only glass BGM switch', async ({ page }) => {
+  await page.addInitScript(() => {
+    const play = HTMLMediaElement.prototype.play
+    let firstAttempt = true
+    HTMLMediaElement.prototype.play = function () {
+      if (firstAttempt) {
+        firstAttempt = false
+        return Promise.reject(new DOMException('Autoplay blocked', 'NotAllowedError'))
+      }
+      return play.call(this)
+    }
+  })
   await page.setViewportSize({width:320,height:700})
   await page.goto('draft/?mode=preview')
   const toggle = page.getByRole('switch', {name:'배경음악',exact:true})
@@ -404,7 +415,10 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
   await expect(toggle).toHaveAttribute('aria-checked','true')
   await toggle.press('Space')
   await expect(toggle).toHaveAttribute('aria-checked','false')
-  await expect(page.locator('audio')).toHaveCount(0)
+  await expect(page.locator('audio')).toHaveCount(1)
+  await expect(page.locator('audio')).toHaveAttribute('src', /audio\/carefree-kevin-macleod\.mp3$/)
+  await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+  await expect(page.locator('audio')).toHaveJSProperty('loop', true)
   await expect(page.locator('.draft-invitation .draft-bgm')).toHaveCount(1)
   await expect(page.locator('.draft-bgm-dock')).toHaveCSS('position','sticky')
   await expect(page.locator('.draft-bgm-glass')).toHaveCSS('height','28px')
@@ -422,6 +436,8 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
 test('BGM stays inside the invitation on desktop and while scrolling', async ({ page }) => {
   await page.setViewportSize({width:1440,height:1000})
   await page.goto('draft/')
+  await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+  await expect(page.getByRole('switch', {name:'배경음악',exact:true})).toHaveAttribute('aria-checked','false')
   const inside = async () => {
     const card = (await page.locator('.draft-invitation').boundingBox())!
     const bgm = (await page.locator('.draft-bgm-glass').boundingBox())!
@@ -589,7 +605,7 @@ test('footer reveals every line together at scroll-end on wide and narrow screen
     await page.getByRole('button',{name:'건너뛰기'}).click()
     await expect(page.locator('#draft-body')).not.toHaveAttribute('inert','')
     await page.evaluate(() => window.scrollTo(0,document.documentElement.scrollHeight))
-    const lines = page.locator('.draft-poster-footer > :not(.draft-copy-editor)')
+    const lines = page.locator('.draft-poster-footer > span, .draft-poster-footer > strong')
     await expect(lines).toHaveCount(3)
     for (const line of await lines.all()) {
       await expect(line).toHaveClass(/is-in-view/)
