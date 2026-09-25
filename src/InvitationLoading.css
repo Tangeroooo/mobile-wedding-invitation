@@ -1,0 +1,15 @@
+.invitation-loading { position:fixed; inset:0; display:grid; place-items:center; min-height:100svh; background:#f4f4f0; color:#274d85; }
+/* Keep the loading announcement for screen readers, without visible text. */
+.invitation-loading-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+.invitation-loading-apple { position:relative; width:32px; height:32px; color:#777b80; }
+.invitation-loading-apple i { position:absolute; left:calc(50% - 1.25px); top:calc(50% - 3.75px); width:2.5px; height:7.5px; border-radius:2px; background:currentColor; transform:rotate(calc(var(--spoke)*30deg)) translateY(-11px); opacity:.2; animation:invitation-loading-spoke 1s linear infinite; animation-delay:calc(var(--spoke)*1s/12 - 1s); }
+.invitation-loading-material { width:34px; height:34px; animation:invitation-loading-turn 1.6s linear infinite; }
+.invitation-loading-material circle { fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; stroke-dasharray:20 101; transform-origin:center; animation:invitation-loading-sweep 1.6s ease-in-out infinite; }
+@keyframes invitation-loading-spoke { 0% { opacity:1; } 100% { opacity:.2; } }
+@keyframes invitation-loading-turn { to { transform:rotate(360deg); } }
+@keyframes invitation-loading-sweep { 0%,100% { stroke-dasharray:6 101; stroke-dashoffset:0; } 50% { stroke-dasharray:72 101; stroke-dashoffset:-20; } 100% { stroke-dashoffset:-101; } }
+@media (prefers-reduced-motion:reduce) {
+  .invitation-loading-apple i,.invitation-loading-material,.invitation-loading-material circle { animation:none; }
+  .invitation-loading-apple i { opacity:.55; }
+  .invitation-loading-material circle { stroke-dasharray:72 101; }
+}
