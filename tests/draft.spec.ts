@@ -43,7 +43,9 @@ test('cover names start writing with the title and family names are centered', a
     await page.locator('.draft-couple').scrollIntoViewIfNeeded()
     await expect(page.locator('.draft-couple')).toHaveCSS('rotate','0deg')
     await expect(page.locator('.draft-couple i')).toHaveText('&')
-    expect(await page.locator('.draft-couple small').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(12)
+    expect(await page.locator('.draft-couple small').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14)
+    await expect(page.locator('.draft-greeting>p').first()).toHaveCSS('font-size','16px')
+    await expect(page.locator('.draft-accounts-section>p')).toHaveCSS('font-size','16px')
     const columns = await page.locator('.draft-couple>span').evaluateAll(elements => elements.map(el => {
       const parent = el.querySelector('small')!.getBoundingClientRect(), name = el.querySelector('strong')!.getBoundingClientRect()
       return {centerDelta:Math.abs(parent.x + parent.width/2 - name.x - name.width/2),nameTop:name.top,overflows:el.scrollWidth>el.clientWidth}
@@ -166,6 +168,8 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   expect(geometry.captionInset).toBeGreaterThanOrEqual(23)
   expect(geometry.captionInset).toBeLessThanOrEqual(33)
   await expect(page.locator('.draft-scroll-note')).toHaveCSS('bottom','24px')
+  await expect(page.locator('.draft-scroll-note')).toHaveCSS('font-size','10px')
+  await expect(page.locator('.draft-scroll-note span')).toHaveCSS('font-size','26px')
   await page.getByRole('button',{name:'다시 재생'}).click()
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await page.emulateMedia({reducedMotion:'reduce'})
