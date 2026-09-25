@@ -28,6 +28,9 @@ const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
 // Preserve the original glyph and its metrics; VS15 requests text, not emoji.
 const DraftAsterisk = () => <>{'\u2733\uFE0E'}</>
+// Outline of the original text asterisk, including its subtly tapered arms.
+// No font or Unicode glyph is used by the ticker, so mobile cannot substitute emoji.
+const DraftTickerAsterisk = () => <svg className="draft-ticker-star" viewBox="0 15.308 74.902 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M72.217 67.480L40.723 66.602L63.623 88.184L60.400 91.406L38.818 68.506L39.697 100.000L35.205 100.000L36.084 68.506L14.502 91.406L11.279 88.184L34.180 66.602L2.686 67.480L2.686 62.988L34.180 64.014L11.279 42.383L14.502 39.209L36.084 62.109L35.205 30.615L39.697 30.615L38.818 62.109L60.400 39.209L63.623 42.383L40.723 64.014L72.217 63.135Z" /></svg>
 // Discourage ordinary image saving without disabling selection in the editor.
 const protectPhoto = (event: SyntheticEvent) => {
   if (event.target instanceof Element && event.target.closest('input, textarea, [contenteditable="true"]')) return
@@ -388,7 +391,7 @@ export default function DraftStudio() {
           </section>
 
           <div className="draft-poster-body" id="draft-body">
-            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b>✳</b><span>{copy.tickerRight}</span><b>✳</b></div>
+            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftTickerAsterisk /></b><span>{copy.tickerRight}</span><b><DraftTickerAsterisk /></b></div>
             <section className="draft-poster-section draft-greeting">
               <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
