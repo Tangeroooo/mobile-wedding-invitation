@@ -9,9 +9,8 @@ export function invitationShare(variant: InvitationVariant = 'main') {
   const text = '2026년 11월 7일 토요일 오후 7시 20분 · 더링크호텔 3층 베일리홀'
   return {
     url, title, text,
-    // A single text item avoids the platform combining separate text/URL items
-    // with its own separators. There is no trailing newline or duplicated URL.
-    native: { text: [title, text, url].join('\n').trim() },
+    // Share only the URL; receiving apps may generate their own link preview.
+    native: { url },
     kakao: {
       objectType: 'feed' as const,
       content: {
