@@ -6,7 +6,7 @@ const site = 'https://tangeroooo.github.io/mobile-wedding-invitation/'
 export function invitationShare(variant: InvitationVariant = 'main') {
   const url = `${site}${variant === 'main' ? '' : `invitation-${variant}/`}`
   const title = `${variant === 'b' ? '주현 ♥ 하니' : '정주현 ♥ 임하니'} 결혼합니다`
-  const text = '2026년 11월 7일 토요일 오후 7시 20분 · 더링크서울 3층 베일리홀'
+  const text = '2026년 11월 7일 토요일 오후 7시 20분 · 더링크호텔 3층 베일리홀'
   return {
     url, title, text,
     kakao: {
