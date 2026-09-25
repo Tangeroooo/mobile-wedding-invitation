@@ -332,7 +332,9 @@ export default function DraftStudio() {
               <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
             <section ref={dateSection} className="draft-poster-section draft-date">
-              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><DraftCountdown dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div>{editCopy('date')}
+              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div>
+              <div className="draft-date-heading"><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><DraftCountdown dateValue={copy.ceremonyDate} /></div>
+              <div className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div>{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? copy.gallerySecond : copy.galleryFirst} ↗</span></button>)}</div><small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
@@ -346,9 +348,6 @@ export default function DraftStudio() {
             </section>
             <section ref={accountsSection} className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}
-            </section>
-            <section className="draft-poster-section draft-rsvp">
-              <div className="draft-section-index">06 <span>{copy.rsvpLabel}</span></div><h2>{copy.rsvpTitle}<em>{copy.rsvpAccent}</em></h2><p>{copy.rsvpMessage}</p>{editCopy('rsvp')}
             </section>
             <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}</footer>
           </div>
