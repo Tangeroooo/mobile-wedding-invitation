@@ -23,7 +23,6 @@ const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square'
   { shape:'square' }, { shape:'landscape' },
   { shape:'portrait' }, { shape:'square' },
   { shape:'landscape' }, { shape:'portrait' },
-  { shape:'square' }, { shape:'landscape' },
 ]
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 
@@ -365,26 +364,18 @@ export default function DraftStudio() {
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
-                <span className="draft-board-label" aria-hidden="true">OUR MEMORY BOARD</span>
-                {Array.from({ length:5 }, (_, row) => <div className={`draft-board-pair board-pair-${row + 1}`} key={row}>
-                  {galleryFrames.slice(row * 2, row * 2 + 2).map(({ scene: value, shape }, column) => {
-                    const number = String(row * 2 + column + 1).padStart(2, '0')
+                  {galleryFrames.map(({ scene: value, shape }, index) => {
+                    const number = String(index + 1).padStart(2, '0')
                     return <div key={number} className={`draft-photo-pin pin-slot-${number} frame-${shape}`}>
                       {value ? <button className="draft-photo-print" onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}>
-                        <i className="draft-photo-tape" aria-hidden="true" />
                         <img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={value === 'main' ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} />
-                        <span className="draft-photo-caption"><b>{number}</b><span>{value === 'main' ? copy.gallerySecond : copy.galleryFirst}</span><i aria-hidden="true">↗</i></span>
                       </button> : <div className="draft-photo-print draft-empty-frame" role="img" aria-label={`${Number(number)}번 사진 자리 · ${shape === 'portrait' ? '세로' : shape === 'landscape' ? '가로' : '정사각형'} 빈 액자`}>
-                        <i className="draft-photo-tape" aria-hidden="true" />
-                        <div className="draft-photo-empty" aria-hidden="true"><span>{number}</span></div>
-                        <span className="draft-photo-caption" aria-hidden="true"><b>{number}</b><span>A MEMORY TO COME</span></span>
+                        <div className="draft-photo-empty" aria-hidden="true" />
                       </div>}
                     </div>
                   })}
-                  {row === 0 && <><span className="draft-board-star" aria-hidden="true">✳</span><span className="draft-board-note" aria-hidden="true">with love,<br />always.</span></>}
-                </div>)}
               </div>
-              <small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
+              {editCopy('gallery')}
             </section>
             <section className="draft-poster-section draft-location">
               <div className="draft-section-index">04 <span>{copy.locationLabel}</span></div><h2>{copy.locationTitle}</h2><div className="draft-location-card"><div className="draft-location-title"><strong>{copy.venueName}</strong><span className="draft-location-hall">{copy.venueHall}</span><span className="draft-location-arrow" aria-hidden="true">↗</span></div><address>{copy.venueAddress}</address></div><DraftMap />

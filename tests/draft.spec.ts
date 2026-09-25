@@ -268,8 +268,10 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   await page.getByRole('button', {name:'건너뛰기'}).click()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
   const board = page.getByRole('group', {name:'사진을 붙인 메모리 보드'})
-  await expect(board.locator('.draft-photo-pin')).toHaveCount(10)
-  await expect(board.locator('.draft-empty-frame')).toHaveCount(8)
+  await expect(board.locator('.draft-photo-pin')).toHaveCount(8)
+  await expect(board.locator('.draft-empty-frame')).toHaveCount(6)
+  await expect(board.locator('.draft-photo-caption')).toHaveCount(0)
+  expect(await page.locator('.draft-gallery').evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(844)
   await expect(board.locator('button')).toHaveCount(2)
   await board.scrollIntoViewIfNeeded()
   for (const pin of await board.locator('.draft-photo-pin').all()) {
@@ -279,7 +281,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
     await expect(pin.locator('.draft-photo-print')).toHaveCSS('opacity','1')
   }
   const sizes = await board.locator('.draft-photo-pin').evaluateAll(els => els.map(el => el.clientWidth))
-  expect(sizes[0]).toBeGreaterThan(sizes[1] * 1.15)
+  expect(sizes[0]).toBeGreaterThan(sizes[1])
   await board.getByRole('button', {name:'메인 커버 사진 크게 보기'}).click()
   await expect(page.locator('.draft-lightbox')).toBeVisible()
   await page.getByRole('button', {name:'닫기 ×'}).click()

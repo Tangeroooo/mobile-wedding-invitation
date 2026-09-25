@@ -29,10 +29,11 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   the saved geometry; only deliberate edits trigger in-frame fitting.
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
-- Gallery is a ten-slot paper memory board using the two supplied photos and eight
-  empty frames, mixing portrait, landscape and square shapes in unequal sizes,
-  with tape, tilted prints, lazy thumbnails and the existing lightbox. Each print
-  flies from a different direction and settles with a small bounce and tape press.
+- Gallery is a compact eight-slot memory board using the two supplied photos and
+  six empty frames, mixing portrait, landscape and square shapes in unequal sizes.
+  White borders only: no tape or captions. The viewport-aware board fits a single
+  mobile screen with its heading. Each print flies in and settles with a small
+  bounce. Real photos retain lazy thumbnails and the existing lightbox.
 - Preview scroll entrances combine masked heading reveals, scale/rotation on cards,
   a turning flower and staggered copy. Each element enters once per preview replay;
   editor mode shows the resting layout. Reduced-motion changes are handled live.
