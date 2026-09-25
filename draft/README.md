@@ -79,8 +79,8 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   device/browser decides whether to open its calendar handler or save the file.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - Preview photos use 100dvh with edge-to-edge cover cropping and no safe-area padding
-  on the photo itself. Only controls/captions get safe-area offsets. The main caption
-  sits at least 72px above the viewport bottom to clear mobile browser UI; the music
+  on the photo itself. Controls and the intro caption get safe-area offsets. At the
+  user's request, the main caption is back at its original 24px bottom offset; the music
   toggle remains in its sticky dock and skip is outside the transitioning photo layer.
   Mobile browser chrome itself is owned by Safari/Chrome, not drawable by this page.
 - Section 06 (attendance placeholder) is removed in edit and preview modes. Legacy

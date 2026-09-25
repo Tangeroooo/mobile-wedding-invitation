@@ -106,7 +106,9 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
     return {top:photo.top,left:photo.left,right:photo.right,bottom:photo.bottom,captionInset:innerHeight-caption.bottom}
   })
   expect(geometry).toMatchObject({top:0,left:0,right:390,bottom:844})
-  expect(geometry.captionInset).toBeGreaterThanOrEqual(70)
+  expect(geometry.captionInset).toBeGreaterThanOrEqual(23)
+  expect(geometry.captionInset).toBeLessThanOrEqual(33)
+  await expect(page.locator('.draft-scroll-note')).toHaveCSS('bottom','24px')
   await page.getByRole('button',{name:'다시 재생'}).click()
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await page.emulateMedia({reducedMotion:'reduce'})

@@ -232,7 +232,6 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
 .is-preview .draft-stage { height:100vh; height:100dvh; min-height:0; max-height:none; scroll-margin-top:0; }
 .is-preview .draft-skip { z-index:5; right:max(18px,env(safe-area-inset-right)); bottom:max(32px,calc(env(safe-area-inset-bottom) + 20px)); }
 .is-preview .draft-skip:disabled { opacity:0; pointer-events:none; }
-.is-preview .draft-scroll-note { bottom:max(72px,calc(env(safe-area-inset-bottom) + 40px)); }
 .is-preview .draft-intro-caption { bottom:max(104px,calc(env(safe-area-inset-bottom) + 72px)); }
 @media (max-width:720px), (hover:none) and (pointer:coarse) { .is-preview .draft-invitation { max-width:none; } }
 .draft-mode-switch { display:flex; align-items:center; gap:12px; font-size:11px; letter-spacing:0; }
