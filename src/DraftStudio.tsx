@@ -367,6 +367,11 @@ export default function DraftStudio() {
       : <span className="draft-loading">{fontError ? '레터링을 불러오지 못했어요. 새로고침해주세요.' : '레터링 준비 중…'}</span>
   }
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
+  const renderCoverNames = (animate: boolean) => outlines && <div className="draft-cover-names" key={`names-${replay}`}>
+    {([['groom', copy.coverGroomName], ['bride', copy.coverBrideName]] as const).map(([side, text]) => text.trim() && <div className={`draft-cover-name is-${side}`} key={side}>
+      <DraftLettering text={text} color={side === 'groom' ? '#FFF3D6' : '#203F76'} outlines={outlines} animate={animate} />
+    </div>)}
+  </div>
 
   return <main className={`draft-studio ${preview ? 'is-preview' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
     {!preview && <>
@@ -420,7 +425,7 @@ export default function DraftStudio() {
             {preview ? <>
               <div className="draft-cover-layer" key={`cover-${replay}`}>
                 {renderPhoto('main', true)}
-                <div className="draft-scene-content"><div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
+                <div className="draft-scene-content"><div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div>{phase === 'main' && renderCoverNames(true)}<span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
               </div>
               {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>
                 {renderPhoto('intro')}
@@ -428,6 +433,7 @@ export default function DraftStudio() {
               </div><div className="draft-cover-controls"><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></div></>}
             </> : <>
               {renderPhoto(scene)}
+              {scene === 'main' && renderCoverNames(false)}
               <button className="draft-edit-text-button" onClick={() => { setInline(value => !value); setToolsOpen(false) }}>{inline ? '편집 완료 ✓' : '문구 편집 ✎'}</button>
               <div ref={selection} className={`draft-letter-position draft-selection ${inline ? 'is-typing' : ''}`} style={position(scene)} tabIndex={0} role="group" aria-label="문구 이동 및 크기 조절"
                 onPointerDown={event => startDrag(event)} onPointerMove={move} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onLostPointerCapture={() => { drag.current = null }}
@@ -455,7 +461,7 @@ export default function DraftStudio() {
           <div className="draft-poster-body" id="draft-body">
             <div className="draft-ticker"><span>{copy.tickerLeft}</span><b><DraftTickerAsterisk /></b><span>{copy.tickerRight}</span><b><DraftTickerAsterisk /></b></div>
             <section className="draft-poster-section draft-greeting">
-              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
+              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true"><DraftAsterisk /></div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>{copy.groomParents}</small><strong>{copy.groom}</strong></span><span><small>{copy.brideParents}</small><strong>{copy.bride}</strong></span></div>{editCopy('greeting')}
             </section>
             <section className="draft-poster-section draft-date">
               <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div>

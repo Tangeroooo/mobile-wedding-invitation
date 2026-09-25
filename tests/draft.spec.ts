@@ -7,6 +7,42 @@ import { createWeddingCalendar } from '../src/draftCalendarFile'
 test('published defaults preserve the approved Zen lettering layout', () => {
   expect(defaults.intro).toEqual({text:"We're getting\nmarried",x:51,y:24.209302325581397,width:94,color:'#F4D84F',rotation:-8})
   expect(defaults.main).toEqual({text:'Wedding\nInvitation',x:50,y:16.88372093023256,width:76.32558139534883,color:'#203F76',rotation:0})
+  expect(defaults.copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
+  const oldCopy = Object.fromEntries(Object.entries(defaults.copy).filter(([key]) => !['coverGroomName','coverBrideName','groomParents','brideParents'].includes(key)))
+  expect(parseConfig({...defaults,copy:oldCopy}).copy).toMatchObject({coverGroomName:'Juhyeon',coverBrideName:'Hani',groomParents:'정우선 · 김인숙의 장남',brideParents:'임춘구 · 박건자의 장녀'})
+})
+
+test('cover names start writing with the title and family names are centered', async ({ page }) => {
+  await page.setViewportSize({width:390,height:844})
+  await page.goto('draft/?mode=preview&source=published')
+  await expect(page.locator('.draft-cover-names')).toHaveCount(0)
+  await page.getByRole('button',{name:'건너뛰기'}).click()
+  const names = page.locator('.draft-cover-name')
+  await expect(names).toHaveCount(2)
+  await expect(names.nth(0).getByRole('img')).toHaveAttribute('aria-label','Juhyeon')
+  await expect(names.nth(1).getByRole('img')).toHaveAttribute('aria-label','Hani')
+  const titleLine = page.locator('.draft-cover-layer .draft-letter-position .draft-write').first()
+  for (const name of await names.all()) {
+    await expect(name.locator('.draft-write')).toHaveCSS('animation-delay','0.3s')
+    await expect(name.locator('.draft-write')).toHaveCSS('animation-duration','1.25s')
+  }
+  await expect(titleLine).toHaveCSS('animation-delay','0.3s')
+  // All three are mounted in the same main-phase render, including on replay.
+  const starts = await page.locator('.draft-cover-layer .draft-write').evaluateAll(elements => elements.map(el => (el.getAnimations()[0] as Animation)?.startTime).filter(value => value !== null && value !== undefined))
+  expect(Math.max(...starts) - Math.min(...starts)).toBeLessThan(20)
+  for (const width of [390,320]) {
+    await page.setViewportSize({width,height:844})
+    await page.locator('.draft-couple').scrollIntoViewIfNeeded()
+    await expect(page.locator('.draft-couple')).toHaveCSS('rotate','0deg')
+    const columns = await page.locator('.draft-couple>span').evaluateAll(elements => elements.map(el => {
+      const parent = el.querySelector('small')!.getBoundingClientRect(), name = el.querySelector('strong')!.getBoundingClientRect()
+      return {centerDelta:Math.abs(parent.x + parent.width/2 - name.x - name.width/2),nameTop:name.top,overflows:el.scrollWidth>el.clientWidth}
+    }))
+    expect(columns.every(column => column.centerDelta < 1 && !column.overflows)).toBe(true)
+    expect(Math.abs(columns[0].nameTop - columns[1].nameTop)).toBeLessThan(1)
+  }
+  await page.emulateMedia({reducedMotion:'reduce'})
+  for (const name of await names.all()) await expect(name.locator('.draft-write')).toHaveCSS('animation-name','none')
 })
 
 test('published preview ignores local edits without deleting them', async ({ page }) => {
@@ -57,7 +93,7 @@ test('schedule float stays compact and yields to the calendar', async ({ page })
   await page.getByRole('button', {name:'건너뛰기'}).click()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
   await expect(summary).toHaveAttribute('aria-hidden','true')
-  await expect(page.locator('.draft-cover-layer .draft-write').last()).toHaveCSS('clip-path','none')
+  await expect(page.locator('.draft-cover-layer .draft-letter-position .draft-write').last()).toHaveCSS('clip-path','none')
   await expect(summary).toBeVisible()
   await expect(page.locator('.draft-countdown strong')).toHaveText(/^D(?:-Day|[-+]\d+)$/)
   await expect(page.locator('.draft-date-heading .draft-countdown')).toHaveCount(1)
@@ -100,7 +136,7 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
   expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('main-1400.webp')
   await expect(summary).toHaveAttribute('aria-hidden','true')
-  await expect(page.locator('.draft-cover-layer .draft-write').last()).toHaveCSS('clip-path','none')
+  await expect(page.locator('.draft-cover-layer .draft-letter-position .draft-write').last()).toHaveCSS('clip-path','none')
   await expect(summary).toBeVisible()
   await page.setViewportSize({width:390,height:844})
   await expect(page.locator('.draft-stage')).toHaveCSS('height','844px')
@@ -627,8 +663,8 @@ test('intro transitions, replay, gallery and mobile editing', async ({ page }) =
   await expect(page.locator('.draft-intro-layer')).toBeVisible()
   await expect(page.locator('.draft-cover-layer svg')).toHaveCount(0)
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0, {timeout:10000})
-  await expect(page.locator('.draft-cover-layer svg')).toBeVisible()
-  await expect(page.locator('.draft-cover-layer .draft-write').last()).toHaveCSS('clip-path', 'none', { timeout:5000 })
+  await expect(page.locator('.draft-cover-layer .draft-letter-position svg')).toBeVisible()
+  await expect(page.locator('.draft-cover-layer .draft-letter-position .draft-write').last()).toHaveCSS('clip-path', 'none', { timeout:5000 })
   await page.screenshot({ path:'/private/tmp/wedding-draft-mobile-cover.png' })
   await page.locator('.draft-greeting').scrollIntoViewIfNeeded()
   await expect(page.locator('.draft-greeting h2')).toHaveCSS('opacity', '1')

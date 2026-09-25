@@ -57,6 +57,10 @@
 .draft-intro-caption { position:absolute; left:0; right:0; bottom:70px; text-align:center; font-size:9px; letter-spacing:.22em; color:#fff; animation:draft-caption 1s 3.3s both; }
 .draft-studio .draft-skip { position:absolute; right:18px; bottom:24px; color:#fff; background:#25352966; border:1px solid #ffffff60; border-radius:30px; font-size:10px; }
 .draft-scroll-note { position:absolute; bottom:24px; left:0; right:0; text-align:center; letter-spacing:.2em; font-size:8px; color:#213f6d; animation:draft-scroll-float 2.4s ease-in-out infinite; }.draft-scroll-note span { display:block; font-size:20px; margin-top:6px; }
+.draft-cover-names { position:absolute; inset:0; pointer-events:none; }
+.draft-cover-name { position:absolute; top:78%; width:34%; transform:translate(-50%,-50%); }
+.draft-cover-name.is-groom { left:26%; }.draft-cover-name.is-bride { left:74%; }
+.draft-cover-name .draft-letter-svg { height:clamp(28px,7.7cqw,36px); max-height:none; }
 @keyframes draft-scroll-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
 .draft-write { animation:draft-write 1.25s cubic-bezier(.42,0,.24,1) both; transform-box:fill-box; }
 @keyframes draft-write { 0% { clip-path:inset(-10% 100% -10% -10%); } 99% { clip-path:inset(-10% -10% -10% -10%); } 100% { clip-path:none; } }
@@ -112,10 +116,10 @@
 .draft-countdown>span { font-size:8px; font-weight:650; letter-spacing:.1em; }
 .draft-countdown>strong { font-size:22px; line-height:1.2; letter-spacing:-.025em; white-space:nowrap; font-variant-numeric:tabular-nums; }
 @media (max-width:350px) { .draft-date-heading { gap:7px; }.draft-countdown { padding:10px 7px; }.draft-countdown>strong { font-size:19px; } }
-.draft-couple { display:flex; align-items:center; justify-content:center; gap:12px; letter-spacing:.02em; font-size:26px; font-weight:600; }
-.draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:8px; }
-.draft-couple small { font-size:11px; font-weight:400; letter-spacing:.08em; }
-.draft-couple i { margin:0 8px; font-size:30px; font-weight:400; }
+.draft-couple { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:16px; text-align:center; letter-spacing:.02em; font-size:26px; font-weight:600; }
+.draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:10px; min-width:0; }
+.draft-couple small { font-size:clamp(10px,2.7vw,12px); line-height:1.7; font-weight:400; letter-spacing:-.045em; word-break:keep-all; }
+.draft-couple strong { font-size:inherit; font-weight:600; line-height:1.5; }
 .draft-calendar { width:100%; table-layout:fixed; border-collapse:collapse; text-align:center; font-variant-numeric:tabular-nums; }
 .draft-calendar caption { text-align:left; margin-bottom:22px; }
 .draft-calendar caption>span { font-size:11px; letter-spacing:.18em; }
