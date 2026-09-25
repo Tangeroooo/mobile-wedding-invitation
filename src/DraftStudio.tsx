@@ -4,6 +4,8 @@ import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
 import DraftShare from './DraftShare'
 import { galleryPhotos, galleryStartingAt } from './draftGallery'
+import { coverMotion } from './coverMotion'
+import { useReducedMotion } from './useReducedMotion'
 import DraftCopyEditor from './DraftCopyEditor'
 import DraftCalendar from './DraftCalendar'
 import DraftDirections from './DraftDirections'
@@ -61,6 +63,8 @@ function readSaved() {
 export default function DraftStudio({ variant }: { variant?: InvitationVariant }) {
   const published = variant !== undefined
   const largeType = variant === 'a' || variant === 'b'
+  const reducedMotion = useReducedMotion()
+  const motion = coverMotion(reducedMotion, largeType)
   const musicEnabled = !published || variant === 'main'
   const [config, setConfig] = useState<DraftConfig>(() => variant ? { ...defaults, copy: invitationCopy(variant) } : readSaved())
   const [scene, setScene] = useState<Scene>('intro')
@@ -95,7 +99,8 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   liveConfig.current = config
   const block = config[scene]
   const copy = config.copy
-  const coverScrollLocked = preview && (phase !== 'main' || (!largeType && !mainLetteringReady && !fontError))
+  const coverScrollLocked = preview && (phase !== 'main' || (motion.waitForMainLetters && !mainLetteringReady && !fontError))
+  const introReady = mainReady && (!motion.waitForIntroLetters || !!outlines || fontError)
   const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
   useEffect(() => { document.title = published ? `${copy.groom} ♥ ${copy.bride} 결혼합니다` : preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [published, copy.groom, copy.bride, preview])
@@ -189,15 +194,15 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   }, [preview, published])
 
   useEffect(() => {
-    if (!preview || (!outlines && !fontError) || !mainReady || phase !== 'intro') return
-    const timer = window.setTimeout(() => setPhase('leaving'), 4200)
+    if (!preview || !introReady || phase !== 'intro') return
+    const timer = window.setTimeout(() => setPhase('leaving'), motion.introHoldMs)
     return () => window.clearTimeout(timer)
-  }, [preview, outlines, fontError, mainReady, phase, replay])
+  }, [preview, introReady, phase, replay, motion.introHoldMs])
   useEffect(() => {
     if (phase !== 'leaving') return
-    const timer = window.setTimeout(() => setPhase('main'), 900)
+    const timer = window.setTimeout(() => setPhase('main'), motion.introFadeMs)
     return () => window.clearTimeout(timer)
-  }, [phase])
+  }, [phase, motion.introFadeMs])
   useLayoutEffect(() => {
     if (!coverScrollLocked) return
     const root = document.documentElement, body = document.body
@@ -400,7 +405,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   const renderPhoto = (value: Scene, isMainPreview = false) => <img
     className="draft-photo" src={photo(value)} srcSet={`${photo(value)} 800w, ${photo(value, 1400)} 1400w`}
     sizes="(max-width: 600px) 100vw, 430px" alt={value === 'intro' ? '정원에서 비눗방울과 함께 웃고 있는 두 사람' : '파란 수트와 핑크 드레스를 입고 나란히 앉은 두 사람'}
-    width="800" height="1200" fetchPriority={isMainPreview ? 'low' : 'high'} draggable={false}
+    width="800" height="1200" fetchPriority={isMainPreview && !reducedMotion ? 'low' : 'high'} draggable={false}
     onLoad={() => { if (isMainPreview) setMainReady(true) }}
     onError={() => { if (isMainPreview) setMainReady(true); setNotice('사진을 불러오지 못했어요. 연결 상태를 확인하고 새로고침해주세요.') }}
   />
