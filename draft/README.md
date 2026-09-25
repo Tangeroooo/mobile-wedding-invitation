@@ -39,7 +39,10 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   White borders only: no tape, captions or separate board backdrop. The viewport-aware collage fits a single
   mobile screen with its heading. Each print flies in and settles with a small
   bounce. Real photos retain lazy thumbnails and a viewport-fitted photo viewer.
-  Translucent icon-only arrows sit halfway down each side of the photo.
+  Translucent icon-only arrows sit halfway down each side of the photo. Arrows and
+  close share 5.5% white glass on touch devices (no sticky opaque hover), with 44px
+  hit areas. A native horizontal scroll-snap rail supports finger swipes; arrows
+  and keyboard controls use the same rail and keep the current-photo state in sync.
   Photo surfaces discourage context-menu saving, copy, drag and touch callouts;
   the viewer blocks pinch/double-tap zoom. Text editing, account copying and page
   zoom outside photos stay available. These are UI deterrents, not access control:
@@ -57,6 +60,9 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - Section 02 shows a small D-Day badge to the right of its title (D-Day on the day,
   D+N afterwards). The date and time text share the same size.
 - A small glass-blurred schedule summary follows the invitation's center-right edge.
+  In preview it stays hidden throughout the intro and appears only after the last
+  line of main lettering finishes. Replay resets this gate; blank text/reduced motion
+  complete immediately, and a lettering load error does not hide the summary forever.
   It uses the edited date, time and venue; pointer events pass through it. It fades
   away only when its actual screen rectangle overlaps the calendar card; section
   headings do not trigger it. It stays visible over accounts and maps without
@@ -68,6 +74,11 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   drafts use a text/calendar Blob. No download attribute forces a download; the
   device/browser decides whether to open its calendar handler or save the file.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
+- Preview photos use 100dvh with edge-to-edge cover cropping and no safe-area padding
+  on the photo itself. Only controls/captions get safe-area offsets. The main caption
+  sits at least 72px above the viewport bottom to clear mobile browser UI; the music
+  toggle remains in its sticky dock and skip is outside the transitioning photo layer.
+  Mobile browser chrome itself is owned by Safari/Chrome, not drawable by this page.
 - Section 06 (attendance placeholder) is removed in edit and preview modes. Legacy
   saved copy is retained for compatibility, but is no longer rendered or editable.
 - Both floating glass surfaces use 20% tinted backgrounds with backdrop blur.

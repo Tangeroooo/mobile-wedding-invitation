@@ -39,7 +39,7 @@ export function DraftCountdown({ dateValue }: { dateValue: string }) {
   </div>
 }
 
-export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion }: { dateValue: string; time: string; venue: string; hall: string; quietRegion: RefObject<HTMLElement | null> }) {
+export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion, enabled = true }: { dateValue: string; time: string; venue: string; hall: string; quietRegion: RefObject<HTMLElement | null>; enabled?: boolean }) {
   const [quiet, setQuiet] = useState(false)
   const float = useRef<HTMLElement>(null)
   useEffect(() => {
@@ -76,7 +76,7 @@ export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion }: {
   const date = parseCeremonyDate(dateValue)
   if (!date || !validCeremonyTime(time)) return null
   const shortVenue = venue === '더링크서울 트리뷰트 포트폴리오 호텔' ? '더링크서울' : venue
-  return <aside ref={float} className={`draft-event-float${quiet ? ' is-quiet' : ''}`} aria-label="예식 일정 요약" aria-hidden={quiet || undefined}
+  return <aside ref={float} className={`draft-event-float${quiet || !enabled ? ' is-quiet' : ''}`} aria-label="예식 일정 요약" aria-hidden={quiet || !enabled || undefined}
     style={{ backdropFilter: 'blur(16px) saturate(160%)', WebkitBackdropFilter: 'blur(16px) saturate(160%)' }}>
     <time dateTime={`${dateValue}T${time}:00+09:00`}>
       <strong>{String(date.getUTCMonth() + 1).padStart(2, '0')}.{String(date.getUTCDate()).padStart(2, '0')}</strong>

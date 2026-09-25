@@ -1,13 +1,21 @@
-import { useId } from 'react'
+import { useEffect, useId } from 'react'
 import { normalizeText } from './draftModel'
 
 type Glyph = { path: string; advance: number; bounds: { x1: number; y1: number; x2: number; y2: number } }
 export type Outlines = { glyphs: Record<string, Glyph>; kerning: Record<string, number> }
 
-export default function DraftLettering({ text, color, outlines, animate }: {
-  text: string; color: string; outlines: Outlines; animate: boolean
+export default function DraftLettering({ text, color, outlines, animate, onComplete }: {
+  text: string; color: string; outlines: Outlines; animate: boolean; onComplete?: () => void
 }) {
   const id = useId()
+  useEffect(() => {
+    if (!onComplete) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const completeWithoutAnimation = () => { if (!animate || !text.trim() || reduced.matches) onComplete() }
+    completeWithoutAnimation()
+    reduced.addEventListener('change', completeWithoutAnimation)
+    return () => reduced.removeEventListener('change', completeWithoutAnimation)
+  }, [animate, text, onComplete])
   const lines = normalizeText(text).split('\n').slice(0, 3).map(line => {
     let cursor = 0
     let previous = ''
@@ -44,7 +52,9 @@ export default function DraftLettering({ text, color, outlines, animate }: {
       const y = offset - line.top
       offset += line.height + padding
       return <g key={`${id}-${index}`} transform={`translate(${(width - line.width) / 2 - line.left},${y})`} fill={color}>
-        <g className={animate ? 'draft-write' : undefined} style={{ animationDelay: `${0.3 + index * 1.1}s` }}>
+        <g className={animate ? 'draft-write' : undefined} style={{ animationDelay: `${0.3 + index * 1.1}s` }} onAnimationEnd={event => {
+          if (index === lines.length - 1 && event.animationName === 'draft-write' && event.target === event.currentTarget) onComplete?.()
+        }}>
           {line.paths.map((path, glyphIndex) => path.fallback
             ? <text key={glyphIndex} x={path.x} y={0} fontSize="90" fontFamily="sans-serif">{path.fallback}</text>
             : <path key={glyphIndex} d={path.d} transform={`translate(${path.x},0)`} />)}

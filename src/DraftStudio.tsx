@@ -56,6 +56,8 @@ export default function DraftStudio() {
   const [preview, setPreview] = useState(isPreviewUrl)
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'main'>('intro')
   const [mainReady, setMainReady] = useState(false)
+  const [mainLetteringReady, setMainLetteringReady] = useState(false)
+  const finishMainLettering = useCallback(() => setMainLetteringReady(true), [])
   const [outlines, setOutlines] = useState<Outlines | null>(null)
   const [fontError, setFontError] = useState(false)
   const [notice, setNotice] = useState('')
@@ -71,6 +73,7 @@ export default function DraftStudio() {
   const selection = useRef<HTMLDivElement>(null)
   const inlineInput = useRef<HTMLTextAreaElement>(null)
   const dialog = useRef<HTMLDialogElement>(null)
+  const photoRail = useRef<HTMLDivElement>(null)
   const importInput = useRef<HTMLInputElement>(null)
   const drag = useRef<{ id: number; x: number; y: number; block: DraftConfig['intro']; w: number; h: number; bw: number; bh: number; mode: 'move' | 'resize' | 'rotate'; cx: number; cy: number; angle: number } | null>(null)
   const liveConfig = useRef(config)
@@ -131,7 +134,7 @@ export default function DraftStudio() {
     return () => window.removeEventListener('pagehide', flush)
   }, [persist, preview])
   useEffect(() => {
-    const syncMode = () => { setConfig(readSaved()); setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setInline(false) }
+    const syncMode = () => { setConfig(readSaved()); setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setMainLetteringReady(false); setInline(false) }
     window.addEventListener('popstate', syncMode)
     return () => window.removeEventListener('popstate', syncMode)
   }, [])
@@ -164,9 +167,18 @@ export default function DraftStudio() {
   }, [preview, phase])
   useEffect(() => { if (inline) inlineInput.current?.focus() }, [inline])
   useEffect(() => {
-    if (lightbox) dialog.current?.showModal()
-    else dialog.current?.close()
+    if (lightbox && dialog.current && !dialog.current.open) {
+      dialog.current.showModal()
+      // Set the selected photo only on opening; never snap back during a swipe.
+      const rail = photoRail.current
+      if (rail) rail.scrollLeft = (lightbox === 'main' ? 1 : 0) * rail.clientWidth
+    } else if (!lightbox) dialog.current?.close()
   }, [lightbox])
+  const changePhoto = () => {
+    const rail = photoRail.current
+    if (!rail) return
+    rail.scrollTo({ left:(lightbox === 'intro' ? 1 : 0) * rail.clientWidth, behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+  }
   const photoViewerOpen = lightbox !== null
   useEffect(() => {
     if (!photoViewerOpen) return
@@ -242,7 +254,7 @@ export default function DraftStudio() {
   }
   const startPreview = () => {
     if (!preview) { const url = new URL(window.location.href); url.searchParams.set('mode', 'preview'); window.history.pushState(null, '', url) }
-    setInline(false); setPhase('intro'); setMainReady(false); setReplay(value => value + 1); setPreview(true)
+    setInline(false); setPhase('intro'); setMainReady(false); setMainLetteringReady(false); setReplay(value => value + 1); setPreview(true)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
   const chooseScene = (value: Scene) => {
@@ -307,7 +319,7 @@ export default function DraftStudio() {
   />
   const renderLetters = (value: Scene, animate: boolean) => {
     const content = config[value]
-    return outlines ? <DraftLettering text={content.text || ' '} color={content.color} outlines={outlines} animate={animate} />
+    return outlines ? <DraftLettering text={content.text || ' '} color={content.color} outlines={outlines} animate={animate} onComplete={value === 'main' && animate ? finishMainLettering : undefined} />
       : <span className="draft-loading">{fontError ? '레터링을 불러오지 못했어요. 새로고침해주세요.' : '레터링 준비 중…'}</span>
   }
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
@@ -358,12 +370,12 @@ export default function DraftStudio() {
         <article className="draft-invitation">
           <div className="draft-bgm-dock">
             <DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} />
-            <DraftEventFloat dateValue={copy.ceremonyDate} time={copy.ceremonyTime} venue={copy.venueName} hall={copy.venueHall} quietRegion={dateCard} />
+            <DraftEventFloat dateValue={copy.ceremonyDate} time={copy.ceremonyTime} venue={copy.venueName} hall={copy.venueHall} quietRegion={dateCard} enabled={!preview || (phase === 'main' && (mainLetteringReady || fontError))} />
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
               <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
-              {phase !== 'main' && <div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span><button className="draft-skip" onClick={() => setPhase('leaving')}>건너뛰기 →</button></div>}
+              {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span></div><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></>}
             </> : <>
               {renderPhoto(scene)}
               <button className="draft-edit-text-button" onClick={() => { setInline(value => !value); setToolsOpen(false) }}>{inline ? '편집 완료 ✓' : '문구 편집 ✎'}</button>
@@ -434,11 +446,16 @@ export default function DraftStudio() {
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
     {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
-    <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); setLightbox(current => current === 'intro' ? 'main' : 'intro') } }}>
+    <dialog ref={dialog} className="draft-lightbox" aria-label="갤러리 사진 보기" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); changePhoto() } }}>
       <div className="draft-lightbox-stage">
-        {lightbox && <img src={photo(lightbox, 1400)} draggable={false} alt={`${sceneLabel[lightbox]} 사진 보기`} />}
-        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={() => setLightbox(current => current === 'intro' ? 'main' : 'intro')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
+        <div ref={photoRail} className="draft-lightbox-rail" aria-label="좌우로 넘기는 사진" onScroll={event => {
+          const rail = event.currentTarget
+          if (dialog.current?.open && rail.clientWidth) setLightbox(Math.round(rail.scrollLeft / rail.clientWidth) === 0 ? 'intro' : 'main')
+        }}>
+          {lightbox && (['intro', 'main'] as const).map(value => <div className="draft-lightbox-slide" key={value} aria-hidden={lightbox !== value}><img src={photo(value, 1400)} draggable={false} alt={`${sceneLabel[value]} 사진 보기`} /></div>)}
+        </div>
+        <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)' }} onClick={changePhoto}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
       </div>
     </dialog>
   </main>

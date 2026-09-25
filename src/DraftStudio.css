@@ -197,17 +197,23 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
   .draft-motion-item,.draft-motion-item .draft-countdown,.draft-photo-print { animation:none !important; }
   .draft-motion-item:not(.is-in-view),.draft-photo-pin.will-pin:not(.is-pinned) .draft-photo-print { opacity:1; }
 }
-.draft-lightbox { width:min(94vw,calc((100svh - 48px)*2/3),520px); max-width:none; max-height:calc(100svh - 48px); padding:0; overflow:hidden; background:transparent; color:#fff; border:0; border-radius:3px; touch-action:none; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
+.draft-lightbox { width:min(94vw,calc((100dvh - 48px)*2/3),520px); max-width:none; max-height:calc(100dvh - 48px); padding:0; overflow:hidden; background:transparent; color:#fff; border:0; border-radius:3px; touch-action:pan-x; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
 .draft-lightbox::backdrop { background:#101513eb; }
-.draft-lightbox-stage { position:relative; width:100%; touch-action:none; }
-.draft-lightbox img { display:block; width:100%; height:auto; max-height:calc(100svh - 48px); object-fit:contain; }
-.draft-studio .draft-lightbox button { position:absolute; display:grid; place-items:center; width:44px; height:44px; min-height:44px; padding:11px; color:#fff; border:0; border-radius:50%; touch-action:none; }
+.draft-lightbox-stage { position:relative; width:100%; touch-action:pan-x; }
+.draft-lightbox-rail { display:flex; width:100%; aspect-ratio:2/3; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior:contain; touch-action:pan-x; }
+.draft-lightbox-rail::-webkit-scrollbar { display:none; }
+.draft-lightbox-slide { flex:0 0 100%; min-width:0; height:100%; scroll-snap-align:start; scroll-snap-stop:always; }
+.draft-lightbox img { display:block; width:100%; height:100%; object-fit:contain; }
+.draft-studio .draft-lightbox button { position:absolute; display:grid; place-items:center; width:44px; height:44px; min-height:44px; padding:11px; color:#ffffffb8; border:0; border-radius:50%; touch-action:none; }
 .draft-lightbox button svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
-.draft-studio .draft-lightbox-arrow { top:50%; translate:0 -50%; background:#ffffff16; box-shadow:inset 0 0 0 1px #ffffff1a; }
+.draft-studio .draft-lightbox-arrow { top:50%; translate:0 -50%; }
 .draft-lightbox-arrow.is-previous { left:8px; }
 .draft-lightbox-arrow.is-next { right:8px; }
-.draft-studio .draft-lightbox-close { right:5px; top:5px; background:#13231c20; }
-.draft-studio .draft-lightbox button:hover { background:#ffffff26; }
+.draft-studio .draft-lightbox-close { right:5px; top:5px; }
+/* Touch browsers retain :hover after a tap; keep that state just as transparent. */
+.draft-studio .draft-lightbox button,.draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff0e; box-shadow:inset 0 0 0 1px #ffffff14; }
+.draft-studio .draft-lightbox button:focus-visible { outline:1px solid #ffffff80; outline-offset:2px; }
+@media (hover:hover) and (pointer:fine) { .draft-studio .draft-lightbox button:hover:not(:disabled) { background:#ffffff20; } }
 @media (max-width:1050px) { .draft-workspace { padding-inline:28px; gap:30px; grid-template-columns:290px minmax(0,1fr); }.draft-introduction { padding-inline:28px; }.draft-introduction>p { max-width:230px; } }
 @media (max-width:720px) { .draft-header { height:66px; padding:0 18px; }.draft-header>span { display:none; }.draft-introduction { display:block; padding:32px 22px 24px; }.draft-introduction>p { max-width:none; margin-top:18px; font-size:11px; }.draft-workspace { display:flex; flex-direction:column; padding:0 16px 30px; gap:26px; }.draft-inspector { width:100%; max-height:none; position:static; padding:18px; }.draft-preview-column { max-width:100%; }.draft-inspector { order:2; }.draft-preview-column { order:1; }.draft-invitation { max-width:430px; }.draft-stage { height:calc(100svh - 100px); min-height:520px; max-height:820px; }.draft-inspector::before { content:'편집 도구 · 위쪽 사진에 바로 반영됩니다'; display:block; font-size:11px; margin-bottom:22px; color:#778270; }.draft-preview-column .draft-bottom-note { padding:0 12px; }.is-preview .draft-stage { max-height:none; min-height:100svh; }.is-preview .draft-invitation { max-width:480px; }.draft-preview-controls { right:10px; } }
 @media (prefers-reduced-motion:reduce) { .draft-write,.draft-intro-caption { animation:none; }.draft-intro-layer { transition:opacity .15s; } }
@@ -218,6 +224,14 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
   .draft-studio .draft-mobile-tools:hover:not(:disabled) { background:#426052; }
 }
 .draft-studio .draft-skip:hover:not(:disabled) { background:#253529aa; }
+/* Photos bleed through safe areas; only overlays get safety spacing. Dynamic
+   height follows mobile browser chrome opening/closing instead of leaving a gap. */
+.is-preview .draft-stage { height:100vh; height:100dvh; min-height:0; max-height:none; scroll-margin-top:0; }
+.is-preview .draft-skip { z-index:5; right:max(18px,env(safe-area-inset-right)); bottom:max(32px,calc(env(safe-area-inset-bottom) + 20px)); }
+.is-preview .draft-skip:disabled { opacity:0; pointer-events:none; }
+.is-preview .draft-scroll-note { bottom:max(72px,calc(env(safe-area-inset-bottom) + 40px)); }
+.is-preview .draft-intro-caption { bottom:max(104px,calc(env(safe-area-inset-bottom) + 72px)); }
+@media (max-width:720px), (hover:none) and (pointer:coarse) { .is-preview .draft-invitation { max-width:none; } }
 .draft-mode-switch { display:flex; align-items:center; gap:12px; font-size:11px; letter-spacing:0; }
 .draft-mode-switch>a { text-decoration:underline; text-underline-offset:4px; }
 .draft-copy-editor { position:relative; z-index:2; margin-top:28px; text-align:left; font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif; color:#31423b; letter-spacing:0; }
