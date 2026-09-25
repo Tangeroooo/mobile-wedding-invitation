@@ -338,7 +338,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   expect(await page.locator('.draft-gallery').evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(844)
   await expect(board.locator('button')).toHaveCount(10)
   expect(await board.locator('button').evaluateAll(elements => elements.map(el => el.getAttribute('aria-label')))).toEqual(
-    [1,10,5,14,18,9,20,21,23,24].map(number => `${number}번 사진 보기`),
+    [1,10,5,7,18,9,20,21,23,24].map(number => `${number}번 사진 보기`),
   )
   for (let slot = 1; slot <= 10; slot++) {
     await expect(board.locator(`.pin-slot-${String(slot).padStart(2,'0')}`)).toHaveCount(1)

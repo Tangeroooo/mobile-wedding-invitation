@@ -20,7 +20,7 @@ const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
 const galleryPhotos = Array.from({ length:25 }, (_, index) => index + 1)
 // Mix settings, outfits and framing; board slot and full-gallery photo ID are independent.
-const galleryBoard = [1, 10, 5, 14, 18, 9, 20, 21, 23, 24]
+const galleryBoard = [1, 10, 5, 7, 18, 9, 20, 21, 23, 24]
 const galleryPhoto = (number: number, width: 320 | 1200 = 320) => asset(`gallery/${String(number).padStart(2, '0')}-${width}.webp`)
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
