@@ -579,6 +579,33 @@ test('each section plays its own motion once, without restarting on upward scrol
   await expect(card).toHaveCSS('opacity','1')
 })
 
+test('calendar paper, compact add button and venue typography stay consistent', async ({ page }) => {
+  for (const mode of ['draft/', 'draft/?mode=preview&source=published']) {
+    await page.goto(mode)
+    for (const width of [320, 390, 1440]) {
+      await page.setViewportSize({width, height:844})
+      const palette = await page.locator('.draft-date').evaluate(el => {
+        const style = getComputedStyle(el)
+        const probe = document.createElement('span')
+        probe.style.backgroundColor = 'var(--draft-paper)'
+        el.append(probe)
+        const paper = getComputedStyle(probe).backgroundColor
+        probe.remove()
+        return { background:style.backgroundColor, paper }
+      })
+      await expect(page.locator('.draft-date')).toHaveCSS('background-color', palette.paper)
+      const cardColor = await page.locator('.draft-date-card').evaluate(el => getComputedStyle(el).backgroundColor)
+      expect(cardColor).not.toBe(palette.background)
+      expect(cardColor).not.toBe('rgba(0, 0, 0, 0)')
+      await expect(page.locator('.draft-calendar-add')).toHaveCSS('font-size', '13px')
+      const hotelSize = await page.locator('.draft-location-title strong').evaluate(el => getComputedStyle(el).fontSize)
+      await expect(page.locator('.draft-location-hall')).toHaveCSS('font-size', hotelSize)
+      await expect(page.locator('.draft-location-hall')).toHaveCSS('font-weight', '700')
+      await expect(page.locator('.draft-location-title strong')).toHaveCSS('font-weight', '700')
+    }
+  }
+})
+
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
   await page.goto('draft/')
   const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')
