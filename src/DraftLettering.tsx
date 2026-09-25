@@ -4,8 +4,8 @@ import { normalizeText } from './draftModel'
 type Glyph = { path: string; advance: number; bounds: { x1: number; y1: number; x2: number; y2: number } }
 export type Outlines = { glyphs: Record<string, Glyph>; kerning: Record<string, number> }
 
-export default function DraftLettering({ text, color, outlines, animate, onComplete }: {
-  text: string; color: string; outlines: Outlines; animate: boolean; onComplete?: () => void
+export default function DraftLettering({ text, color, outlines, animate, fast = false, onComplete }: {
+  text: string; color: string; outlines: Outlines; animate: boolean; fast?: boolean; onComplete?: () => void
 }) {
   const id = useId()
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function DraftLettering({ text, color, outlines, animate, onCompl
       const y = offset - line.top
       offset += line.height + padding
       return <g key={`${id}-${index}`} transform={`translate(${(width - line.width) / 2 - line.left},${y})`} fill={color}>
-        <g className={animate ? 'draft-write' : undefined} style={{ animationDelay: `${0.3 + index * 1.1}s` }} onAnimationEnd={event => {
+        <g className={animate ? 'draft-write' : undefined} style={{ animationDelay: `${(0.3 + index * 1.1) / (fast ? 2 : 1)}s`, animationDuration: fast ? '.625s' : undefined }} onAnimationEnd={event => {
           if (index === lines.length - 1 && event.animationName === 'draft-write' && event.target === event.currentTarget) onComplete?.()
         }}>
           {line.paths.map((path, glyphIndex) => path.fallback

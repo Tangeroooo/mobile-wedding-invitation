@@ -30,7 +30,7 @@ export default function DraftAccounts({ copy, familyFirst = false }: { copy: Dra
       <div className="draft-account-panel" id={`${id}-${side}-panel`} role="region" aria-labelledby={`${id}-${side}-trigger`} aria-hidden={!expanded[side]} inert={!expanded[side]}>
         <div className="draft-account-panel-inner"><ul>{accounts.filter(([, , number]) => number.trim()).map(([name, bank, number], index) => <li key={index}>
           <button type="button" className="draft-account-copy" aria-label={`${name} 은행명과 계좌번호 복사`} onClick={() => copyAccount(name, bank, number)}>
-            <strong>{name}</strong><span className="draft-account-bank">{bank}</span><span className="draft-account-number">{number}</span><svg className="draft-account-copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg>
+            {familyFirst ? <span className="draft-account-identity"><strong>{name}</strong><span className="draft-account-bank">{bank}</span></span> : <><strong>{name}</strong><span className="draft-account-bank">{bank}</span></>}<span className="draft-account-number">{number}</span><svg className="draft-account-copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg>
           </button>
         </li>)}</ul></div>
       </div>

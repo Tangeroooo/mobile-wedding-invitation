@@ -64,7 +64,8 @@ export function parseConfig(raw: unknown): DraftConfig {
   for (const key of Object.keys(previousCopy) as CopyKey[]) {
     if (copy[key] === previousCopy[key]) copy[key] = copyDefaults[key]
   }
-  if (copy.galleryAccent === '빛나는 순간들.') copy.galleryAccent = copyDefaults.galleryAccent
+  if (copy.galleryAccent === '빛나는 순간들.' || copy.galleryAccent === '빛나는 순간들') copy.galleryAccent = copyDefaults.galleryAccent
+  if (copy.galleryMessage === '함께 웃던 순간을 모아.') copy.galleryMessage = copyDefaults.galleryMessage
   if (copy.footerLabel === '이 모든 것 위에 사랑을 더하라\n이는 온전하게 매는 띠니라\n\n골로새서 3:14') copy.footerLabel = copyDefaults.footerLabel
   if (copy.groom === '신랑 이름') copy.groom = copyDefaults.groom
   if (copy.bride === '신부 이름') copy.bride = copyDefaults.bride

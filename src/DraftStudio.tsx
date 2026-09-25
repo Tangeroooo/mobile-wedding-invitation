@@ -60,6 +60,7 @@ function readSaved() {
 
 export default function DraftStudio({ variant }: { variant?: InvitationVariant }) {
   const published = variant !== undefined
+  const largeType = variant === 'a' || variant === 'b'
   const musicEnabled = !published || variant === 'main'
   const [config, setConfig] = useState<DraftConfig>(() => variant ? { ...defaults, copy: invitationCopy(variant) } : readSaved())
   const [scene, setScene] = useState<Scene>('intro')
@@ -93,7 +94,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   liveConfig.current = config
   const block = config[scene]
   const copy = config.copy
-  const coverScrollLocked = preview && (phase !== 'main' || (!mainLetteringReady && !fontError))
+  const coverScrollLocked = preview && (phase !== 'main' || (!largeType && !mainLetteringReady && !fontError))
   const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
   useEffect(() => { document.title = published ? `${copy.groom} ♥ ${copy.bride} 결혼합니다` : preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [published, copy.groom, copy.bride, preview])
@@ -404,13 +405,13 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   />
   const renderLetters = (value: Scene, animate: boolean) => {
     const content = config[value]
-    return outlines ? <DraftLettering text={content.text || ' '} color={content.color} outlines={outlines} animate={animate} onComplete={value === 'main' && animate ? finishMainLettering : undefined} />
+    return outlines ? <DraftLettering text={content.text || ' '} color={content.color} outlines={outlines} animate={animate} fast={largeType && value === 'main'} onComplete={value === 'main' && animate ? finishMainLettering : undefined} />
       : <span className="draft-loading">{fontError ? '레터링을 불러오지 못했어요. 새로고침해주세요.' : '레터링 준비 중…'}</span>
   }
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
   const renderCoverNames = (animate: boolean) => outlines && <div className="draft-cover-names" key={`names-${replay}`}>
     {([['groom', copy.coverGroomName], ['bride', copy.coverBrideName]] as const).map(([side, text]) => text.trim() && <div className={`draft-cover-name is-${side}`} key={side}>
-      <DraftLettering text={text} color={side === 'groom' ? config.palette.pink : config.palette.blue} outlines={outlines} animate={animate} />
+      <DraftLettering text={text} color={side === 'groom' ? config.palette.pink : config.palette.blue} outlines={outlines} animate={animate} fast={largeType} />
     </div>)}
   </div>
 
@@ -510,7 +511,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
               <div ref={dateCard} className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div><DraftCalendarAdd copy={copy} variant={variant} />{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
-              <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
+              <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2>{copy.galleryMessage && <p>{copy.galleryMessage}</p>}
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
                   {galleryBoard.map((number, index) => {
                     return <div key={number} className={`draft-photo-pin pin-slot-${String(index + 1).padStart(2,'0')} frame-portrait`}>
