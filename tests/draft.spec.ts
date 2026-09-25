@@ -2,6 +2,21 @@ import { test, expect } from '@playwright/test'
 import { defaults } from '../src/draftModel'
 import { parseConfig } from '../src/draftModel'
 import { parseCeremonyDate, ceremonyLabel, ceremonyCountdown } from '../src/draftDate'
+import { createWeddingCalendar } from '../src/draftCalendarFile'
+
+test('calendar file uses edited details and the Korean ceremony instant', () => {
+  const ics = createWeddingCalendar(defaults.copy, new Date('2026-09-25T00:00:00Z'))!
+  const unfolded = ics.replace(/\r\n /g, '')
+  expect(unfolded).toContain('DTSTART:20261107T102000Z')
+  expect(unfolded).toContain('SUMMARY:정주현 ♥ 임하니 결혼식')
+  expect(unfolded).toContain('3층 베일리홀')
+  expect(unfolded).not.toContain('DTEND:')
+  expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true)
+  for (const line of ics.split('\r\n')) expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75)
+  const edited = createWeddingCalendar({ ...defaults.copy, ceremonyDate:'2026-12-12', ceremonyTime:'09:30', venueName:'홀, A;B\n2층' })!.replace(/\r\n /g, '')
+  expect(edited).toContain('DTSTART:20261212T003000Z')
+  expect(edited).toContain('LOCATION:홀\\, A\\;B\\n2층')
+})
 
 test('countdown uses Korean calendar days including midnight and past dates', () => {
   expect(ceremonyCountdown('2026-11-07', new Date('2026-09-25T00:00:00+09:00'))).toEqual({ days:43, label:'D-43' })
@@ -27,6 +42,9 @@ test('schedule float stays compact and yields to the calendar', async ({ page })
   await expect(page.locator('.draft-event-float')).toHaveCSS('background-color','rgba(24, 49, 61, 0.2)')
   await expect(page.locator('.draft-bgm-glass')).toHaveCSS('background-color','rgba(24, 49, 61, 0.2)')
   await expect(page.locator('.draft-rsvp')).toHaveCount(0)
+  const calendarLink = page.getByRole('link', {name:'결혼식 일정 캘린더에 추가',exact:true})
+  await expect(calendarLink).toHaveAttribute('href','/mobile-wedding-invitation/calendar/wedding.ics')
+  await expect(calendarLink).not.toHaveAttribute('download')
   const heading = (await page.locator('.draft-date-heading h2').boundingBox())!
   const badge = (await page.locator('.draft-countdown').boundingBox())!
   expect(badge.x).toBeGreaterThanOrEqual(heading.x + heading.width)
@@ -34,7 +52,8 @@ test('schedule float stays compact and yields to the calendar', async ({ page })
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await expect(summary).toHaveCSS('opacity','0')
   await page.locator('.draft-accounts-section').scrollIntoViewIfNeeded()
-  await expect(summary).toHaveAttribute('aria-hidden','true')
+  await expect(summary).toBeVisible()
+  await expect(summary).not.toHaveAttribute('aria-hidden','true')
   await page.locator('.draft-stage').scrollIntoViewIfNeeded()
   await expect(summary).toBeVisible()
   const box = (await summary.boundingBox())!
@@ -165,6 +184,8 @@ test('compact account rows, animated accessible disclosure and readable full ven
   }
   await expect(trigger).toHaveCSS('font-size','14px')
   await expect(row.locator('.draft-account-copy-icon')).toBeVisible()
+  const iconPositions = await page.locator('.groom .draft-account-copy-icon').evaluateAll(els => els.map(el => el.getBoundingClientRect().x))
+  expect(Math.max(...iconPositions) - Math.min(...iconPositions)).toBeLessThan(1)
   expect(Math.abs(name.y + name.height/2 - number.y - number.height/2)).toBeLessThan(2)
   await trigger.press('Enter')
   await expect(trigger).toHaveAttribute('aria-expanded', 'false')

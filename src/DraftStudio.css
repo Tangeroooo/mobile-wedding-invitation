@@ -76,6 +76,8 @@
 .draft-ceremony-venue>span:first-child { display:block; text-wrap:balance; }
 .draft-date-heading { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:12px; margin-top:30px; }
 .draft-date-heading h2 { margin:0; }
+.draft-studio .draft-calendar-add { display:flex; align-items:center; justify-content:center; gap:6px; width:fit-content; min-height:36px; margin:24px auto 0; padding:7px 12px; border:1px solid color-mix(in srgb,var(--draft-blue) 22%,transparent); border-radius:20px; background:transparent; color:var(--draft-blue); font-size:11px; font-weight:500; }
+.draft-calendar-add:hover { background:color-mix(in srgb,var(--draft-blue) 6%,var(--draft-paper)); }
 .draft-countdown { display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 10px; border:1px solid color-mix(in srgb,var(--draft-pink) 20%,transparent); border-radius:12px; color:var(--draft-pink); background:color-mix(in srgb,var(--draft-pink) 6%,var(--draft-paper)); }
 .draft-countdown>span { font-size:8px; font-weight:650; letter-spacing:.1em; }
 .draft-countdown>strong { font-size:22px; line-height:1.2; letter-spacing:-.025em; white-space:nowrap; font-variant-numeric:tabular-nums; }
@@ -113,10 +115,13 @@
 .draft-account-copy strong { font-size:15px; font-weight:700; flex-shrink:0; }
 .draft-account-bank { font-size:15px; font-weight:700; flex-shrink:0; }
 .draft-account-number { font-size:15px; font-weight:700; flex-shrink:0; font-variant-numeric:tabular-nums; user-select:text; }
-.draft-account-copy-icon { margin-left:auto; flex-shrink:0; width:18px; height:18px; opacity:.8; }
+.draft-account-copy-icon { flex-shrink:0; width:18px; height:18px; opacity:.8; }
+.draft-account-group ul { display:grid; grid-template-columns:max-content max-content max-content 18px; column-gap:6px; }
+.draft-account-group li { display:grid; grid-column:1 / -1; grid-template-columns:subgrid; }
+.draft-studio .draft-account-copy { display:grid; grid-column:1 / -1; grid-template-columns:subgrid; column-gap:inherit; }
 .draft-studio .draft-account-trigger:focus-visible,.draft-studio .draft-account-copy:focus-visible { outline:2px solid var(--draft-pink); outline-offset:-2px; }
 .draft-accounts .draft-account-status { font-size:11px; margin:14px 0 0; }
-@container (max-width:330px) { .draft-account-group ul { padding-inline:6px; }.draft-studio .draft-account-copy { gap:3px; } }
+@container (max-width:330px) { .draft-account-group ul { padding-inline:6px; column-gap:3px; }.draft-studio .draft-account-copy { gap:3px; } }
 .draft-location-title { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; margin-bottom:16px; }
 .draft-location-title strong { font-size:clamp(14px,3.9vw,16px); line-height:1.6; word-break:keep-all; overflow-wrap:anywhere; text-wrap:balance; }
 .draft-location-card .draft-location-hall { font-size:clamp(13px,3.6vw,15px); color:var(--draft-pink); }

@@ -34,8 +34,15 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   D+N afterwards). The date and time text share the same size.
 - A small glass-blurred schedule summary follows the invitation's center-right edge.
   It uses the edited date, time and venue; pointer events pass through it. It fades
-  away while section 02 or the account section occupies the reading area, avoiding
-  duplicate information and keeping account-copy icons clear.
+  away only when its actual screen rectangle overlaps the calendar card; section
+  headings do not trigger it. It stays visible over accounts and maps without
+  intercepting taps. Account copy icons align immediately after the number column.
+- The small button below the calendar opens an ICS event using the edited
+  names, date/time and venue, with Korean time converted to UTC. No end time or
+  reminder is invented; saving the event is left to the visitor's calendar app.
+  Shared defaults are emitted as calendar/wedding.ics at build time. Edited local
+  drafts use a text/calendar Blob. No download attribute forces a download; the
+  device/browser decides whether to open its calendar handler or save the file.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - Section 06 (attendance placeholder) is removed in edit and preview modes. Legacy
   saved copy is retained for compatibility, but is no longer rendered or editable.
