@@ -229,8 +229,17 @@ p.draft-motion-item.is-in-view { animation-delay:.1s; }
 .draft-studio .draft-skip:hover:not(:disabled) { background:#253529aa; }
 /* Keep the photo at the largest browser viewport, not the smaller area above an
    expanded toolbar. Overlays use the visible viewport independently. */
-html.draft-preview-page { background-image:var(--draft-edge-photo); background-position:center top; background-repeat:no-repeat; background-size:cover; background-attachment:fixed; }
+html.draft-preview-page { background:#dcded7; }
 html.draft-preview-page body { background:transparent; }
+.draft-viewport-backdrop { position:fixed; z-index:0; top:calc(-1 * env(safe-area-inset-top,0px)); left:50%; width:480px; max-width:100%; height:100vh; height:calc(max(100lvh,100dvh) + env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); overflow:hidden; pointer-events:none; background:#c9d0c1; }
+.draft-backdrop-intro { position:absolute; inset:0; opacity:1; transition:opacity .9s ease; }
+.draft-backdrop-intro.is-leaving { opacity:0; }
+.draft-cover-layer.is-waiting { visibility:hidden; }
+.draft-studio.is-preview { position:relative; z-index:1; background:transparent; }
+.is-preview .draft-invitation,.is-preview .draft-stage { background:transparent; }
+.is-edge-clean .draft-bgm-dock,.is-edge-clean .draft-preview-controls { display:none; }
+@media (max-width:720px), (hover:none) and (pointer:coarse) { .draft-viewport-backdrop { width:100%; } }
+@media (prefers-reduced-motion:reduce) { .draft-backdrop-intro { transition:none; } }
 .is-preview .draft-stage { height:100vh; height:100lvh; min-height:100dvh; max-height:none; scroll-margin-top:0; }
 .draft-scene-content,.draft-cover-controls { position:absolute; top:0; left:0; width:100%; height:100%; height:100dvh; }
 .draft-scene-content { container-type:size; pointer-events:none; }

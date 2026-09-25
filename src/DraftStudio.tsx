@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { CSSProperties, PointerEvent as ReactPointerEvent, SyntheticEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
@@ -52,6 +53,8 @@ export default function DraftStudio() {
   const [config, setConfig] = useState<DraftConfig>(readSaved)
   const [scene, setScene] = useState<Scene>('intro')
   const [preview, setPreview] = useState(isPreviewUrl)
+  // Diagnostic link only: isolate Safari's treatment of top fixed/sticky controls.
+  const [cleanEdges] = useState(() => new URLSearchParams(window.location.search).get('edge') === 'clean')
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'main'>('intro')
   const [mainReady, setMainReady] = useState(false)
   const [mainLetteringReady, setMainLetteringReady] = useState(false)
@@ -85,26 +88,22 @@ export default function DraftStudio() {
 
   useLayoutEffect(() => {
     if (!preview) return
-    // Let Safari sample the photo canvas instead of the site's beige page canvas.
+    // The photo now lives directly under body, outside clipped/transformed ancestors.
     // Native toolbar/status-bar compositing is still controlled by the browser.
     const root = document.documentElement
-    const previousPhoto = root.style.getPropertyValue('--draft-edge-photo')
     const hadClass = root.classList.contains('draft-preview-page')
     const themes = Array.from(document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]'))
     const previousMedia = themes.map(meta => meta.getAttribute('media'))
     root.classList.add('draft-preview-page')
-    root.style.setProperty('--draft-edge-photo', `url("${photo(phase === 'main' ? 'main' : 'intro', 1400)}")`)
     themes.forEach(meta => meta.setAttribute('media', 'not all'))
     return () => {
       if (!hadClass) root.classList.remove('draft-preview-page')
-      if (previousPhoto) root.style.setProperty('--draft-edge-photo', previousPhoto)
-      else root.style.removeProperty('--draft-edge-photo')
       themes.forEach((meta, index) => {
         if (previousMedia[index] === null) meta.removeAttribute('media')
         else meta.setAttribute('media', previousMedia[index]!)
       })
     }
-  }, [preview, phase])
+  }, [preview])
 
   useLayoutEffect(() => {
     // A reload must restore saved percentages, not overwrite them from a loading
@@ -347,7 +346,12 @@ export default function DraftStudio() {
   }
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
 
-  return <main className={`draft-studio ${preview ? 'is-preview' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
+  return <>
+    {preview && createPortal(<div className="draft-viewport-backdrop" aria-hidden="true" key={`backdrop-${replay}`}>
+      {renderPhoto('main', true)}
+      {phase !== 'main' && <div className={`draft-backdrop-intro ${phase === 'leaving' ? 'is-leaving' : ''}`}>{renderPhoto('intro')}</div>}
+    </div>, document.body)}
+    <main className={`draft-studio ${preview ? 'is-preview' : ''} ${preview && cleanEdges ? 'is-edge-clean' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
     {!preview && <>
       <header className="draft-header">
         <a href={`${import.meta.env.BASE_URL}design-lab/`}>← DESIGN LAB</a>
@@ -397,12 +401,10 @@ export default function DraftStudio() {
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
-              <div className="draft-cover-layer" key={`cover-${replay}`}>
-                {renderPhoto('main', true)}
+              <div className={`draft-cover-layer ${phase !== 'main' ? 'is-waiting' : ''}`} key={`cover-${replay}`}>
                 <div className="draft-scene-content"><div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
               </div>
               {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>
-                {renderPhoto('intro')}
                 <div className="draft-scene-content"><div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span></div>
               </div><div className="draft-cover-controls"><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></div></>}
             </> : <>
@@ -487,4 +489,5 @@ export default function DraftStudio() {
       </div>
     </dialog>
   </main>
+  </>
 }

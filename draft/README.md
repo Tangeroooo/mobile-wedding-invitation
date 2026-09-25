@@ -82,8 +82,13 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - Preview photos use 100lvh (at least 100dvh) with edge-to-edge cover cropping and no
   safe-area padding on the photo itself. Separate 100dvh layers anchor lettering and
-  controls to the currently visible viewport. The root canvas also uses the active
-  photo and opts out of the flat theme-color in preview; editor mode restores both.
+  controls to the currently visible viewport. Preview photos are rendered in a fixed
+  body-level backdrop (outside the stage's clipping/size containment), extended through
+  safe-area insets. Transparent cover layers hold only lettering; the opaque poster
+  body scrolls over the photo. Intro backdrop crossfades in sync with its lettering.
+  Preview opts out of flat theme-color; editor mode removes the backdrop and restores it.
+  Add `&edge=clean` to a preview URL for a diagnostic comparison without the top
+  BGM/summary dock and edit/replay controls; normal previews keep all controls.
   This avoids exposing the next section below the photo when toolbars are expanded.
   Safari's native status-bar compositing still needs real-device verification.
   Controls and the intro caption get safe-area offsets. At the
