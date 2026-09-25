@@ -50,6 +50,8 @@ for (const edition of ['main','a','b'] as const) {
     await expect(page.locator('.bride.draft-account-group')).toHaveCount(1)
     await expect(page.locator('.bride .draft-account-copy strong')).toHaveText(['임하니'])
     await expect(page.locator('.bride .draft-account-copy strong')).toHaveCSS('color','rgb(185, 68, 112)')
+    await expect(page.locator('.bride .draft-account-bank')).toHaveCSS('color','rgb(185, 68, 112)')
+    await expect(page.locator('.bride .draft-account-number')).toHaveCSS('color','rgb(185, 68, 112)')
     await expect(page.locator('.draft-calendar-add')).toHaveAttribute('href',new RegExp(`wedding-${edition}\\.ics`))
     if (edition !== 'main') await expect(page.locator('.draft-greeting>p').first()).toHaveCSS('font-size','19px')
   })
