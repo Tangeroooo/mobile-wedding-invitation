@@ -82,6 +82,7 @@ test('directions modals load on demand, zoom the map, stop video and restore foc
   await page.getByRole('button',{name:'셔틀버스 영상',exact:true}).click()
   await expect(page.getByRole('dialog',{name:'셔틀버스 이용 안내',exact:true})).toBeVisible()
   await expect(page.locator('.draft-shuttle-modal iframe')).toHaveAttribute('src',/youtube-nocookie\.com\/embed\/I5oNxPbXw3I/)
+  await expect(page.locator('.draft-shuttle-modal iframe')).toHaveAttribute('src',/[?&]mute=1(?:&|$)/)
   await page.getByRole('button',{name:'안내 모달 닫기',exact:true}).click()
   await expect(page.locator('.draft-shuttle-modal iframe')).toHaveCount(0)
   await expect(page.getByRole('button',{name:'셔틀버스 영상',exact:true})).toBeFocused()

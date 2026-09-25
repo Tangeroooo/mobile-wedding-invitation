@@ -30,7 +30,7 @@ export default function DraftDirections() {
     <dialog ref={dialog} className={`draft-shuttle-modal${view === 'map' ? ' is-map' : ''}`} aria-label={view === 'map' ? '약도' : '셔틀버스 이용 안내'} onCancel={() => setView(null)} onClose={() => setView(null)} onClick={event => { if (event.target === event.currentTarget) setView(null) }}>
       {view === 'video' && <header><h2>셔틀버스 이용 안내</h2></header>}
       <button type="button" className="draft-directions-close" aria-label="안내 모달 닫기" autoFocus onClick={() => setView(null)} style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-      {view === 'video' && <><iframe title="신도림역 셔틀버스 이용 안내 영상" src="https://www.youtube-nocookie.com/embed/I5oNxPbXw3I?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+      {view === 'video' && <><iframe title="신도림역 셔틀버스 이용 안내 영상" src="https://www.youtube-nocookie.com/embed/I5oNxPbXw3I?autoplay=1&mute=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         <footer><span>재생이 안 되면</span><a href={videoUrl} target="_blank" rel="noopener noreferrer">YouTube에서 보기 ↗</a></footer></>}
       {view === 'map' && <DraftRouteImage />}
     </dialog>
