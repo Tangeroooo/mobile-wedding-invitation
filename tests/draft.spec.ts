@@ -9,11 +9,13 @@ test('calendar dates are valid and original placeholders migrate without losing 
   expect(ceremonyLabel('2026-11-07', '19:20')).toBe('2026년 11월 7일 토요일\n오후 7시 20분')
   const legacy = structuredClone(defaults)
   legacy.copy.groom = '신랑 이름'; legacy.copy.bride = '신부 이름'
+  legacy.copy.venueName = '더링크호텔'
   legacy.copy.greetingMessage = '직접 편집한 인사말'
   legacy.intro.rotation = 27
   const migrated = parseConfig(legacy)
   expect(migrated.copy.groom).toBe('정주현')
   expect(migrated.copy.bride).toBe('임하니')
+  expect(migrated.copy.venueName).toBe(defaults.copy.venueName)
   expect(migrated.copy.greetingMessage).toBe('직접 편집한 인사말')
   expect(migrated.intro.rotation).toBe(27)
   expect(() => parseConfig({ ...defaults, copy: { ...defaults.copy, ceremonyDate: '2026-02-30' } })).toThrow()
@@ -84,7 +86,7 @@ test('draft contains ceremony details and a deferred venue map', async ({ page }
   await expect(page.locator('.draft-date-text')).toContainText('2026년 11월 7일 토요일')
   await expect(page.locator('.draft-date-card')).toContainText('오후 7시 20분')
   await expect(page.locator('.draft-ceremony-hour')).toHaveText('오후 7시 20분')
-  await expect(page.locator('.draft-ceremony-venue')).toHaveText('더링크호텔 · 3층 베일리홀')
+  await expect(page.locator('.draft-ceremony-venue')).toHaveText('더링크서울 트리뷰트 포트폴리오 호텔 3층 베일리홀')
   expect(await page.locator('.draft-ceremony-hour').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(20)
   await expect(page.locator('.draft-ceremony-venue')).toHaveCSS('font-weight','650')
   await expect(page.locator('.draft-location-card')).toContainText('3층 베일리홀')
@@ -100,7 +102,7 @@ test('draft contains ceremony details and a deferred venue map', async ({ page }
   await expect(page.getByRole('link', {name:'카카오맵 ↗'})).toHaveAttribute('href', /map\.kakao\.com/)
 })
 
-test('compact account rows, animated accessible disclosure and single-line venue', async ({ page }) => {
+test('compact account rows, animated accessible disclosure and readable full venue name', async ({ page }) => {
   await page.setViewportSize({width:320, height:700})
   await page.goto('draft/')
   const trigger = page.getByRole('button', {name:'신랑측 계좌 안내', exact:true})
@@ -109,12 +111,16 @@ test('compact account rows, animated accessible disclosure and single-line venue
   await expect(panel).toHaveAttribute('inert', '')
   await trigger.click()
   await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+  await expect(trigger).toHaveCSS('font-weight', '700')
   await expect(panel).not.toHaveAttribute('inert', '')
   const row = page.getByRole('button', {name:'정주현 은행명과 계좌번호 복사', exact:true})
   await expect(row).toBeVisible()
   expect(await row.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
+  for (const account of await page.locator('.groom .draft-account-copy').all()) expect(await account.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
   const name = (await row.locator('strong').boundingBox())!
   const number = (await row.locator('.draft-account-number').boundingBox())!
+  await expect(row.locator('.draft-account-number')).toHaveCSS('font-size','13px')
+  await expect(row.locator('.draft-account-copy-icon')).toBeVisible()
   expect(Math.abs(name.y + name.height/2 - number.y - number.height/2)).toBeLessThan(2)
   await trigger.press('Enter')
   await expect(trigger).toHaveAttribute('aria-expanded', 'false')

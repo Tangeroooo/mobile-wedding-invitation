@@ -11,7 +11,7 @@ export const copyDefaults = {
   galleryMessage: '함께 웃던 순간을 모아.', galleryFirst: 'IN THE GARDEN', gallerySecond: 'SIDE BY SIDE',
   galleryNote: '갤러리 구성은 사진을 추가하며 다듬을 예정입니다.',
   locationLabel: 'MEET US HERE', locationTitle: '오시는 길',
-  venueName: '더링크호텔', venueHall: '3층 베일리홀', venueAddress: '서울특별시 구로구 경인로 610',
+  venueName: '더링크서울 트리뷰트 포트폴리오 호텔', venueHall: '3층 베일리홀', venueAddress: '서울특별시 구로구 경인로 610',
   transport: '',
   rsvpLabel: 'WITH LOVE', rsvpTitle: '당신과 함께라서', rsvpAccent: '더 특별한 하루.',
   rsvpMessage: '참석 여부 안내는\n정보가 정해지면 연결할 예정입니다.',
