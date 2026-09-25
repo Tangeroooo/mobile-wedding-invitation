@@ -183,6 +183,7 @@
 .draft-studio .draft-map-links>:is(a,button):hover { background:color-mix(in srgb,var(--draft-blue) 8%,transparent); }
 .draft-poster-footer { padding:44px 20px; background:var(--draft-blue); color:var(--draft-paper); text-align:center; }.draft-poster-footer span { display:block; font-size:8px; letter-spacing:.23em; }.draft-poster-footer strong { display:block; font:italic 37px/1.3 Georgia,serif; margin:17px 0 24px; font-weight:normal; }
 .draft-music-credit { margin-top:20px; font-size:10px; line-height:1.8; }
+.draft-poster-footer .draft-footer-verse { margin:0 auto 32px; font-size:15px; line-height:1.9; letter-spacing:-.025em; word-break:keep-all; }
 .draft-music-credit summary { cursor:pointer; width:fit-content; margin:auto; color:color-mix(in srgb,var(--draft-paper) 75%,transparent); }
 .draft-music-credit p { margin:10px 0 0; }
 .draft-music-credit a { text-decoration:underline; text-underline-offset:3px; }
@@ -271,6 +272,19 @@ html.draft-preview-page body { background:transparent; }
 .draft-transport { border-top:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); padding-top:20px; margin-top:24px; }
 .draft-shuttle-modal { width:min(92vw,720px); max-width:none; max-height:calc(100dvh - 32px); margin:auto; padding:0; border:1px solid #ffffff24; border-radius:16px; background:#151a20; color:#fff; overflow:auto; overscroll-behavior:contain; }
 .draft-shuttle-modal::backdrop { background:#101513d9; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+.draft-calendar-guide { width:min(90vw,400px); max-height:calc(100dvh - 40px); padding:30px 24px 20px; border:1px solid color-mix(in srgb,var(--draft-blue) 18%,transparent); border-radius:18px; background:var(--draft-paper); color:var(--draft-blue); overflow:auto; overscroll-behavior:contain; }
+.draft-calendar-guide::backdrop { background:#15233a80; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.draft-studio dialog.draft-calendar-guide h2 { margin:8px 24px 18px 0; font-size:23px; line-height:1.45; letter-spacing:-.04em; }
+.draft-studio dialog.draft-calendar-guide p { font-size:15px; line-height:1.75; white-space:normal; word-break:keep-all; }
+.draft-calendar-guide ol { padding-left:22px; font-size:15px; line-height:1.8; word-break:keep-all; }
+.draft-calendar-guide li+li { margin-top:12px; }
+.draft-studio .draft-calendar-guide-close { position:absolute; top:8px; right:8px; width:44px; height:44px; padding:0; border:0; background:transparent; color:var(--draft-blue); font-size:28px; }
+.draft-studio .draft-calendar-guide-copy { width:100%; min-height:48px; margin-top:8px; background:var(--draft-blue); color:var(--draft-paper); border:0; font-size:16px; }
+.draft-calendar-guide-url { display:block; margin-top:16px; font-size:13px; }
+.draft-calendar-guide-url input { display:block; width:100%; min-width:0; padding:10px; margin-top:6px; border:1px solid #274d8540; border-radius:5px; color:var(--draft-blue); background:transparent; font-size:16px; user-select:text; }
+.draft-studio dialog.draft-calendar-guide .draft-calendar-guide-status { margin-bottom:0; font-size:14px; }
+.is-large-type dialog.draft-calendar-guide :is(p,ol) { font-size:18px; }
+.is-large-type .draft-calendar-guide-copy { font-size:18px; }
 .draft-shuttle-modal header { display:flex; align-items:center; min-height:60px; padding:8px 60px 8px 18px; }
 .draft-shuttle-modal header h2 { margin:0; font-size:14px; line-height:1.5; letter-spacing:0; font-weight:500; }
 .draft-studio .draft-directions-close,.draft-studio .draft-directions-close:hover:not(:disabled) { position:absolute; z-index:2; right:5px; top:5px; display:grid; place-items:center; width:44px; height:44px; padding:11px; border:0; border-radius:50%; background:#ffffff06; box-shadow:inset 0 0 0 1px #ffffff0d; color:#ffffffb8; }

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { invitationCopy } from '../src/invitationVariants'
 import { copyDefaults } from '../src/draftCopy'
 import { createWeddingCalendar } from '../src/draftCalendarFile'
+import { defaults, parseConfig } from '../src/draftModel'
 
 test('published edition data stays independent and calendars use edition names', () => {
   const main = invitationCopy('main'), a = invitationCopy('a'), b = invitationCopy('b')
@@ -15,6 +16,9 @@ test('published edition data stays independent and calendars use edition names',
   expect(createWeddingCalendar(b)).toContain('SUMMARY:주현 ♥ 하니 결혼식')
   expect(createWeddingCalendar(a)).toContain('SUMMARY:정주현 ♥ 임하니 결혼식')
   expect(copyDefaults.brideParents).toBe('임춘구 · 박건자의 장녀')
+  expect(main.footerLabel).toBe('이 모든 것 위에 사랑을 더하라\n이는 온전하게 매는 띠니라\n\n골로새서 3:14')
+  expect(parseConfig({...defaults,copy:{...copyDefaults,footerLabel:'BLUE MEETS PINK.'}}).copy.footerLabel).toBe(copyDefaults.footerLabel)
+  expect(parseConfig({...defaults,copy:{...copyDefaults,footerLabel:'직접 쓴 문구'}}).copy.footerLabel).toBe('직접 쓴 문구')
 })
 
 test('published HTML includes independent crawler-readable sharing cards', () => {

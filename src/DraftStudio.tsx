@@ -234,8 +234,9 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   const changePhoto = (direction: -1 | 1) => {
     const rail = photoRail.current
     if (!rail || lightbox === null) return
-    const next = (lightbox - 1 + direction + galleryPhotos.length) % galleryPhotos.length + 1
-    const instant = Math.abs(next - lightbox) > 1 || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const next = clamp(lightbox + direction, 1, galleryPhotos.length)
+    if (next === lightbox) return
+    const instant = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     rail.scrollTo({ left:gallerySlideLeft(rail, next - 1), behavior:instant ? 'instant' : 'smooth' })
   }
   const photoViewerOpen = lightbox !== null
@@ -275,7 +276,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
     const invitation = stage.current?.closest('.draft-invitation')
     if (!invitation) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const items = invitation.querySelectorAll('.draft-poster-section > :not(.draft-gallery-grid):not(.draft-copy-editor)')
+    const items = invitation.querySelectorAll('.draft-poster-section > :not(.draft-gallery-grid):not(.draft-copy-editor):not(dialog)')
     const footer = invitation.querySelector('.draft-poster-footer')
     const footerItems = invitation.querySelectorAll('.draft-poster-footer > :not(.draft-copy-editor)')
     const pins = invitation.querySelectorAll('.draft-photo-pin')
@@ -532,7 +533,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} familyFirst={variant === 'a' || variant === 'b'} />{editCopy('accounts')}
             </section>
-            <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}
+            <footer className="draft-poster-footer"><span className="draft-footer-verse">{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}
               {musicEnabled && <details className="draft-music-credit">
                 <summary>음악 출처</summary>
                 <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a><br />
@@ -561,7 +562,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
           </div>)}
         </div>
         <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-        {(['previous', 'next'] as const).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => changePhoto(direction === 'previous' ? -1 : 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
+        {(['previous', 'next'] as const).filter(direction => lightbox !== null && (direction === 'previous' ? lightbox > 1 : lightbox < galleryPhotos.length)).map(direction => <button key={direction} className={`draft-lightbox-arrow is-${direction}`} aria-label={direction === 'previous' ? '이전 사진' : '다음 사진'} style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => changePhoto(direction === 'previous' ? -1 : 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={direction === 'previous' ? 'm14 5-7 7 7 7' : 'm10 5 7 7-7 7'} /></svg></button>)}
       </div>
     </dialog>
   </main>

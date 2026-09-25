@@ -5,8 +5,12 @@ import type { DraftCopy } from './draftCopy'
 import { copyDefaults } from './draftCopy'
 import { createWeddingCalendar } from './draftCalendarFile'
 import type { InvitationVariant } from './invitationVariants'
+import { calendarBrowser } from './calendarBrowser'
+import DraftCalendarGuide from './DraftCalendarGuide'
 
 export function DraftCalendarAdd({ copy, variant }: { copy: DraftCopy; variant?: InvitationVariant }) {
+  const [guideOpen, setGuideOpen] = useState(false)
+  const browser = calendarBrowser(navigator.userAgent, navigator.platform, navigator.maxTouchPoints)
   const calendar = useMemo(() => createWeddingCalendar(copy), [copy])
   const isDefault = (['groom', 'bride', 'ceremonyDate', 'ceremonyTime', 'ceremonyEndTime', 'venueName', 'venueHall', 'venueAddress'] as const).every(key => copy[key] === copyDefaults[key])
   const [editedUrl, setEditedUrl] = useState<string | null>(null)
@@ -20,10 +24,12 @@ export function DraftCalendarAdd({ copy, variant }: { copy: DraftCopy; variant?:
   const revision = `${copy.ceremonyDate}-${copy.ceremonyTime}-${copy.ceremonyEndTime}`.replace(/[^\d-]/g, '')
   const href = variant ? `${import.meta.env.BASE_URL}calendar/wedding-${variant}.ics?v=${revision}` : isDefault ? `${import.meta.env.BASE_URL}calendar/wedding.ics?v=${revision}` : editedUrl
   if (!href) return null
-  return <a className="draft-calendar-add" href={href} type="text/calendar" aria-label="결혼식 일정 캘린더에 추가">
+  return <><a className="draft-calendar-add" href={href} type="text/calendar" aria-label="결혼식 일정 캘린더에 추가" aria-haspopup={browser.kakao ? 'dialog' : undefined} onClick={event => {
+    if (browser.kakao) { event.preventDefault(); setGuideOpen(true) }
+  }}>
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4m10-4v4M3 10h18m-9 3v5m-2.5-2.5h5" /></svg>
     캘린더에 추가
-  </a>
+  </a>{guideOpen && <DraftCalendarGuide browserName={browser.browserName} onClose={() => setGuideOpen(false)} />}</>
 }
 
 export function DraftCountdown({ dateValue }: { dateValue: string }) {
