@@ -50,7 +50,8 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   settled when scrolling back; only an explicit preview replay resets entrances.
   Specialized animations override the generic entrance. Editor mode shows the
   resting layout. Reduced-motion changes are handled live. Pink asterisk decorations
-  use drawn SVG strokes rather than an emoji-prone Unicode glyph.
+  retain the original glyph, font, size and placement. VS15 and text emoji presentation
+  request the monochrome text form instead of a platform color emoji.
 - Section 02 shows a small D-Day badge to the right of its title (D-Day on the day,
   D+N afterwards). The date and time text share the same size.
 - A small glass-blurred schedule summary follows the invitation's center-right edge.

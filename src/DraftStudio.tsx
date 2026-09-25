@@ -26,8 +26,8 @@ const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square'
 ]
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
-// A drawn asterisk keeps the pink ink on devices that render ✳ as a color emoji.
-const DraftAsterisk = () => <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M50 4v92M4 50h92M17.5 17.5l65 65M17.5 82.5l65-65" fill="none" stroke="currentColor" strokeWidth="3" /></svg>
+// Preserve the original glyph and its metrics; VS15 requests text, not emoji.
+const DraftAsterisk = () => <>{'\u2733\uFE0E'}</>
 // Discourage ordinary image saving without disabling selection in the editor.
 const protectPhoto = (event: SyntheticEvent) => {
   if (event.target instanceof Element && event.target.closest('input, textarea, [contenteditable="true"]')) return

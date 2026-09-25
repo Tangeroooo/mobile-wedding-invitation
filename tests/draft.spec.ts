@@ -363,8 +363,8 @@ test('each section plays its own motion once, without restarting on upward scrol
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
   await page.goto('draft/')
   const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')
-  await expect(flower.locator('svg path')).toHaveAttribute('stroke','currentColor')
-  await expect(flower).toHaveText('')
+  await expect(flower.locator('svg')).toHaveCount(0)
+  await expect(flower).toHaveText('\u2733\uFE0E')
   await expect(flower).toHaveCSS('opacity', '1')
   const color = await flower.evaluate(el => getComputedStyle(el).color)
   const rotation = await calendar.evaluate(el => getComputedStyle(el).transform)
