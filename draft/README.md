@@ -30,7 +30,13 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
 - Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
-- Event names, date/time, venue, RSVP and account information are not yet supplied.
+- Ceremony: November 7, 2026 (Saturday), 19:20 KST, 더링크호텔 3층 베일리홀.
+  Year assumed to be the upcoming November; confirm before final publication.
+- Venue address: 서울특별시 구로구 경인로 610, verified against the official listing:
+  https://www.marriott.com/en-us/hotels/seltx-the-link-seoul-a-tribute-portfolio-hotel/overview/
+  A lazy-loaded OpenStreetMap and Naver/Kakao map links are included in the draft only.
+  Map pin (37.5052943, 126.8838555) comes from the official listing's View Map link.
+- Event names, RSVP and account information are not yet supplied.
 
 Regenerate derivatives: `node scripts/prepare-draft.mjs`.
 Optionally pass a local Blackrush.ttf path to rebuild the outline data. See asset notices.

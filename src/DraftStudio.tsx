@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import DraftLettering from './DraftLettering'
+import DraftMap from './DraftMap'
 import type { Outlines } from './DraftLettering'
 import { clamp, defaults, isSupportedText, normalizeText, parseConfig, storageKey } from './draftModel'
 import type { DraftConfig, Scene } from './draftModel'
@@ -9,6 +10,13 @@ import './DraftStudio.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
+// Address verified against the hotel's official Marriott listing.
+const venue = {
+  name: '더링크호텔',
+  hall: '3층 베일리홀',
+  address: '서울특별시 구로구 경인로 610',
+}
+const mapQuery = encodeURIComponent('더링크호텔 서울')
 
 function readSaved() {
   try {
@@ -285,14 +293,14 @@ export default function DraftStudio() {
           <div className="draft-poster-body" id="draft-body">
             <div className="draft-ticker"><span>WITH YOU, ALWAYS</span><b>✳</b><span>A NEW CHAPTER</span><b>✳</b></div>
             <section className="draft-poster-section draft-greeting"><div className="draft-section-index">01 <span>THE INVITATION</span></div><h2>우리의<br /><em>가장 좋은 날.</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>서로의 일상에 가장 다정한 사람이 되어<br />이제, 함께하는 내일을 시작합니다.</p><p>소중한 여러분을<br />우리의 시작에 초대합니다.</p><div className="draft-couple">신랑 이름 <i>&</i> 신부 이름</div></section>
-            <section className="draft-poster-section draft-date"><div className="draft-section-index">02 <span>SAVE THE DATE</span></div><h2>함께할<br /><em>그날의 약속.</em></h2><div className="draft-date-card"><strong>OUR DAY</strong><p>예식 날짜 · 시간 입력 예정</p><span>예식장 · 홀 이름 입력 예정</span></div></section>
+            <section className="draft-poster-section draft-date"><div className="draft-section-index">02 <span>SAVE THE DATE</span></div><h2>함께할<br /><em>그날의 약속.</em></h2><div className="draft-date-card"><span className="draft-date-year">2026 · OUR DAY</span><strong>11. 07. SAT</strong><time dateTime="2026-11-07T19:20:00+09:00">2026년 11월 7일 토요일<br />오후 7시 20분</time><span>{venue.name} · {venue.hall}</span></div></section>
             <section className="draft-poster-section draft-gallery"><div className="draft-section-index">03 <span>MOMENTS OF US</span></div><h2>우리라는<br /><em>장면들.</em></h2><p>함께 웃던 순간을 모아.</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? 'SIDE BY SIDE' : 'IN THE GARDEN'} ↗</span></button>)}</div><small className="draft-gallery-note">갤러리 구성은 사진을 추가하며 다듬을 예정입니다.</small></section>
-            <section className="draft-poster-section"><div className="draft-section-index">04 <span>MEET US HERE</span></div><h2>만나는 곳.</h2><div className="draft-location-card"><span>↗</span><strong>예식장 이름 입력 예정</strong><p>주소와 교통 안내를 이곳에 담을게요.</p></div></section>
+            <section className="draft-poster-section draft-location"><div className="draft-section-index">04 <span>MEET US HERE</span></div><h2>만나는 곳.</h2><div className="draft-location-card"><span aria-hidden="true">↗</span><strong>{venue.name}</strong><p className="draft-location-hall">{venue.hall}</p><address>{venue.address}</address></div><DraftMap /><nav className="draft-map-links" aria-label="예식장 지도 앱"><a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer">네이버지도 ↗</a><a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer">카카오맵 ↗</a></nav><p className="draft-map-help">지도가 보이지 않으면 위 버튼으로 열어주세요.</p></section>
             <section className="draft-poster-section draft-rsvp"><div className="draft-section-index">05 <span>WITH LOVE</span></div><h2>당신과 함께라서<br /><em>더 특별한 하루.</em></h2><p>참석 여부와 마음 전하실 곳은<br />정보가 정해지면 연결할 예정입니다.</p></section>
             <footer className="draft-poster-footer"><span>BLUE MEETS PINK.</span><strong>Better, together.</strong><span>OUR WEDDING INVITATION</span></footer>
           </div>
         </article>
-        {!preview && <p className="draft-bottom-note">이름·일시·장소는 미입력 상태입니다. 초안 편집은 기존 청첩장에 반영되지 않습니다.</p>}
+        {!preview && <p className="draft-bottom-note">이름·참석 여부 등은 준비 중입니다. 초안 편집은 기존 청첩장에 반영되지 않습니다.</p>}
       </div>
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}

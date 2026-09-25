@@ -1,6 +1,21 @@
 import { test, expect } from '@playwright/test'
 import { defaults } from '../src/draftModel'
 
+test('draft contains ceremony details and a deferred venue map', async ({ page }) => {
+  await page.setViewportSize({ width:390, height:844 })
+  await page.goto('draft/')
+  await expect(page.locator('.draft-date-card time')).toHaveAttribute('datetime', '2026-11-07T19:20:00+09:00')
+  await expect(page.locator('.draft-date-card')).toContainText('오후 7시 20분')
+  await expect(page.locator('.draft-location-card')).toContainText('3층 베일리홀')
+  await expect(page.locator('.draft-location-card address')).toHaveText('서울특별시 구로구 경인로 610')
+  await expect(page.locator('.draft-location-map .leaflet-tile')).toHaveCount(0)
+  await page.locator('.draft-location').scrollIntoViewIfNeeded()
+  await expect(page.getByRole('region', {name:'더링크호텔 위치 지도'})).toBeVisible()
+  await expect(page.getByTitle('더링크호텔 · 3층 베일리홀')).toBeVisible()
+  await expect(page.getByRole('link', {name:'네이버지도 ↗'})).toHaveAttribute('href', /map\.naver\.com/)
+  await expect(page.getByRole('link', {name:'카카오맵 ↗'})).toHaveAttribute('href', /map\.kakao\.com/)
+})
+
 test('legacy yellow migration, rotation handle, persistence and playback', async ({ page }) => {
   await page.setViewportSize({ width:1440, height:1000 })
   await page.goto('draft/')
