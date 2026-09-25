@@ -3,6 +3,7 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent, SyntheticEvent }
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
 import DraftShare from './DraftShare'
+import { galleryPhotos, galleryStartingAt } from './draftGallery'
 import DraftCopyEditor from './DraftCopyEditor'
 import DraftCalendar from './DraftCalendar'
 import DraftDirections from './DraftDirections'
@@ -23,8 +24,6 @@ import './PublishedInvitation.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
-const galleryPhotos = Array.from({ length:25 }, (_, index) => String(index + 1))
-  .flatMap(id => id === '21' ? [id, '21-1', '21-2'] : [id])
 // Mix settings, outfits and framing; board slot and full-gallery photo ID are independent.
 const galleryBoard = [1, 17, 6, 7, 18, 9, 20, 21, 23, 24]
 const galleryPhoto = (id: number | string, width: 320 | 1200 = 320) => asset(`gallery/${String(id).padStart(2, '0')}-${width}.webp`)
@@ -79,6 +78,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
   const [typing, setTyping] = useState(false)
   const [toolsOpen, setToolsOpen] = useState(false)
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const [galleryOrder, setGalleryOrder] = useState(galleryPhotos)
   const [replay, setReplay] = useState(0)
   const stage = useRef<HTMLElement>(null)
   const dateCard = useRef<HTMLDivElement>(null)
@@ -225,7 +225,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
     }
   }, [coverScrollLocked])
   useEffect(() => { if (inline) inlineInput.current?.focus() }, [inline])
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (lightbox && dialog.current && !dialog.current.open) {
       dialog.current.showModal()
       // Set the selected photo only on opening; never snap back during a swipe.
@@ -516,7 +516,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
                   {galleryBoard.map((number, index) => {
                     return <div key={number} className={`draft-photo-pin pin-slot-${String(index + 1).padStart(2,'0')} frame-portrait`}>
-                      <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(galleryPhotos.indexOf(String(number)) + 1)} aria-label={`${number}번 사진 보기`}>
+                      <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => { setGalleryOrder(galleryStartingAt(String(number))); setLightbox(1) }} aria-label={`${number}번 사진 보기`}>
                         <img src={galleryPhoto(number)} width="320" height="480" loading="lazy" decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
                       </button>
                     </div>
@@ -560,7 +560,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
             if (step > 0) setLightbox(clamp(Math.round((rail.scrollLeft - start) / step) + 1, 1, galleryPhotos.length))
           }
         }}>
-          {lightbox !== null && galleryPhotos.map((id, index) => <div className="draft-lightbox-slide" key={id} aria-hidden={lightbox !== index + 1}>
+          {lightbox !== null && galleryOrder.map((id, index) => <div className="draft-lightbox-slide" key={id} aria-hidden={lightbox !== index + 1}>
             <img src={galleryPhoto(id, Math.abs(index + 1 - lightbox) <= 1 ? 1200 : 320)} width="1200" height="1800" loading={Math.abs(index + 1 - lightbox) <= 1 ? 'eager' : 'lazy'} decoding="async" draggable={false} alt={`${id}번째 웨딩 사진`} />
           </div>)}
         </div>

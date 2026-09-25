@@ -14,3 +14,18 @@ test('sharing data preserves each published edition and never shares the editor'
   }
   expect(invitationShare().url).toBe(base)
 })
+
+test('sharing buttons have equal vertical spacing even after copying', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.setViewportSize({width:375,height:812})
+  await page.goto('invitation-b/')
+  await page.getByRole('button',{name:'청첩장 링크 복사',exact:true}).click()
+  await expect(page.locator('.draft-share-status')).toHaveText('청첩장 링크를 복사했어요.')
+  const spacing = await page.locator('.draft-share').evaluate(section => {
+    const outer = section.getBoundingClientRect()
+    const buttons = section.querySelector('.draft-share-actions')!.getBoundingClientRect()
+    return {top:buttons.top-outer.top,bottom:outer.bottom-buttons.bottom}
+  })
+  expect(spacing).toEqual({top:30,bottom:30})
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(invitationShare('b').url)
+})

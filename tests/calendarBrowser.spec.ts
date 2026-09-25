@@ -28,7 +28,8 @@ for (const path of ['./','invitation-a/','invitation-b/']) {
   })
 }
 
-test('gallery end buttons match swipe boundaries without wrapping', async ({page}) => {
+test('gallery end buttons follow the clicked photo relative order', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'reduce'})
   await page.goto('draft/')
   await page.getByRole('button',{name:'1번 사진 보기',exact:true}).click()
   await expect(page.getByRole('button',{name:'이전 사진',exact:true})).toHaveCount(0)
@@ -37,11 +38,22 @@ test('gallery end buttons match swipe boundaries without wrapping', async ({page
   await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','1번째 웨딩 사진')
   await page.getByRole('button',{name:'사진 보기 닫기'}).click()
   await page.getByRole('button',{name:'24번 사진 보기',exact:true}).click()
+  await expect(page.getByRole('button',{name:'이전 사진',exact:true})).toHaveCount(0)
+  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','24번째 웨딩 사진')
   await page.getByRole('button',{name:'다음 사진',exact:true}).click()
   await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','25번째 웨딩 사진')
+  await page.getByRole('button',{name:'다음 사진',exact:true}).click()
+  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','1번째 웨딩 사진')
+  // Scroll the same rail used by touch gestures to its relative final slide.
+  await page.locator('.draft-lightbox-rail').evaluate(rail => { rail.scrollLeft = rail.scrollWidth })
+  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','23번째 웨딩 사진')
   await expect(page.getByRole('button',{name:'다음 사진',exact:true})).toHaveCount(0)
   await page.getByRole('dialog',{name:'갤러리 사진 보기'}).press('ArrowRight')
-  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','25번째 웨딩 사진')
+  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','23번째 웨딩 사진')
   await page.getByRole('button',{name:'이전 사진',exact:true}).click()
   await expect(page.getByRole('button',{name:'다음 사진',exact:true})).toBeVisible()
+  await page.getByRole('button',{name:'사진 보기 닫기'}).click()
+  await page.getByRole('button',{name:'7번 사진 보기',exact:true}).click()
+  await expect(page.locator('.draft-lightbox-slide[aria-hidden="false"] img')).toHaveAttribute('alt','7번째 웨딩 사진')
+  await expect(page.getByRole('button',{name:'이전 사진',exact:true})).toHaveCount(0)
 })

@@ -11,6 +11,11 @@ export default function DraftShare({ variant }: { variant?: InvitationVariant })
   const [manual, setManual] = useState(false)
   const [busy, setBusy] = useState(false)
   useEffect(() => {
+    if (!status) return
+    const timer = window.setTimeout(() => setStatus(''), 4500)
+    return () => window.clearTimeout(timer)
+  }, [status])
+  useEffect(() => {
     if (!kakaoKey || !section.current) return
     let active = true
     const observer = new IntersectionObserver(entries => {
@@ -63,7 +68,7 @@ export default function DraftShare({ variant }: { variant?: InvitationVariant })
   }
   return <section ref={section} className="draft-share" aria-label="청첩장 공유">
     <div className="draft-share-actions">
-      <button type="button" onClick={() => void copyLink()}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true"><path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 1)" /></svg><span>청첩장 링크 복사</span></button>
+      <button type="button" onClick={() => void copyLink()}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg><span>청첩장 링크 복사</span></button>
       <button type="button" onClick={() => void shareLink()} disabled={busy}>
         {kakaoKey ? <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2 6.4 2 10.6c0 2.7 1.8 5.1 4.5 6.4l-1 3.7c-.1.4.3.6.6.4l4.4-3h1.5c5.5 0 10-3.4 10-7.5S17.5 3 12 3Z" /></svg> : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V2m-4 4 4-4 4 4M6 10H4v12h16V10h-2" /></svg>}
         <span>{kakaoKey ? '카카오톡으로 공유' : '청첩장 공유하기'}</span>
