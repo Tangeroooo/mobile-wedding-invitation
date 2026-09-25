@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import type { CSSProperties, PointerEvent as ReactPointerEvent, SyntheticEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
+import DraftShare from './DraftShare'
 import DraftCopyEditor from './DraftCopyEditor'
 import DraftCalendar from './DraftCalendar'
 import DraftDirections from './DraftDirections'
@@ -534,6 +535,7 @@ export default function DraftStudio({ variant }: { variant?: InvitationVariant }
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} familyFirst={variant === 'a' || variant === 'b'} />{editCopy('accounts')}
             </section>
+            <DraftShare variant={variant} />
             <footer className="draft-poster-footer"><span className="draft-footer-verse">{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}
               {musicEnabled && <details className="draft-music-credit">
                 <summary>음악 출처</summary>

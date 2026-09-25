@@ -182,6 +182,18 @@
 .draft-studio .draft-map-links>:is(a,button) { display:flex; align-items:center; justify-content:center; gap:6px; min-width:0; min-height:48px; padding:12px 4px; border:1px solid var(--draft-blue); border-radius:4px; background:transparent; color:var(--draft-blue); font-size:14px; font-weight:500; line-height:1.4; white-space:nowrap; }
 .draft-map-links :is(img,svg) { flex-shrink:0; width:20px; height:20px; border-radius:5px; object-fit:contain; }
 .draft-studio .draft-map-links>:is(a,button):hover { background:color-mix(in srgb,var(--draft-blue) 8%,transparent); }
+.draft-share { padding:30px 24px 22px; background:var(--draft-paper); color:var(--draft-blue); }
+.draft-share-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.draft-share-actions button { display:flex; align-items:center; justify-content:center; gap:8px; flex:1 1 180px; min-height:48px; padding:12px 14px; border:1px solid color-mix(in srgb,var(--draft-blue) 24%,transparent); border-radius:5px; background:transparent; color:inherit; font-size:14px; font-weight:600; line-height:1.5; font-family:inherit; cursor:pointer; transition:background .2s; }
+.draft-share-actions button:last-child { color:var(--draft-pink); border-color:color-mix(in srgb,var(--draft-pink) 24%,transparent); }
+.draft-share-actions button:hover { background:color-mix(in srgb,currentColor 5%,transparent); }
+.draft-share-actions button:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+.draft-share-actions button:disabled { opacity:.6; cursor:wait; }
+.draft-share-actions svg { width:19px; height:19px; flex:none; }
+.draft-share-status { margin:10px 0 0; min-height:1.5em; text-align:center; font-size:12px; line-height:1.6; word-break:keep-all; }
+.draft-share-url { display:block; width:100%; margin-top:8px; padding:10px; border:1px solid currentColor; border-radius:4px; color:inherit; background:transparent; font-size:13px; }
+.is-large-type .draft-share-actions button { font-size:17px; }
+.is-large-type .draft-share-status { font-size:15px; }
 .draft-poster-footer { padding:44px 20px; background:var(--draft-blue); color:var(--draft-paper); text-align:center; }.draft-poster-footer span { display:block; font-size:8px; letter-spacing:.23em; }.draft-poster-footer strong { display:block; font:italic 37px/1.3 Georgia,serif; margin:17px 0 24px; font-weight:normal; }
 .draft-music-credit { margin-top:20px; font-size:10px; line-height:1.8; }
 .draft-poster-footer .draft-footer-verse { margin:0 auto 32px; font-size:15px; line-height:1.9; letter-spacing:-.025em; word-break:keep-all; }
