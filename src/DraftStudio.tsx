@@ -18,6 +18,13 @@ import './DraftStudio.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
+const galleryFrames: { scene?: Scene; shape: 'portrait' | 'landscape' | 'square' }[] = [
+  { scene:'intro', shape:'portrait' }, { scene:'main', shape:'portrait' },
+  { shape:'square' }, { shape:'landscape' },
+  { shape:'portrait' }, { shape:'square' },
+  { shape:'landscape' }, { shape:'portrait' },
+  { shape:'square' }, { shape:'landscape' },
+]
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 
 function readSaved() {
@@ -150,13 +157,33 @@ export default function DraftStudio() {
     else dialog.current?.close()
   }, [lightbox])
   useEffect(() => {
-    if (!preview || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const sections = document.querySelectorAll('.draft-poster-section')
+    if (!preview) return
+    const invitation = stage.current?.closest('.draft-invitation')
+    if (!invitation) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sections = invitation.querySelectorAll('.draft-poster-section')
+    const pins = invitation.querySelectorAll('.draft-photo-pin')
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('draft-revealed'); observer.unobserve(entry.target) }
-    }, { threshold: .08 })
-    for (const section of sections) { section.classList.add('draft-reveal'); observer.observe(section) }
-    return () => { observer.disconnect(); for (const section of sections) section.classList.remove('draft-reveal', 'draft-revealed') }
+    }, { threshold: .08, rootMargin:'0px 0px -5% 0px' })
+    const pinObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-pinned'); pinObserver.unobserve(entry.target) }
+    }, { threshold: .18, rootMargin:'0px 0px -8% 0px' })
+    const clear = () => {
+      observer.disconnect(); pinObserver.disconnect()
+      for (const section of sections) section.classList.remove('draft-reveal', 'draft-revealed')
+      for (const pin of pins) pin.classList.remove('will-pin', 'is-pinned')
+    }
+    const start = () => {
+      clear()
+      if (reduced.matches) return
+      for (const section of sections) { section.classList.add('draft-reveal'); observer.observe(section) }
+      // Observe stable photo wrappers, not their transformed flying images.
+      for (const pin of pins) { pin.classList.add('will-pin'); pinObserver.observe(pin) }
+    }
+    start()
+    reduced.addEventListener('change', start)
+    return () => { clear(); reduced.removeEventListener('change', start) }
   }, [preview, replay])
 
   const remember = useCallback(() => setHistory(current => [...current.slice(-49), structuredClone(liveConfig.current)]), [])
@@ -336,7 +363,28 @@ export default function DraftStudio() {
               <div ref={dateCard} className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><div className="draft-ceremony-details"><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}><span>{ceremonyDay}</span>{'\n'}<span className="draft-ceremony-hour">{ceremonyHour}</span></time></p><div className="draft-ceremony-venue"><span>{copy.venueName}</span>{' '}<span className="draft-ceremony-hall">{copy.venueHall}</span></div></div></div><DraftCalendarAdd copy={copy} />{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
-              <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? copy.gallerySecond : copy.galleryFirst} ↗</span></button>)}</div><small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
+              <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
+              <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
+                <span className="draft-board-label" aria-hidden="true">OUR MEMORY BOARD</span>
+                {Array.from({ length:5 }, (_, row) => <div className={`draft-board-pair board-pair-${row + 1}`} key={row}>
+                  {galleryFrames.slice(row * 2, row * 2 + 2).map(({ scene: value, shape }, column) => {
+                    const number = String(row * 2 + column + 1).padStart(2, '0')
+                    return <div key={number} className={`draft-photo-pin pin-slot-${number} frame-${shape}`}>
+                      {value ? <button className="draft-photo-print" onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}>
+                        <i className="draft-photo-tape" aria-hidden="true" />
+                        <img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={value === 'main' ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} />
+                        <span className="draft-photo-caption"><b>{number}</b><span>{value === 'main' ? copy.gallerySecond : copy.galleryFirst}</span><i aria-hidden="true">↗</i></span>
+                      </button> : <div className="draft-photo-print draft-empty-frame" role="img" aria-label={`${Number(number)}번 사진 자리 · ${shape === 'portrait' ? '세로' : shape === 'landscape' ? '가로' : '정사각형'} 빈 액자`}>
+                        <i className="draft-photo-tape" aria-hidden="true" />
+                        <div className="draft-photo-empty" aria-hidden="true"><span>{number}</span></div>
+                        <span className="draft-photo-caption" aria-hidden="true"><b>{number}</b><span>A MEMORY TO COME</span></span>
+                      </div>}
+                    </div>
+                  })}
+                  {row === 0 && <><span className="draft-board-star" aria-hidden="true">✳</span><span className="draft-board-note" aria-hidden="true">with love,<br />always.</span></>}
+                </div>)}
+              </div>
+              <small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
             </section>
             <section className="draft-poster-section draft-location">
               <div className="draft-section-index">04 <span>{copy.locationLabel}</span></div><h2>{copy.locationTitle}</h2><div className="draft-location-card"><div className="draft-location-title"><strong>{copy.venueName}</strong><span className="draft-location-hall">{copy.venueHall}</span><span className="draft-location-arrow" aria-hidden="true">↗</span></div><address>{copy.venueAddress}</address></div><DraftMap />

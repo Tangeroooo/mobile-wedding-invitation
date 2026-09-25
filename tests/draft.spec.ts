@@ -262,6 +262,35 @@ test('English section labels are larger and titles smaller in both modes', async
   await verify()
 })
 
+test('memory-board photos have unequal sizes, settle on scroll and respect reduced motion', async ({ page }) => {
+  await page.setViewportSize({width:390,height:844})
+  await page.goto('draft/?mode=preview')
+  await page.getByRole('button', {name:'건너뛰기'}).click()
+  await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
+  const board = page.getByRole('group', {name:'사진을 붙인 메모리 보드'})
+  await expect(board.locator('.draft-photo-pin')).toHaveCount(10)
+  await expect(board.locator('.draft-empty-frame')).toHaveCount(8)
+  await expect(board.locator('button')).toHaveCount(2)
+  await board.scrollIntoViewIfNeeded()
+  for (const pin of await board.locator('.draft-photo-pin').all()) {
+    await pin.scrollIntoViewIfNeeded()
+    await expect(pin).toHaveClass(/is-pinned/)
+    await expect(pin.locator('.draft-photo-print')).toHaveCSS('animation-name','draft-photo-land')
+    await expect(pin.locator('.draft-photo-print')).toHaveCSS('opacity','1')
+  }
+  const sizes = await board.locator('.draft-photo-pin').evaluateAll(els => els.map(el => el.clientWidth))
+  expect(sizes[0]).toBeGreaterThan(sizes[1] * 1.15)
+  await board.getByRole('button', {name:'메인 커버 사진 크게 보기'}).click()
+  await expect(page.locator('.draft-lightbox')).toBeVisible()
+  await page.getByRole('button', {name:'닫기 ×'}).click()
+  await page.emulateMedia({reducedMotion:'reduce'})
+  await expect(board.locator('.will-pin')).toHaveCount(0)
+  for (const button of await board.locator('button').all()) {
+    await expect(button).toHaveCSS('animation-name','none')
+    await expect(button).toHaveCSS('opacity','1')
+  }
+})
+
 test('editor and preview share the flower color and tilted calendar', async ({ page }) => {
   await page.goto('draft/')
   const flower = page.locator('.draft-flower'), calendar = page.locator('.draft-date-card')

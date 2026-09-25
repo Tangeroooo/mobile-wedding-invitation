@@ -61,6 +61,7 @@ export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion }: {
     if (invitation) observer.observe(invitation)
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
+    card.addEventListener('animationend', schedule)
     window.visualViewport?.addEventListener('resize', schedule)
     schedule()
     return () => {
@@ -68,6 +69,7 @@ export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion }: {
       observer.disconnect()
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
+      card.removeEventListener('animationend', schedule)
       window.visualViewport?.removeEventListener('resize', schedule)
     }
   }, [quietRegion])

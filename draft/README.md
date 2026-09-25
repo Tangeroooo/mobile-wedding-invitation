@@ -29,7 +29,13 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   the saved geometry; only deliberate edits trigger in-frame fitting.
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
-- Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
+- Gallery is a ten-slot paper memory board using the two supplied photos and eight
+  empty frames, mixing portrait, landscape and square shapes in unequal sizes,
+  with tape, tilted prints, lazy thumbnails and the existing lightbox. Each print
+  flies from a different direction and settles with a small bounce and tape press.
+- Preview scroll entrances combine masked heading reveals, scale/rotation on cards,
+  a turning flower and staggered copy. Each element enters once per preview replay;
+  editor mode shows the resting layout. Reduced-motion changes are handled live.
 - Section 02 shows a small D-Day badge to the right of its title (D-Day on the day,
   D+N afterwards). The date and time text share the same size.
 - A small glass-blurred schedule summary follows the invitation's center-right edge.
