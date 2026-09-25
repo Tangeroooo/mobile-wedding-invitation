@@ -157,6 +157,9 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
   await expect(page.locator('.draft-invitation .draft-bgm')).toHaveCount(1)
   await expect(page.locator('.draft-bgm-dock')).toHaveCSS('position','sticky')
   await expect(page.locator('.draft-bgm-glass')).toHaveCSS('height','28px')
+  await expect(toggle.locator('svg')).toHaveAttribute('width','12')
+  await expect(toggle.locator('.draft-bgm-track>span')).toHaveCSS('width','12px')
+  await expect(toggle).toHaveCSS('color','rgb(255, 249, 234)')
   const bgm = (await toggle.boundingBox())!, controls = (await page.locator('.draft-preview-controls').boundingBox())!
   expect(controls.x + controls.width).toBeLessThanOrEqual(bgm.x)
   await expect(page.locator('.draft-ceremony-hall')).toHaveCSS('color','rgb(185, 68, 112)')
