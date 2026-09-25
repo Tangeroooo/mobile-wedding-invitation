@@ -5,7 +5,11 @@ import sharp from 'sharp'
 const destination = new URL('../public/images/draft/gallery/', import.meta.url)
 await mkdir(destination, { recursive:true })
 let thumbnailBytes = 0, viewerBytes = 0, originalBytes = 0
-for (let number = 1; number <= 25; number++) {
+const allPhotos = Array.from({ length:25 }, (_, index) => String(index + 1))
+  .flatMap(id => id === '21' ? [id, '21-1', '21-2'] : [id])
+const requested = process.argv.slice(2)
+if (requested.some(id => !allPhotos.includes(id))) throw new Error('Unknown gallery photo ID')
+for (const number of requested.length ? requested : allPhotos) {
   const source = new URL(`../images/${number}.jpg`, import.meta.url)
   originalBytes += (await stat(source)).size
   for (const width of [320, 1200]) {

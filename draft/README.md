@@ -38,7 +38,7 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   1, 17, 6, 7, 18, 9, 20, 21, 23 and 24 (floral, veil couple, garden, groom portrait,
   wood, solo pink, brick arch, black outfits, cake and night garden),
   with unequal sizes and overlapping tilted white frames. The swipe viewer includes
-  all 25 user-supplied numbered photos in numeric order. Original JPEGs stay local;
+  all 27 user-supplied photos, with 21-1 and 21-2 immediately after 21. Original JPEGs stay local;
   scripts/prepare-gallery.mjs generates metadata-free 320px/1200px WebP derivatives.
   Only the current and adjacent slides request large versions; other slides stay lazy
   thumbnails. The large images are not requested before the viewer is opened.
@@ -49,6 +49,10 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   close share 2.4% white glass and a light 2px blur on touch devices (no sticky opaque hover), with 44px
   hit areas. A native horizontal scroll-snap rail supports finger swipes; arrows
   and keyboard controls use the same rail and keep the current-photo state in sync.
+  Slide targeting uses measured fractional positions rather than rounded clientWidth;
+  a 2px transparent gutter and clipping prevent adjacent-photo slivers at rest.
+  Resizing the viewer realigns the selected slide. Portrait and landscape photos
+  use contain so the entire image remains visible.
   Photo surfaces discourage context-menu saving, copy, drag and touch callouts;
   the viewer blocks pinch/double-tap zoom. Text editing, account copying and page
   zoom outside photos stay available. These are UI deterrents, not access control:
@@ -82,19 +86,16 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - Preview photos use 100lvh (at least 100dvh) with edge-to-edge cover cropping and no
   safe-area padding on the photo itself. Separate 100dvh layers anchor lettering and
-  controls to the currently visible viewport. Preview photos are rendered in a fixed
-  body-level backdrop (outside the stage's clipping/size containment), extended through
-  safe-area insets. Transparent cover layers hold only lettering; the opaque poster
-  body scrolls over the photo. Intro backdrop crossfades in sync with its lettering.
-  Preview opts out of flat theme-color; editor mode removes the backdrop and restores it.
-  Add `&edge=clean` to a preview URL for a diagnostic comparison without the top
-  BGM/summary dock and edit/replay controls; normal previews keep all controls.
+  controls to the currently visible viewport. The root canvas also uses the active
+  photo and opts out of the flat theme-color in preview; editor mode restores both.
   This avoids exposing the next section below the photo when toolbars are expanded.
   Safari's native status-bar compositing still needs real-device verification.
   Controls and the intro caption get safe-area offsets. At the
   user's request, the main caption is back at its original 24px bottom offset; the music
   toggle remains in its sticky dock and skip is outside the transitioning photo layer.
   Mobile browser chrome itself is owned by Safari/Chrome, not drawable by this page.
+  The body-level fixed-photo experiment and `edge=clean` comparison were removed at
+  the user's request; cover photos again scroll with their section and controls stay visible.
 - Section 06 (attendance placeholder) is removed in edit and preview modes. Legacy
   saved copy is retained for compatibility, but is no longer rendered or editable.
 - Both floating glass surfaces use 20% tinted backgrounds with backdrop blur.

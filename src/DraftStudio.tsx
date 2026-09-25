@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import type { CSSProperties, PointerEvent as ReactPointerEvent, SyntheticEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
@@ -19,10 +18,16 @@ import './DraftStudio.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
-const galleryPhotos = Array.from({ length:25 }, (_, index) => index + 1)
+const galleryPhotos = Array.from({ length:25 }, (_, index) => String(index + 1))
+  .flatMap(id => id === '21' ? [id, '21-1', '21-2'] : [id])
 // Mix settings, outfits and framing; board slot and full-gallery photo ID are independent.
 const galleryBoard = [1, 17, 6, 7, 18, 9, 20, 21, 23, 24]
-const galleryPhoto = (number: number, width: 320 | 1200 = 320) => asset(`gallery/${String(number).padStart(2, '0')}-${width}.webp`)
+const galleryPhoto = (id: number | string, width: 320 | 1200 = 320) => asset(`gallery/${String(id).padStart(2, '0')}-${width}.webp`)
+// clientWidth rounds fractional CSS pixels: multiplying it drifts on later slides.
+const gallerySlideLeft = (rail: HTMLDivElement, index: number) => {
+  const slide = rail.children[index]
+  return slide ? rail.scrollLeft + slide.getBoundingClientRect().left - rail.getBoundingClientRect().left : 0
+}
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
 // Preserve the original glyph and its metrics; VS15 requests text, not emoji.
@@ -53,8 +58,6 @@ export default function DraftStudio() {
   const [config, setConfig] = useState<DraftConfig>(readSaved)
   const [scene, setScene] = useState<Scene>('intro')
   const [preview, setPreview] = useState(isPreviewUrl)
-  // Diagnostic link only: isolate Safari's treatment of top fixed/sticky controls.
-  const [cleanEdges] = useState(() => new URLSearchParams(window.location.search).get('edge') === 'clean')
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'main'>('intro')
   const [mainReady, setMainReady] = useState(false)
   const [mainLetteringReady, setMainLetteringReady] = useState(false)
@@ -75,6 +78,8 @@ export default function DraftStudio() {
   const inlineInput = useRef<HTMLTextAreaElement>(null)
   const dialog = useRef<HTMLDialogElement>(null)
   const photoRail = useRef<HTMLDivElement>(null)
+  const currentSlide = useRef(lightbox)
+  currentSlide.current = lightbox
   const importInput = useRef<HTMLInputElement>(null)
   const drag = useRef<{ id: number; x: number; y: number; block: DraftConfig['intro']; w: number; h: number; bw: number; bh: number; mode: 'move' | 'resize' | 'rotate'; cx: number; cy: number; angle: number } | null>(null)
   const liveConfig = useRef(config)
@@ -88,22 +93,26 @@ export default function DraftStudio() {
 
   useLayoutEffect(() => {
     if (!preview) return
-    // The photo now lives directly under body, outside clipped/transformed ancestors.
+    // Let Safari sample the photo canvas instead of the site's beige page canvas.
     // Native toolbar/status-bar compositing is still controlled by the browser.
     const root = document.documentElement
+    const previousPhoto = root.style.getPropertyValue('--draft-edge-photo')
     const hadClass = root.classList.contains('draft-preview-page')
     const themes = Array.from(document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]'))
     const previousMedia = themes.map(meta => meta.getAttribute('media'))
     root.classList.add('draft-preview-page')
+    root.style.setProperty('--draft-edge-photo', `url("${photo(phase === 'main' ? 'main' : 'intro', 1400)}")`)
     themes.forEach(meta => meta.setAttribute('media', 'not all'))
     return () => {
       if (!hadClass) root.classList.remove('draft-preview-page')
+      if (previousPhoto) root.style.setProperty('--draft-edge-photo', previousPhoto)
+      else root.style.removeProperty('--draft-edge-photo')
       themes.forEach((meta, index) => {
         if (previousMedia[index] === null) meta.removeAttribute('media')
         else meta.setAttribute('media', previousMedia[index]!)
       })
     }
-  }, [preview])
+  }, [preview, phase])
 
   useLayoutEffect(() => {
     // A reload must restore saved percentages, not overwrite them from a loading
@@ -191,7 +200,7 @@ export default function DraftStudio() {
       dialog.current.showModal()
       // Set the selected photo only on opening; never snap back during a swipe.
       const rail = photoRail.current
-      if (rail) rail.scrollLeft = (lightbox - 1) * rail.clientWidth
+      if (rail) rail.scrollLeft = gallerySlideLeft(rail, lightbox - 1)
     } else if (!lightbox) dialog.current?.close()
   }, [lightbox])
   const changePhoto = (direction: -1 | 1) => {
@@ -199,9 +208,22 @@ export default function DraftStudio() {
     if (!rail || lightbox === null) return
     const next = (lightbox - 1 + direction + galleryPhotos.length) % galleryPhotos.length + 1
     const instant = Math.abs(next - lightbox) > 1 || window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    rail.scrollTo({ left:(next - 1) * rail.clientWidth, behavior:instant ? 'instant' : 'smooth' })
+    rail.scrollTo({ left:gallerySlideLeft(rail, next - 1), behavior:instant ? 'instant' : 'smooth' })
   }
   const photoViewerOpen = lightbox !== null
+  useEffect(() => {
+    const rail = photoRail.current
+    if (!photoViewerOpen || !rail) return
+    let width = rail.getBoundingClientRect().width
+    const observer = new ResizeObserver(() => {
+      const nextWidth = rail.getBoundingClientRect().width
+      if (Math.abs(nextWidth - width) < .01) return
+      width = nextWidth
+      if (currentSlide.current !== null) rail.scrollTo({ left:gallerySlideLeft(rail, currentSlide.current - 1), behavior:'instant' })
+    })
+    observer.observe(rail)
+    return () => observer.disconnect()
+  }, [photoViewerOpen])
   useEffect(() => {
     if (!photoViewerOpen) return
     const viewer = dialog.current
@@ -346,12 +368,7 @@ export default function DraftStudio() {
   }
   const position = (value: Scene): CSSProperties => ({ left: `${config[value].x}%`, top: `${config[value].y}%`, width: `${config[value].width}%`, transform: `translate(-50%, -50%) rotate(${config[value].rotation}deg)` })
 
-  return <>
-    {preview && createPortal(<div className="draft-viewport-backdrop" aria-hidden="true" key={`backdrop-${replay}`}>
-      {renderPhoto('main', true)}
-      {phase !== 'main' && <div className={`draft-backdrop-intro ${phase === 'leaving' ? 'is-leaving' : ''}`}>{renderPhoto('intro')}</div>}
-    </div>, document.body)}
-    <main className={`draft-studio ${preview ? 'is-preview' : ''} ${preview && cleanEdges ? 'is-edge-clean' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
+  return <main className={`draft-studio ${preview ? 'is-preview' : ''}`} style={{ '--draft-paper': config.palette.background, '--draft-blue': config.palette.blue, '--draft-pink': config.palette.pink } as CSSProperties}>
     {!preview && <>
       <header className="draft-header">
         <a href={`${import.meta.env.BASE_URL}design-lab/`}>← DESIGN LAB</a>
@@ -401,10 +418,12 @@ export default function DraftStudio() {
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
-              <div className={`draft-cover-layer ${phase !== 'main' ? 'is-waiting' : ''}`} key={`cover-${replay}`}>
+              <div className="draft-cover-layer" key={`cover-${replay}`}>
+                {renderPhoto('main', true)}
                 <div className="draft-scene-content"><div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
               </div>
               {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>
+                {renderPhoto('intro')}
                 <div className="draft-scene-content"><div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span></div>
               </div><div className="draft-cover-controls"><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></div></>}
             </> : <>
@@ -448,7 +467,7 @@ export default function DraftStudio() {
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
                   {galleryBoard.map((number, index) => {
                     return <div key={number} className={`draft-photo-pin pin-slot-${String(index + 1).padStart(2,'0')} frame-portrait`}>
-                      <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(number)} aria-label={`${number}번 사진 보기`}>
+                      <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(galleryPhotos.indexOf(String(number)) + 1)} aria-label={`${number}번 사진 보기`}>
                         <img src={galleryPhoto(number)} width="320" height="480" loading="lazy" decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
                       </button>
                     </div>
@@ -478,10 +497,14 @@ export default function DraftStudio() {
       <div className="draft-lightbox-stage">
         <div ref={photoRail} className="draft-lightbox-rail" aria-label="좌우로 넘기는 사진" onScroll={event => {
           const rail = event.currentTarget
-          if (dialog.current?.open && rail.clientWidth) setLightbox(clamp(Math.round(rail.scrollLeft / rail.clientWidth) + 1, 1, galleryPhotos.length))
+          if (dialog.current?.open && rail.children.length > 1) {
+            const start = gallerySlideLeft(rail, 0)
+            const step = gallerySlideLeft(rail, 1) - start
+            if (step > 0) setLightbox(clamp(Math.round((rail.scrollLeft - start) / step) + 1, 1, galleryPhotos.length))
+          }
         }}>
-          {lightbox !== null && galleryPhotos.map(number => <div className="draft-lightbox-slide" key={number} aria-hidden={lightbox !== number}>
-            <img src={galleryPhoto(number, Math.abs(number - lightbox) <= 1 ? 1200 : 320)} width="1200" height="1800" loading={Math.abs(number - lightbox) <= 1 ? 'eager' : 'lazy'} decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
+          {lightbox !== null && galleryPhotos.map((id, index) => <div className="draft-lightbox-slide" key={id} aria-hidden={lightbox !== index + 1}>
+            <img src={galleryPhoto(id, Math.abs(index + 1 - lightbox) <= 1 ? 1200 : 320)} width="1200" height="1800" loading={Math.abs(index + 1 - lightbox) <= 1 ? 'eager' : 'lazy'} decoding="async" draggable={false} alt={`${id}번째 웨딩 사진`} />
           </div>)}
         </div>
         <button className="draft-lightbox-close" aria-label="사진 보기 닫기" autoFocus style={{ backdropFilter:'blur(2px)', WebkitBackdropFilter:'blur(2px)' }} onClick={() => setLightbox(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
@@ -489,5 +512,4 @@ export default function DraftStudio() {
       </div>
     </dialog>
   </main>
-  </>
 }

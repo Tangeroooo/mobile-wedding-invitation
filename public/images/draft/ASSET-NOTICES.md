@@ -12,7 +12,9 @@ intro-*.webp and main-*.webp are optimized derivatives of the photographs suppli
 by the user in images/intro.jpg and images/main.jpg. Originals are excluded from Git.
 
 gallery/01-*.webp through gallery/25-*.webp are optimized derivatives of the user's
-images/1.jpg through images/25.jpg, added at the user's request. The 320px files are
+images/1.jpg through images/25.jpg, added at the user's request. Also included are
+gallery/21-1-*.webp and gallery/21-2-*.webp from images/21-1.jpg and images/21-2.jpg.
+The 320px files are
 board thumbnails; 1200px files are for the swipe viewer. EXIF/GPS and original camera
 metadata are omitted. The JPEG originals remain local and excluded from Git.
 Regenerate these derivatives with node scripts/prepare-gallery.mjs.

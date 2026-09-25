@@ -88,26 +88,24 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   await page.goto('draft/?mode=preview&source=published')
   const summary = page.locator('.draft-event-float')
   await expect(summary).toHaveAttribute('aria-hidden','true')
-  await expect(page.locator('.draft-backdrop-intro img')).toHaveCSS('object-fit','cover')
-  await expect(page.locator('.draft-scroll-note')).toBeHidden()
+  await expect(page.locator('.draft-intro-layer img')).toHaveCSS('object-fit','cover')
   await expect(page.locator('.draft-stage')).toHaveCSS('height','844px')
   await expect(page.locator('html')).toHaveClass(/draft-preview-page/)
-  await expect(page.locator('body > .draft-viewport-backdrop')).toHaveCSS('position','fixed')
-  await expect(page.locator('.draft-stage img')).toHaveCount(0)
+  expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('intro-1400.webp')
   // Desktop viewport resizing is a layout regression check, not native Safari chrome emulation.
   await page.setViewportSize({width:390,height:664})
   await expect(page.locator('.draft-stage')).toHaveCSS('height','664px')
   await expect(page.locator('.draft-cover-controls')).toHaveCSS('height','664px')
   await page.getByRole('button',{name:'건너뛰기'}).click()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
-  await expect(page.locator('.draft-backdrop-intro')).toHaveCount(0)
+  expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('main-1400.webp')
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await expect(page.locator('.draft-cover-layer .draft-write').last()).toHaveCSS('clip-path','none')
   await expect(summary).toBeVisible()
   await page.setViewportSize({width:390,height:844})
   await expect(page.locator('.draft-stage')).toHaveCSS('height','844px')
   const geometry = await page.locator('.draft-stage').evaluate(el => {
-    const photo = document.querySelector('.draft-viewport-backdrop > img')!.getBoundingClientRect()
+    const photo = el.querySelector('.draft-cover-layer img')!.getBoundingClientRect()
     const caption = el.querySelector('.draft-scroll-note')!.getBoundingClientRect()
     return {top:photo.top,left:photo.left,right:photo.right,bottom:photo.bottom,captionInset:innerHeight-caption.bottom}
   })
@@ -123,19 +121,7 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   await expect(summary).toBeVisible()
   await page.getByRole('button',{name:'편집으로'}).click()
   await expect(page.locator('html')).not.toHaveClass(/draft-preview-page/)
-  await expect(page.locator('.draft-viewport-backdrop')).toHaveCount(0)
   expect(await page.locator('meta[name="theme-color"]').getAttribute('media')).toBeNull()
-})
-
-test('clean-edge comparison removes top controls only in preview', async ({ page }) => {
-  await page.goto('draft/?mode=preview&source=published&edge=clean')
-  await expect(page.locator('.draft-viewport-backdrop')).toBeVisible()
-  await expect(page.locator('.draft-bgm-dock')).toBeHidden()
-  await expect(page.locator('.draft-preview-controls')).toBeHidden()
-  await expect(page.getByRole('button',{name:'건너뛰기'})).toBeVisible()
-  await page.goto('draft/?mode=preview&source=published')
-  await expect(page.locator('.draft-bgm-dock')).not.toHaveCSS('display','none')
-  await expect(page.locator('.draft-preview-controls')).toBeVisible()
 })
 
 test('calendar dates are valid and original placeholders migrate without losing edits', () => {
@@ -372,7 +358,7 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   await board.getByRole('button', {name:'17번 사진 보기',exact:true}).click()
   await expect(page.locator('.draft-lightbox')).toBeVisible()
   const viewer = page.locator('.draft-lightbox')
-  await expect(viewer.locator('.draft-lightbox-slide')).toHaveCount(25)
+  await expect(viewer.locator('.draft-lightbox-slide')).toHaveCount(27)
   await expect(viewer.locator('img[src$="-1200.webp"]')).toHaveCount(3)
   await expect(viewer).toHaveCSS('touch-action','pan-x')
   const currentImage = viewer.locator('.draft-lightbox-slide[aria-hidden="false"] img')
@@ -402,6 +388,31 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   await expect(currentImage).toHaveAttribute('alt','25번째 웨딩 사진')
   await viewer.getByRole('button', {name:'다음 사진'}).click()
   await expect(currentImage).toHaveAttribute('alt','1번째 웨딩 사진')
+  await page.getByRole('button', {name:'사진 보기 닫기'}).click()
+  await board.getByRole('button', {name:'21번 사진 보기',exact:true}).click()
+  await expect(currentImage).toHaveAttribute('alt','21번째 웨딩 사진')
+  for (const id of ['21-1','21-2','22']) {
+    await viewer.getByRole('button', {name:'다음 사진'}).click()
+    await expect(currentImage).toHaveAttribute('alt',`${id}번째 웨딩 사진`)
+  }
+  await page.getByRole('button', {name:'사진 보기 닫기'}).click()
+  await board.getByRole('button', {name:'23번 사진 보기',exact:true}).click()
+  await expect(currentImage).toHaveAttribute('alt','23번째 웨딩 사진')
+  // Fractional desktop widths and phone rotation must not expose adjacent slides.
+  for (const viewport of [{width:1280,height:721},{width:393,height:852},{width:844,height:390}]) {
+    await page.setViewportSize(viewport)
+    await expect(currentImage).toHaveAttribute('alt','23번째 웨딩 사진')
+    await expect.poll(() => rail.evaluate(el => {
+      const bounds = el.getBoundingClientRect()
+      const selected = el.querySelector('.draft-lightbox-slide[aria-hidden="false"]')!
+      const rect = selected.getBoundingClientRect()
+      const previous = selected.previousElementSibling?.getBoundingClientRect()
+      const next = selected.nextElementSibling?.getBoundingClientRect()
+      return Math.abs(rect.left - bounds.left) <= .6 && Math.abs(rect.width - bounds.width) <= .1
+        && (!previous || previous.right <= bounds.left) && (!next || next.left >= bounds.right)
+    })).toBe(true)
+  }
+  await page.setViewportSize({width:390,height:844})
   await page.getByRole('button', {name:'사진 보기 닫기'}).click()
   await page.emulateMedia({reducedMotion:'reduce'})
   await expect(board.locator('.will-pin')).toHaveCount(0)
