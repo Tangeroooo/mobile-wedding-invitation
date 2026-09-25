@@ -2,6 +2,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
+import DraftCopyEditor from './DraftCopyEditor'
+import type { CopyKey } from './draftCopy'
 import type { Outlines } from './DraftLettering'
 import { clamp, defaults, isSupportedText, normalizeText, parseConfig, storageKey } from './draftModel'
 import type { DraftConfig, Scene } from './draftModel'
@@ -10,13 +12,7 @@ import './DraftStudio.css'
 const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}`
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
-// Address verified against the hotel's official Marriott listing.
-const venue = {
-  name: '더링크호텔',
-  hall: '3층 베일리홀',
-  address: '서울특별시 구로구 경인로 610',
-}
-const mapQuery = encodeURIComponent('더링크호텔 서울')
+const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 
 function readSaved() {
   try {
@@ -33,7 +29,7 @@ function readSaved() {
 export default function DraftStudio() {
   const [config, setConfig] = useState<DraftConfig>(readSaved)
   const [scene, setScene] = useState<Scene>('intro')
-  const [preview, setPreview] = useState(false)
+  const [preview, setPreview] = useState(isPreviewUrl)
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'main'>('intro')
   const [mainReady, setMainReady] = useState(false)
   const [outlines, setOutlines] = useState<Outlines | null>(null)
@@ -56,6 +52,9 @@ export default function DraftStudio() {
   const constrainNextLayout = useRef(false)
   liveConfig.current = config
   const block = config[scene]
+  const copy = config.copy
+  const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
+  useEffect(() => { document.title = preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [preview])
 
   useLayoutEffect(() => {
     // A reload must restore saved percentages, not overwrite them from a loading
@@ -98,12 +97,28 @@ export default function DraftStudio() {
       return false
     }
   }, [])
-  useLayoutEffect(() => { persist(config) }, [config, persist])
+  useLayoutEffect(() => { if (!preview) persist(config) }, [config, persist, preview])
   useEffect(() => {
+    if (preview) return
     const flush = () => persist(liveConfig.current)
     window.addEventListener('pagehide', flush)
     return () => window.removeEventListener('pagehide', flush)
-  }, [persist])
+  }, [persist, preview])
+  useEffect(() => {
+    const syncMode = () => { setPreview(isPreviewUrl()); setPhase('intro'); setMainReady(false); setInline(false) }
+    window.addEventListener('popstate', syncMode)
+    return () => window.removeEventListener('popstate', syncMode)
+  }, [])
+  useEffect(() => {
+    if (!preview) return
+    const syncCopy = (event: StorageEvent) => {
+      if (event.key === storageKey && event.newValue) {
+        try { setConfig(parseConfig(JSON.parse(event.newValue))) } catch { /* Keep the last valid preview. */ }
+      }
+    }
+    window.addEventListener('storage', syncCopy)
+    return () => window.removeEventListener('storage', syncCopy)
+  }, [preview])
 
   useEffect(() => {
     if (!preview || !outlines || !mainReady || phase !== 'intro') return
@@ -137,7 +152,9 @@ export default function DraftStudio() {
   }, [preview, replay])
 
   const remember = useCallback(() => setHistory(current => [...current.slice(-49), structuredClone(liveConfig.current)]), [])
-  const update = (next: DraftConfig, record = true) => { if (record) remember(); constrainNextLayout.current = true; liveConfig.current = next; persist(next); setConfig(next) }
+  const update = (next: DraftConfig, record = true, fit = true) => { if (record) remember(); if (fit) constrainNextLayout.current = true; liveConfig.current = next; persist(next); setConfig(next) }
+  const updateCopy = (key: CopyKey, value: string) => update({ ...liveConfig.current, copy: { ...liveConfig.current.copy, [key]: value } }, true, false)
+  const editCopy = (group: string) => !preview && <DraftCopyEditor group={group} copy={copy} onChange={updateCopy} saveState={saveState} />
   const updateBlock = (patch: Partial<DraftConfig['intro']>, record = true) => {
     update({ ...liveConfig.current, [scene]: { ...liveConfig.current[scene], ...patch } }, record)
   }
@@ -153,11 +170,16 @@ export default function DraftStudio() {
     if (previous) { setConfig(previous); setHistory(history.slice(0, -1)) }
   }
   const startPreview = () => {
+    if (!preview) { const url = new URL(window.location.href); url.searchParams.set('mode', 'preview'); window.history.pushState(null, '', url) }
     setInline(false); setPhase('intro'); setMainReady(false); setReplay(value => value + 1); setPreview(true)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
   const chooseScene = (value: Scene) => {
     setScene(value); setInline(false); stage.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+  }
+  const stopPreview = () => {
+    const url = new URL(window.location.href); url.searchParams.delete('mode'); window.history.pushState(null, '', url)
+    setPreview(false); setInline(false); setToolsOpen(false); window.scrollTo({ top:0, behavior:'instant' })
   }
 
   const startDrag = (event: ReactPointerEvent<HTMLElement>, mode: 'move' | 'resize' | 'rotate' = 'move') => {
@@ -222,9 +244,9 @@ export default function DraftStudio() {
       <header className="draft-header">
         <a href={`${import.meta.env.BASE_URL}design-lab/`}>← DESIGN LAB</a>
         <span>OUR INVITATION <i> / </i> DRAFT 01</span>
-        <button className="draft-primary" onClick={startPreview} disabled={!outlines}>전체 재생 ↗</button>
+        <nav className="draft-mode-switch" aria-label="초안 모드"><span aria-current="page">편집 모드</span><button className="draft-primary" onClick={startPreview}>미리보기 ▶</button><a href="?mode=preview" target="_blank" rel="noopener noreferrer">새 창 ↗</a></nav>
       </header>
-      <div className="draft-introduction"><div><p className="draft-eyebrow">A LITTLE SPACE FOR OUR DAY</p><h1>우리의 초대장, <em>만드는 중.</em></h1></div><p>24 프렐류드의 시작, 20 시트러스의 리듬.<br />사진 위의 문장을 움직이며 우리다운 장면을 찾아보세요.</p></div>
+      <div className="draft-introduction"><div><p className="draft-eyebrow">A LITTLE SPACE FOR OUR DAY</p><h1>우리의 초대장, <em>만드는 중.</em></h1></div><p>사진 위 문구는 드래그해서, 본문은 각 구역의<br />‘문구 편집’에서 수정하세요. 미리보기에는 도구가 숨겨져요.</p></div>
     </>}
 
     <div className="draft-workspace">
@@ -244,6 +266,7 @@ export default function DraftStudio() {
         </div>
         <label className="draft-color-field">레터링 색상 <span>{block.color}<input aria-label="레터링 색상" type="color" value={block.color} onChange={event => updateBlock({ color: event.target.value })} /></span></label>
         <div className="draft-small-actions"><button onClick={() => updateBlock({ x: 50 })}>가운데 정렬</button><button onClick={() => updateBlock(defaults[scene])}>이 장면 초기화</button></div>
+        {editCopy('cover')}
         <div className="draft-palette-heading"><span>02 / PAPER & INK</span><h2>사진에서 이어지는 색</h2><p>수트의 블루, 드레스의 로즈핑크.<br />배경은 노란 기가 적은 쿨 아이보리를 추천해요.</p></div>
         {(['background', 'blue', 'pink'] as const).map((key, index) => <label key={key} className="draft-color-field">{['본문 배경', '블루 글자', '핑크 포인트'][index]}<span>{config.palette[key]}<input aria-label={['본문 배경', '블루 글자', '핑크 포인트'][index]} type="color" value={config.palette[key]} onChange={event => update({ ...config, palette: { ...config.palette, [key]: event.target.value } })} /></span></label>)}
         <div className="draft-swatches">{[['쿨 아이보리', '#F4F4F0'], ['미스트 블루', '#EAF0F5'], ['블러시 화이트', '#FAF0F2']].map(([label, color]) => <button key={color} aria-label={`${label} 배경`} title={label} onClick={() => update({ ...config, palette: { ...config.palette, background: color } })}><i style={{ background: color }} />{label}</button>)}</div>
@@ -251,7 +274,7 @@ export default function DraftStudio() {
         <div className="draft-save-tools"><p role="status">● {saveState}</p><p>자동 저장은 이 기기에만 적용돼요.<br />설정 파일을 옮기면 다른 기기에서도 이어갈 수 있어요.</p><div><button onClick={() => { if (persist(liveConfig.current)) setNotice('문구·위치·회전을 저장했어요. 새로고침해도 유지됩니다.') }}>지금 저장</button><button onClick={undo} disabled={!history.length}>되돌리기</button><button onClick={exportConfig}>설정 내보내기</button><button onClick={() => importInput.current?.click()}>불러오기</button></div></div>
         <input ref={importInput} type="file" accept="application/json,.json" hidden onChange={async event => {
           const file = event.target.files?.[0]; event.target.value = ''; if (!file) return
-          try { if (file.size > 30000) throw new Error('설정 파일이 너무 큽니다.'); update(parseConfig(JSON.parse(await file.text()))); setNotice('설정을 불러왔어요.') }
+          try { if (file.size > 200000) throw new Error('설정 파일이 너무 큽니다.'); update(parseConfig(JSON.parse(await file.text()))); setNotice('설정을 불러왔어요.') }
           catch (error) { setNotice(error instanceof Error ? error.message : '설정 파일을 확인해주세요.') }
         }} />
         {notice && <p className="draft-notice" role="status">{notice}</p>}
@@ -262,8 +285,8 @@ export default function DraftStudio() {
         <article className="draft-invitation">
           <section ref={stage} className="draft-stage" aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
-              <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">OUR NEXT CHAPTER <span>↓</span></span></div>
-              {phase !== 'main' && <div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">TOGETHER, A NEW BEGINNING</span><button className="draft-skip" onClick={() => setPhase('leaving')}>건너뛰기 →</button></div>}
+              <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
+              {phase !== 'main' && <div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span><button className="draft-skip" onClick={() => setPhase('leaving')}>건너뛰기 →</button></div>}
             </> : <>
               {renderPhoto(scene)}
               <button className="draft-edit-text-button" onClick={() => { setInline(value => !value); setToolsOpen(false) }}>{inline ? '편집 완료 ✓' : '문구 편집 ✎'}</button>
@@ -291,20 +314,34 @@ export default function DraftStudio() {
           </section>
 
           <div className="draft-poster-body" id="draft-body">
-            <div className="draft-ticker"><span>WITH YOU, ALWAYS</span><b>✳</b><span>A NEW CHAPTER</span><b>✳</b></div>
-            <section className="draft-poster-section draft-greeting"><div className="draft-section-index">01 <span>THE INVITATION</span></div><h2>우리의<br /><em>가장 좋은 날.</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>서로의 일상에 가장 다정한 사람이 되어<br />이제, 함께하는 내일을 시작합니다.</p><p>소중한 여러분을<br />우리의 시작에 초대합니다.</p><div className="draft-couple">신랑 이름 <i>&</i> 신부 이름</div></section>
-            <section className="draft-poster-section draft-date"><div className="draft-section-index">02 <span>SAVE THE DATE</span></div><h2>함께할<br /><em>그날의 약속.</em></h2><div className="draft-date-card"><span className="draft-date-year">2026 · OUR DAY</span><strong>11. 07. SAT</strong><time dateTime="2026-11-07T19:20:00+09:00">2026년 11월 7일 토요일<br />오후 7시 20분</time><span>{venue.name} · {venue.hall}</span></div></section>
-            <section className="draft-poster-section draft-gallery"><div className="draft-section-index">03 <span>MOMENTS OF US</span></div><h2>우리라는<br /><em>장면들.</em></h2><p>함께 웃던 순간을 모아.</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? 'SIDE BY SIDE' : 'IN THE GARDEN'} ↗</span></button>)}</div><small className="draft-gallery-note">갤러리 구성은 사진을 추가하며 다듬을 예정입니다.</small></section>
-            <section className="draft-poster-section draft-location"><div className="draft-section-index">04 <span>MEET US HERE</span></div><h2>만나는 곳.</h2><div className="draft-location-card"><span aria-hidden="true">↗</span><strong>{venue.name}</strong><p className="draft-location-hall">{venue.hall}</p><address>{venue.address}</address></div><DraftMap /><nav className="draft-map-links" aria-label="예식장 지도 앱"><a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer">네이버지도 ↗</a><a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer">카카오맵 ↗</a></nav><p className="draft-map-help">지도가 보이지 않으면 위 버튼으로 열어주세요.</p></section>
-            <section className="draft-poster-section draft-rsvp"><div className="draft-section-index">05 <span>WITH LOVE</span></div><h2>당신과 함께라서<br /><em>더 특별한 하루.</em></h2><p>참석 여부와 마음 전하실 곳은<br />정보가 정해지면 연결할 예정입니다.</p></section>
-            <footer className="draft-poster-footer"><span>BLUE MEETS PINK.</span><strong>Better, together.</strong><span>OUR WEDDING INVITATION</span></footer>
+            <div className="draft-ticker"><span>{copy.tickerLeft}</span><b>✳</b><span>{copy.tickerRight}</span><b>✳</b></div>
+            <section className="draft-poster-section draft-greeting">
+              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple">{copy.groom} <i>&</i> {copy.bride}</div>{editCopy('greeting')}
+            </section>
+            <section className="draft-poster-section draft-date">
+              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><span className="draft-date-year">{copy.dateYear}</span><strong>{copy.dateStamp}</strong><p className="draft-date-text">{copy.dateText}</p><span>{[copy.venueName, copy.venueHall].filter(Boolean).join(' · ')}</span></div>{editCopy('date')}
+            </section>
+            <section className="draft-poster-section draft-gallery">
+              <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? copy.gallerySecond : copy.galleryFirst} ↗</span></button>)}</div><small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
+            </section>
+            <section className="draft-poster-section draft-location">
+              <div className="draft-section-index">04 <span>{copy.locationLabel}</span></div><h2>{copy.locationTitle}</h2><div className="draft-location-card"><span aria-hidden="true">↗</span><strong>{copy.venueName}</strong><p className="draft-location-hall">{copy.venueHall}</p><address>{copy.venueAddress}</address></div><DraftMap />
+              <nav className="draft-map-links" aria-label="예식장 지도 앱">
+                <a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://ssl.pstatic.net/static/maps/assets/icons/apple-icon-180x180.png" width="22" height="22" alt="" loading="lazy" />네이버지도 ↗</a>
+                <a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://map.kakao.com/favicon.ico" width="22" height="22" alt="" loading="lazy" />카카오맵 ↗</a>
+              </nav><p className="draft-map-help">{copy.mapHelp}</p>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
+            </section>
+            <section className="draft-poster-section draft-rsvp">
+              <div className="draft-section-index">05 <span>{copy.rsvpLabel}</span></div><h2>{copy.rsvpTitle}<em>{copy.rsvpAccent}</em></h2><p>{copy.rsvpMessage}</p>{editCopy('rsvp')}
+            </section>
+            <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}</footer>
           </div>
         </article>
-        {!preview && <p className="draft-bottom-note">이름·참석 여부 등은 준비 중입니다. 초안 편집은 기존 청첩장에 반영되지 않습니다.</p>}
+        {!preview && <p className="draft-bottom-note">수정 사항은 이 브라우저에 자동 저장돼요. 미리보기 주소를 다른 기기에서 열면 기본 초안이 표시됩니다.<br />다른 기기로 옮길 때는 설정 내보내기·불러오기를 이용해주세요.</p>}
       </div>
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
-    {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={() => { setPreview(false); setInline(false); window.scrollTo({ top: 0, behavior: 'instant' }) }}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
+    {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
     <dialog ref={dialog} className="draft-lightbox" onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') setLightbox(current => current === 'intro' ? 'main' : 'intro') }}>
       <button className="draft-lightbox-close" autoFocus onClick={() => setLightbox(null)}>닫기 ×</button>
       {lightbox && <img src={photo(lightbox, 1400)} alt={`${sceneLabel[lightbox]} 사진 확대`} />}

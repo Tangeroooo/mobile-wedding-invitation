@@ -1,3 +1,5 @@
+import { copyDefaults } from './draftCopy'
+import type { CopyKey, DraftCopy } from './draftCopy'
 export type Scene = 'intro' | 'main'
 export type Lettering = { text: string; x: number; y: number; width: number; color: string; rotation: number }
 export type DraftConfig = {
@@ -5,6 +7,7 @@ export type DraftConfig = {
   intro: Lettering
   main: Lettering
   palette: { background: string; blue: string; pink: string }
+  copy: DraftCopy
 }
 export const storageKey = 'wedding-draft-v1'
 export const defaults: DraftConfig = {
@@ -12,6 +15,7 @@ export const defaults: DraftConfig = {
   intro: { text: "We're getting\nmarried", x: 50, y: 22, width: 86, color: '#F4D84F', rotation: 0 },
   main: { text: 'Wedding\nInvitation', x: 65, y: 77, width: 64, color: '#203F76', rotation: 0 },
   palette: { background: '#F4F4F0', blue: '#274D85', pink: '#B94470' },
+  copy: { ...copyDefaults },
 }
 export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 export const normalizeText = (text: string) => text.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-')
@@ -37,10 +41,21 @@ export function parseConfig(raw: unknown): DraftConfig {
       throw new Error('문구는 100자 / 3줄 이내로 입력하고 위치·색상을 확인해주세요.')
     }
   }
+  const copy = { ...copyDefaults }
+  if (item.copy !== undefined) {
+    if (!item.copy || typeof item.copy !== 'object' || Array.isArray(item.copy)) throw new Error('본문 문구 형식을 확인해주세요.')
+    for (const key of Object.keys(copyDefaults) as CopyKey[]) {
+      const value = item.copy[key]
+      if (value === undefined) continue
+      if (typeof value !== 'string' || value.length > 1000) throw new Error('본문 문구는 항목당 1,000자까지 입력할 수 있어요.')
+      copy[key] = value
+    }
+  }
   return {
     version: 1,
     intro: { ...item.intro, text: normalizeText(item.intro.text), rotation: item.intro.rotation ?? 0 },
     main: { ...item.main, text: normalizeText(item.main.text), rotation: item.main.rotation ?? 0 },
     palette: { background: item.palette.background, blue: item.palette.blue, pink: item.palette.pink },
+    copy,
   }
 }

@@ -34,9 +34,21 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   Year assumed to be the upcoming November; confirm before final publication.
 - Venue address: 서울특별시 구로구 경인로 610, verified against the official listing:
   https://www.marriott.com/en-us/hotels/seltx-the-link-seoul-a-tribute-portfolio-hotel/overview/
-  A lazy-loaded OpenStreetMap and Naver/Kakao map links are included in the draft only.
+  A lazy-loaded Kakao static map (official HTML export) and Naver/Kakao map links
+  are included in the draft only. Buttons use the providers' official site/app icons.
+  The map image retains Kakao attribution and opens the interactive Kakao map on tap.
   Map pin (37.5052943, 126.8838555) comes from the official listing's View Map link.
 - Event names, RSVP and account information are not yet supplied.
+- Every body section has a collapsible copy editor, including labels, headings,
+  names, date display, gallery captions, transport notes, and footer. Source defaults
+  live in src/draftCopy.ts. Empty strings are valid; line breaks are preserved.
+  Copy is saved/exported with the existing configuration; legacy files merge defaults.
+  Venue name/hall are shared by the date and directions sections. Changing address
+  text updates search links but does not move the map pin; the editor states this.
+- Dedicated preview URL: /draft/?mode=preview. The mode survives reload and browser
+  back/forward. It omits all editors, and a second tab follows same-browser saved edits
+  through storage events without writing stale preview data back to storage.
+  Preview links do not transfer local edits to another device; use JSON export/import.
 
 Regenerate derivatives: `node scripts/prepare-draft.mjs`.
 Optionally pass a local Blackrush.ttf path to rebuild the outline data. See asset notices.
