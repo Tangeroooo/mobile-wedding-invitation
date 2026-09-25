@@ -7,7 +7,6 @@ export function invitationCopy(variant: InvitationVariant) {
   if (variant === 'main') {
     copy.groomFamily1Name = copy.groomFamily1Bank = copy.groomFamily1Number = ''
     copy.groomFamily2Name = copy.groomFamily2Bank = copy.groomFamily2Number = ''
-    copy.brideAccountName = copy.brideAccountBank = copy.brideAccountNumber = ''
   }
   if (variant === 'b') {
     copy.groom = '주현'
