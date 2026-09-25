@@ -141,6 +141,10 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
   const toggle = page.getByRole('switch', {name:'배경음악',exact:true})
   await expect(toggle).toHaveAttribute('aria-checked','false')
   await expect(toggle).toHaveText('')
+  expect(await toggle.evaluate(el => {
+    const style = getComputedStyle(el)
+    return [style.backdropFilter, style.getPropertyValue('-webkit-backdrop-filter')].some(value => value.includes('blur(10px)'))
+  })).toBe(true)
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-checked','true')
   await toggle.press('Space')
