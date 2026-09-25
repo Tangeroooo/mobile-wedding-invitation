@@ -9,6 +9,8 @@ export default defineConfig({
   base: '/mobile-wedding-invitation/',
   plugins: [react()],
   build: {
+    // Preserve the prefixed glass/backdrop filter for older iOS Safari/WebKit.
+    cssTarget: ['chrome107', 'firefox104', 'safari15.4'],
     rollupOptions: {
       input: {
         main: `${projectRoot}index.html`,
