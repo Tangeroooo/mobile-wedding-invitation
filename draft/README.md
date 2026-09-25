@@ -30,6 +30,12 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
 - Shared defaults live in src/draftModel.ts. Apply an approved exported configuration
   there before publishing the final invitation.
 - Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
+- Section 02 shows an automatic Korean-calendar D-Day counter (D-Day on the day,
+  D+N afterwards). The date and time text share the same size.
+- A small glass-blurred schedule summary follows the invitation's center-right edge.
+  It uses the edited date, time and venue; pointer events pass through it. It fades
+  away while section 02 or the account section occupies the reading area, avoiding
+  duplicate information and keeping account-copy icons clear.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
 - BGM has a minimal 58 × 28 glass-effect music icon and switch inside the invitation,
   anchored to its top-right edge while scrolling, with a 44px-tall touch target and no

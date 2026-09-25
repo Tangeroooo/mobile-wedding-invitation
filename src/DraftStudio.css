@@ -70,10 +70,13 @@
 .draft-ceremony-details { margin-top:22px; padding-top:22px; border-top:1px solid color-mix(in srgb,var(--draft-blue) 30%,transparent); }
 .draft-date-card .draft-date-text { display:block; margin:0; font-size:clamp(14px,4vw,17px); line-height:1.6; font-weight:650; letter-spacing:-.035em; white-space:normal; }
 .draft-date-text time>span { display:block; }
-.draft-date-text .draft-ceremony-hour { margin-top:6px; font-size:clamp(20px,5.5vw,24px); line-height:1.5; font-weight:750; color:var(--draft-pink); }
+.draft-date-text .draft-ceremony-hour { margin-top:6px; font-size:inherit; line-height:1.5; font-weight:650; color:var(--draft-pink); }
 .draft-ceremony-venue { display:block; margin-top:14px; font-size:clamp(13px,3.7vw,16px); line-height:1.6; font-weight:650; letter-spacing:-.035em; word-break:keep-all; overflow-wrap:anywhere; }
 .draft-ceremony-hall { display:block; margin-top:4px; color:var(--draft-pink); }
 .draft-ceremony-venue>span:first-child { display:block; text-wrap:balance; }
+.draft-countdown { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:24px; padding:12px 14px; border-radius:3px; color:var(--draft-pink); background:color-mix(in srgb,var(--draft-pink) 8%,var(--draft-paper)); }
+.draft-countdown>span { font-size:10px; font-weight:650; letter-spacing:.16em; }
+.draft-date-card .draft-countdown>strong { font-size:26px; line-height:1.2; letter-spacing:-.025em; font-variant-numeric:tabular-nums; }
 .draft-couple { display:flex; align-items:center; justify-content:center; gap:12px; letter-spacing:.02em; font-size:26px; font-weight:600; }
 .draft-couple>span { display:flex; flex-direction:column; align-items:center; gap:8px; }
 .draft-couple small { font-size:11px; font-weight:400; letter-spacing:.08em; }
@@ -168,6 +171,15 @@
 @media (max-width:380px) { .draft-studio:not(.is-preview) .draft-preview-column { width:calc(100% + 32px); max-width:none; margin-inline:-16px; }.draft-studio:not(.is-preview) .draft-canvas-caption { padding-inline:12px; } }
 @media (prefers-reduced-motion:reduce) { .draft-account-panel,.draft-account-toggle,.draft-account-group ul { transition:none; } }
 .draft-bgm-dock { position:sticky; top:0; height:0; z-index:12; pointer-events:none; }
+.draft-event-float { position:absolute; top:50svh; right:max(8px,env(safe-area-inset-right)); transform:translateY(-50%); width:76px; padding:10px 5px; border:1px solid #fff9ea40; border-radius:12px; background:#18313d6b; color:#fff9ea; box-shadow:inset 0 1px 0 #fff9ea24,0 3px 12px #182b450a; text-shadow:0 1px 3px #12252f66; text-align:center; pointer-events:none; }
+.draft-event-float time { display:block; }
+.draft-event-float time strong { display:block; font-size:17px; line-height:1.2; font-weight:650; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+.draft-event-float time>span { display:block; margin-top:4px; font-size:8px; font-weight:600; letter-spacing:.025em; }
+.draft-event-venue { display:block; margin-top:8px; padding-top:7px; border-top:1px solid #fff9ea30; font-size:9px; line-height:1.4; font-weight:600; overflow-wrap:anywhere; }
+.draft-event-hall { display:block; margin-top:2px; font-size:8px; line-height:1.4; overflow-wrap:anywhere; }
+.draft-event-float { transition:opacity .25s ease,visibility .25s ease; }
+.draft-event-float.is-quiet { opacity:0; visibility:hidden; }
+@media (prefers-reduced-motion:reduce) { .draft-event-float { transition:none; } }
 .draft-bgm { position:absolute; top:max(4px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); pointer-events:auto; }
 .draft-studio .draft-bgm-toggle { display:flex; align-items:center; justify-content:center; width:58px; min-height:44px; padding:8px 0; border:0; border-radius:14px; background:transparent; color:#FFF9EA; }
 .draft-bgm-glass { display:flex; align-items:center; justify-content:center; gap:5px; width:58px; height:28px; padding:4px; border:1px solid #fff9ea45; border-radius:14px; background:#18313d80; box-shadow:inset 0 1px 0 #fff9ea24,0 2px 8px #182b450a; }

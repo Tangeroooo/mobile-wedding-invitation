@@ -6,6 +6,16 @@ export function parseCeremonyDate(value: string) {
 
 export const validCeremonyTime = (value: string) => /^([01]\d|2[0-3]):[0-5]\d$/.test(value)
 
+// Compare calendar days in Korea, regardless of the guest's device timezone.
+export function ceremonyCountdown(dateValue: string, now = new Date()) {
+  const date = parseCeremonyDate(dateValue)
+  if (!date || !Number.isFinite(now.getTime())) return null
+  const dayMs = 86_400_000
+  const today = Math.floor((now.getTime() + 9 * 3_600_000) / dayMs)
+  const days = Math.round(date.getTime() / dayMs) - today
+  return { days, label: days === 0 ? 'D-Day' : `D${days > 0 ? '-' : '+'}${Math.abs(days)}` }
+}
+
 export function ceremonyLabel(dateValue: string, time: string) {
   const date = parseCeremonyDate(dateValue)
   if (!date || !validCeremonyTime(time)) return ''

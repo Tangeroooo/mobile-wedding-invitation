@@ -1,7 +1,37 @@
 import { test, expect } from '@playwright/test'
 import { defaults } from '../src/draftModel'
 import { parseConfig } from '../src/draftModel'
-import { parseCeremonyDate, ceremonyLabel } from '../src/draftDate'
+import { parseCeremonyDate, ceremonyLabel, ceremonyCountdown } from '../src/draftDate'
+
+test('countdown uses Korean calendar days including midnight and past dates', () => {
+  expect(ceremonyCountdown('2026-11-07', new Date('2026-09-25T00:00:00+09:00'))).toEqual({ days:43, label:'D-43' })
+  expect(ceremonyCountdown('2026-11-07', new Date('2026-11-06T14:59:59Z'))?.label).toBe('D-1')
+  expect(ceremonyCountdown('2026-11-07', new Date('2026-11-06T15:00:00Z'))?.label).toBe('D-Day')
+  expect(ceremonyCountdown('2026-11-07', new Date('2026-11-07T15:00:00Z'))?.label).toBe('D+1')
+  expect(ceremonyCountdown('invalid')).toBeNull()
+})
+
+test('schedule float stays compact and yields to the calendar', async ({ page }) => {
+  await page.setViewportSize({width:390,height:844})
+  await page.goto('draft/?mode=preview')
+  const summary = page.locator('.draft-event-float')
+  await expect(summary).toContainText('11.07')
+  await expect(summary).toContainText('19:20')
+  await expect(summary).toContainText('더링크서울')
+  await expect(summary).toHaveCSS('width','76px')
+  await expect(summary).toHaveCSS('pointer-events','none')
+  await expect(summary).toBeVisible()
+  await expect(page.locator('.draft-countdown strong')).toHaveText(/^D(?:-Day|[-+]\d+)$/)
+  await page.locator('.draft-calendar').scrollIntoViewIfNeeded()
+  await expect(summary).toHaveAttribute('aria-hidden','true')
+  await expect(summary).toHaveCSS('opacity','0')
+  await page.locator('.draft-accounts-section').scrollIntoViewIfNeeded()
+  await expect(summary).toHaveAttribute('aria-hidden','true')
+  await page.locator('.draft-stage').scrollIntoViewIfNeeded()
+  await expect(summary).toBeVisible()
+  const box = (await summary.boundingBox())!
+  expect(Math.abs(box.y + box.height / 2 - 422)).toBeLessThan(2)
+})
 
 test('calendar dates are valid and original placeholders migrate without losing edits', () => {
   expect(parseCeremonyDate('2026-02-30')).toBeNull()
@@ -87,7 +117,7 @@ test('draft contains ceremony details and a deferred venue map', async ({ page }
   await expect(page.locator('.draft-date-card')).toContainText('오후 7시 20분')
   await expect(page.locator('.draft-ceremony-hour')).toHaveText('오후 7시 20분')
   await expect(page.locator('.draft-ceremony-venue')).toHaveText('더링크서울 트리뷰트 포트폴리오 호텔 3층 베일리홀')
-  expect(await page.locator('.draft-ceremony-hour').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(20)
+  await expect(page.locator('.draft-ceremony-hour')).toHaveCSS('font-size', await page.locator('.draft-date-text').evaluate(el => getComputedStyle(el).fontSize))
   await expect(page.locator('.draft-ceremony-venue')).toHaveCSS('font-weight','650')
   await expect(page.locator('.draft-location-card')).toContainText('3층 베일리홀')
   await expect(page.locator('.draft-location-card address')).toHaveText('서울특별시 구로구 경인로 610')
