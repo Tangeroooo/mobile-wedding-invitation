@@ -504,11 +504,12 @@ export default function DraftStudio() {
               {editCopy('gallery')}
             </section>
             <section className="draft-poster-section draft-location">
-              <div className="draft-section-index">04 <span>{copy.locationLabel}</span></div><h2>{copy.locationTitle}</h2><div className="draft-location-card"><div className="draft-location-title"><strong>{copy.venueName}</strong><span className="draft-location-hall">{copy.venueHall}</span><span className="draft-location-arrow" aria-hidden="true">↗</span></div><address>{copy.venueAddress}</address></div><DraftMap />
-              <nav className="draft-map-links" aria-label="예식장 지도 앱">
+              <div className="draft-section-index">04 <span>{copy.locationLabel}</span></div><h2>{copy.locationTitle}</h2><div className="draft-location-card"><div className="draft-location-title"><strong>{copy.venueName}</strong><span className="draft-location-hall">{copy.venueHall}</span><span className="draft-location-arrow" aria-hidden="true">↗</span></div><address>{copy.venueAddress}{copy.transitStop && <span className="draft-transit-stop">({copy.transitStop})</span>}</address></div><DraftMap />
+              <nav className="draft-map-links" aria-label="예식장 지도 및 교통 안내">
                 <a href={`https://map.naver.com/p/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://ssl.pstatic.net/static/maps/assets/icons/apple-icon-180x180.png" width="22" height="22" alt="" loading="lazy" />네이버지도 ↗</a>
                 <a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://map.kakao.com/favicon.ico" width="22" height="22" alt="" loading="lazy" />카카오맵 ↗</a>
-              </nav><DraftDirections stop={copy.transitStop} />{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
+                <DraftDirections />
+              </nav>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
             </section>
             <section className="draft-poster-section draft-accounts-section">
               <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}

@@ -96,11 +96,13 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   scrolling keys are blocked without disabling pinch zoom or the cover controls.
   Replay resets the lock; editor mode, reduced motion, blank lettering and font
   errors do not trap guests. No fixed-position photo/backdrop layout is introduced.
-- Directions include editable “신도림역 1번 출구에서 800m” and compact outlined
-  “셔틀버스 영상” / “약도” buttons. A native dialog plays the provided YouTube
+- Directions put editable “(신도림역 1번 출구에서 800m)” under the address and share
+  a 14px, two-by-two button grid for Naver, Kakao, shuttle video and map. A native dialog plays the provided YouTube
   embed only after opening; closing removes the iframe and restores page scroll
   and focus. A YouTube link is available if embedding is blocked. The map modal
-  loads the user-supplied PDF's lossless image on demand, with zoom and panning.
+  loads the user-supplied PDF's lossless image on demand. Only the image and a faint
+  glass close icon are shown: two-finger pinch zoom (1–5x), one-finger panning, desktop
+  double-click and keyboard zoom/pan keep the close button stationary. No zoom buttons.
 - Black Rush names Juhyeon and Hani sit below the people in the main cover at 78%
   height. Their enlarged lettering follows the edited palette: groom pink, bride blue.
   They mount with the main title and share its first-line writing delay/duration,

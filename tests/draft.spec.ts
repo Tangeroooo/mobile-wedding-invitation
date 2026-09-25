@@ -3,6 +3,17 @@ import { defaults } from '../src/draftModel'
 import { parseConfig } from '../src/draftModel'
 import { parseCeremonyDate, ceremonyLabel, ceremonyCountdown } from '../src/draftDate'
 import { createWeddingCalendar } from '../src/draftCalendarFile'
+import { boundMapView, initialMapView, pinchMapView } from '../src/draftMapZoom'
+
+test('map pinch zoom anchors and bounds the image without moving the close button', () => {
+  const start = [{x:-50,y:0},{x:50,y:0}]
+  expect(pinchMapView(initialMapView,start,[{x:-100,y:0},{x:100,y:0}])).toEqual({scale:2,x:0,y:0})
+  expect(pinchMapView(initialMapView,start,[{x:-80,y:30},{x:120,y:30}])).toEqual({scale:2,x:20,y:30})
+  expect(pinchMapView({scale:2,x:0,y:0},[{x:0,y:0}],[{x:40,y:60}])).toEqual({scale:2,x:40,y:60})
+  expect(boundMapView({scale:1,x:400,y:800},300,500)).toEqual({scale:1,x:0,y:0})
+  expect(boundMapView({scale:9,x:900,y:-1500},300,500)).toEqual({scale:5,x:600,y:-1000})
+  expect(pinchMapView({scale:2,x:20,y:30},[{x:-80,y:30},{x:120,y:30}],start)).toEqual(initialMapView)
+})
 
 test('published defaults preserve the approved Zen lettering layout', () => {
   expect(defaults.copy.transitStop).toBe('신도림역 1번 출구에서 800m')
@@ -45,14 +56,23 @@ test('directions modals load on demand, zoom the map, stop video and restore foc
   await page.getByRole('button',{name:'건너뛰기 →',exact:true}).click()
   const mapButton = page.getByRole('button',{name:'약도',exact:true})
   await mapButton.scrollIntoViewIfNeeded()
-  await expect(page.getByText('신도림역 1번 출구에서 800m',{exact:true})).toBeVisible()
+  await expect(page.locator('.draft-location-card address')).toContainText('(신도림역 1번 출구에서 800m)')
+  await expect(page.locator('.draft-map-links > a, .draft-map-links > button')).toHaveCount(4)
+  await expect(mapButton).toHaveCSS('font-size','14px')
   await expect(page.locator('.draft-shuttle-modal iframe, .draft-route-image img')).toHaveCount(0)
   await mapButton.click()
   const modal = page.getByRole('dialog',{name:'약도',exact:true})
   await expect(modal).toBeVisible()
   await expect(modal.locator('img')).toHaveJSProperty('naturalWidth',1327)
-  await page.getByRole('button',{name:'약도 확대',exact:true}).click()
-  expect(await page.locator('.draft-route-image').evaluate(el => el.scrollWidth > el.clientWidth)).toBe(true)
+  await expect(modal.locator('header, footer')).toHaveCount(0)
+  await expect(modal.getByRole('button')).toHaveCount(1)
+  const image = page.locator('.draft-route-image')
+  const closePosition = await modal.getByRole('button').boundingBox()
+  await image.dblclick()
+  await expect(image).toHaveAttribute('data-scale','2.5')
+  expect(await modal.getByRole('button').boundingBox()).toEqual(closePosition)
+  await image.press('0')
+  await expect(image).toHaveAttribute('data-scale','1')
   await page.keyboard.press('Escape')
   await expect(modal).not.toBeVisible()
   await expect(mapButton).toBeFocused()
