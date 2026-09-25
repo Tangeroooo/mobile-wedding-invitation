@@ -19,7 +19,8 @@ const asset = (name: string) => `${import.meta.env.BASE_URL}images/draft/${name}
 const photo = (scene: Scene, width = 800) => asset(`${scene}-${width}.webp`)
 const sceneLabel = { intro: '인트로', main: '메인 커버' }
 const galleryPhotos = Array.from({ length:25 }, (_, index) => index + 1)
-const galleryBoard = galleryPhotos.slice(0, 10)
+// Mix settings, outfits and framing; board slot and full-gallery photo ID are independent.
+const galleryBoard = [1, 10, 5, 14, 18, 9, 20, 21, 23, 24]
 const galleryPhoto = (number: number, width: 320 | 1200 = 320) => asset(`gallery/${String(number).padStart(2, '0')}-${width}.webp`)
 const isPreviewUrl = () => new URLSearchParams(window.location.search).get('mode') === 'preview'
 const isPublishedPreview = () => isPreviewUrl() && new URLSearchParams(window.location.search).get('source') === 'published'
@@ -81,6 +82,29 @@ export default function DraftStudio() {
   const [ceremonyDay, ceremonyHour] = ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime).split('\n')
   const mapQuery = encodeURIComponent(`${copy.venueName} ${copy.venueAddress}`)
   useEffect(() => { document.title = preview ? 'Our invitation — 미리보기' : 'Our invitation — 초안 스튜디오' }, [preview])
+
+  useLayoutEffect(() => {
+    if (!preview) return
+    // Let Safari sample the photo canvas instead of the site's beige page canvas.
+    // Native toolbar/status-bar compositing is still controlled by the browser.
+    const root = document.documentElement
+    const previousPhoto = root.style.getPropertyValue('--draft-edge-photo')
+    const hadClass = root.classList.contains('draft-preview-page')
+    const themes = Array.from(document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]'))
+    const previousMedia = themes.map(meta => meta.getAttribute('media'))
+    root.classList.add('draft-preview-page')
+    root.style.setProperty('--draft-edge-photo', `url("${photo(phase === 'main' ? 'main' : 'intro', 1400)}")`)
+    themes.forEach(meta => meta.setAttribute('media', 'not all'))
+    return () => {
+      if (!hadClass) root.classList.remove('draft-preview-page')
+      if (previousPhoto) root.style.setProperty('--draft-edge-photo', previousPhoto)
+      else root.style.removeProperty('--draft-edge-photo')
+      themes.forEach((meta, index) => {
+        if (previousMedia[index] === null) meta.removeAttribute('media')
+        else meta.setAttribute('media', previousMedia[index]!)
+      })
+    }
+  }, [preview, phase])
 
   useLayoutEffect(() => {
     // A reload must restore saved percentages, not overwrite them from a loading
@@ -373,8 +397,14 @@ export default function DraftStudio() {
           </div>
           <section ref={stage} className="draft-stage" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={preview ? protectPhoto : undefined} aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
-              <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
-              {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>{renderPhoto('intro')}<div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span></div><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></>}
+              <div className="draft-cover-layer" key={`cover-${replay}`}>
+                {renderPhoto('main', true)}
+                <div className="draft-scene-content"><div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
+              </div>
+              {phase !== 'main' && <><div className={`draft-intro-layer ${phase === 'leaving' ? 'is-leaving' : ''}`} key={`intro-${replay}`}>
+                {renderPhoto('intro')}
+                <div className="draft-scene-content"><div className="draft-letter-position" style={position('intro')}>{renderLetters('intro', true)}</div><span className="draft-intro-caption">{copy.introCaption}</span></div>
+              </div><div className="draft-cover-controls"><button className="draft-skip" disabled={phase === 'leaving'} onClick={() => setPhase('leaving')}>건너뛰기 →</button></div></>}
             </> : <>
               {renderPhoto(scene)}
               <button className="draft-edit-text-button" onClick={() => { setInline(value => !value); setToolsOpen(false) }}>{inline ? '편집 완료 ✓' : '문구 편집 ✎'}</button>
@@ -414,8 +444,8 @@ export default function DraftStudio() {
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p>
               <div className="draft-gallery-grid" role="group" aria-label="사진을 붙인 메모리 보드">
-                  {galleryBoard.map(number => {
-                    return <div key={number} className={`draft-photo-pin pin-slot-${String(number).padStart(2,'0')} frame-portrait`}>
+                  {galleryBoard.map((number, index) => {
+                    return <div key={number} className={`draft-photo-pin pin-slot-${String(index + 1).padStart(2,'0')} frame-portrait`}>
                       <button className="draft-photo-print" onContextMenu={protectPhoto} onCopy={protectPhoto} onDragStart={protectPhoto} onDoubleClick={protectPhoto} onClick={() => setLightbox(number)} aria-label={`${number}번 사진 보기`}>
                         <img src={galleryPhoto(number)} width="320" height="480" loading="lazy" decoding="async" draggable={false} alt={`${number}번째 웨딩 사진`} />
                       </button>

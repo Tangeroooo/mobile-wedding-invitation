@@ -34,7 +34,9 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   `?mode=preview&source=published` always shows deployed defaults on every device,
   ignoring (but never deleting) local edits. Returning to edit restores local edits.
   Later local changes still require exporting and publishing to update this snapshot.
-- Gallery is a compact ten-photo memory board using images/1.jpg through 10.jpg,
+- Gallery is a compact ten-photo memory board curated from images numbered
+  1, 10, 5, 14, 18, 9, 20, 21, 23 and 24 (floral, pink window, bubbles, monochrome,
+  wood, solo pink, brick arch, black outfits, cake and night garden),
   with unequal sizes and overlapping tilted white frames. The swipe viewer includes
   all 25 user-supplied numbered photos in numeric order. Original JPEGs stay local;
   scripts/prepare-gallery.mjs generates metadata-free 320px/1200px WebP derivatives.
@@ -78,8 +80,13 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   drafts use a text/calendar Blob. No download attribute forces a download; the
   device/browser decides whether to open its calendar handler or save the file.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
-- Preview photos use 100dvh with edge-to-edge cover cropping and no safe-area padding
-  on the photo itself. Controls and the intro caption get safe-area offsets. At the
+- Preview photos use 100lvh (at least 100dvh) with edge-to-edge cover cropping and no
+  safe-area padding on the photo itself. Separate 100dvh layers anchor lettering and
+  controls to the currently visible viewport. The root canvas also uses the active
+  photo and opts out of the flat theme-color in preview; editor mode restores both.
+  This avoids exposing the next section below the photo when toolbars are expanded.
+  Safari's native status-bar compositing still needs real-device verification.
+  Controls and the intro caption get safe-area offsets. At the
   user's request, the main caption is back at its original 24px bottom offset; the music
   toggle remains in its sticky dock and skip is outside the transitioning photo layer.
   Mobile browser chrome itself is owned by Safari/Chrome, not drawable by this page.

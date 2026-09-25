@@ -90,11 +90,15 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await expect(page.locator('.draft-intro-layer img')).toHaveCSS('object-fit','cover')
   await expect(page.locator('.draft-stage')).toHaveCSS('height','844px')
-  // Simulate expanded browser controls, then the taller collapsed-toolbar viewport.
+  await expect(page.locator('html')).toHaveClass(/draft-preview-page/)
+  expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('intro-1400.webp')
+  // Desktop viewport resizing is a layout regression check, not native Safari chrome emulation.
   await page.setViewportSize({width:390,height:664})
   await expect(page.locator('.draft-stage')).toHaveCSS('height','664px')
+  await expect(page.locator('.draft-cover-controls')).toHaveCSS('height','664px')
   await page.getByRole('button',{name:'건너뛰기'}).click()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
+  expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('main-1400.webp')
   await expect(summary).toHaveAttribute('aria-hidden','true')
   await expect(page.locator('.draft-cover-layer .draft-write').last()).toHaveCSS('clip-path','none')
   await expect(summary).toBeVisible()
@@ -115,6 +119,9 @@ test('photo covers fill a resizing viewport and summary waits for final letterin
   await page.getByRole('button',{name:'건너뛰기'}).click()
   await expect(page.locator('.draft-intro-layer')).toHaveCount(0)
   await expect(summary).toBeVisible()
+  await page.getByRole('button',{name:'편집으로'}).click()
+  await expect(page.locator('html')).not.toHaveClass(/draft-preview-page/)
+  expect(await page.locator('meta[name="theme-color"]').getAttribute('media')).toBeNull()
 })
 
 test('calendar dates are valid and original placeholders migrate without losing edits', () => {
@@ -330,6 +337,12 @@ test('memory-board photos have unequal sizes, settle on scroll and respect reduc
   await expect(board.locator('.draft-photo-caption')).toHaveCount(0)
   expect(await page.locator('.draft-gallery').evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(844)
   await expect(board.locator('button')).toHaveCount(10)
+  expect(await board.locator('button').evaluateAll(elements => elements.map(el => el.getAttribute('aria-label')))).toEqual(
+    [1,10,5,14,18,9,20,21,23,24].map(number => `${number}번 사진 보기`),
+  )
+  for (let slot = 1; slot <= 10; slot++) {
+    await expect(board.locator(`.pin-slot-${String(slot).padStart(2,'0')}`)).toHaveCount(1)
+  }
   await expect(page.locator('.draft-lightbox img')).toHaveCount(0)
   await board.scrollIntoViewIfNeeded()
   for (const pin of await board.locator('.draft-photo-pin').all()) {
