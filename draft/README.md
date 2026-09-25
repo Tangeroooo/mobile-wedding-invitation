@@ -31,11 +31,12 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   there before publishing the final invitation.
 - Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
-- BGM has a translucent, fixed top-right control. No music is bundled yet: it stays
-  OFF / 준비 중 and makes no audio request. Add a licensed file under public/audio/
-  and set its base-path-aware URL in src/draftMusic.ts to connect it. Playback starts
-  only after a tap; ON reflects actual playback, OFF pauses, and hiding the page
-  pauses playback. Failed playback shows a retry notice rather than a false ON state.
+- BGM has a minimal glass-effect, fixed top-right music icon and switch, with no
+  visible labels. No music is bundled yet: the switch previews the sound preference
+  without audio requests. Add a licensed file under public/audio/ and set its
+  base-path-aware URL in src/draftMusic.ts to connect it. Playback starts only after
+  a tap; with a source connected, checked reflects playback and unchecked pauses.
+  Hiding the page pauses playback. Playback errors are announced to screen readers.
 - Ceremony: November 7, 2026 (Saturday), 19:20 KST, 더링크호텔 3층 베일리홀.
   Year assumed to be the upcoming November; confirm before final publication.
 - Venue address: 서울특별시 구로구 경인로 610, verified against the official listing:

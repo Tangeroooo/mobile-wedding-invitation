@@ -166,10 +166,13 @@
 @media (prefers-reduced-motion:reduce) { .draft-account-panel,.draft-account-toggle,.draft-account-group ul { transition:none; } }
 .draft-bgm { position:fixed; z-index:12; top:max(78px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); }
 .is-preview .draft-bgm { top:max(12px,env(safe-area-inset-top)); }
-.draft-studio .draft-bgm-toggle { display:flex; align-items:center; justify-content:center; gap:7px; width:102px; min-height:44px; padding:8px 10px; border:1px solid #ffffff80; border-radius:24px; background:#ffffff9e; color:#274D85; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 2px 12px #182b4514; font-size:10px; letter-spacing:.06em; }
-.draft-bgm-toggle small { display:block; margin-top:2px; font-size:8px; font-weight:400; letter-spacing:0; }
-.draft-bgm-message { position:absolute; top:calc(100% + 8px); right:0; width:min(250px,calc(100vw - 24px)); display:flex; align-items:start; padding:12px; border-radius:10px; background:#ffffffed; color:#274D85; box-shadow:0 3px 16px #182b451a; }
-.draft-bgm-message p { flex:1; margin:0; font-size:11px; line-height:1.7; }
-.draft-studio .draft-bgm-message button { border:0; padding:0 4px; background:transparent; font-size:20px; color:inherit; }
-.is-preview .draft-preview-controls { right:calc(max(12px,env(safe-area-inset-right)) + 112px); }
+.draft-studio .draft-bgm-toggle { display:flex; align-items:center; justify-content:center; gap:8px; width:72px; min-height:44px; padding:8px; border:1px solid #ffffff45; border-radius:24px; background:#ffffff14; color:#274D85; backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); box-shadow:inset 0 1px 0 #ffffff24,0 2px 10px #182b450a; }
+.draft-studio .draft-bgm-toggle:hover:not(:disabled) { background:#ffffff24; }
+.draft-bgm-track { position:relative; width:24px; height:14px; flex-shrink:0; border-radius:12px; background:#274d8526; box-shadow:inset 0 0 0 1px #274d851a; transition:background .2s ease; }
+.draft-bgm-track>span { position:absolute; left:3px; top:3px; width:8px; height:8px; border-radius:50%; background:#274d85a6; transition:transform .2s ease,background .2s ease; }
+.draft-bgm-toggle[aria-checked=true] .draft-bgm-track { background:#274d8573; }
+.draft-bgm-toggle[aria-checked=true] .draft-bgm-track>span { transform:translateX(10px); background:#fff; }
+.draft-bgm-status { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.is-preview .draft-preview-controls { right:calc(max(12px,env(safe-area-inset-right)) + 82px); }
 @media (prefers-reduced-motion:reduce) { .draft-scroll-note { animation:none; } }
+@media (prefers-reduced-motion:reduce) { .draft-bgm-track,.draft-bgm-track>span { transition:none; } }

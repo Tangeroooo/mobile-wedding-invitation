@@ -135,12 +135,16 @@ test('compact account rows, animated accessible disclosure and readable full ven
   await expect(panel).toHaveCSS('transition-duration', '0s')
 })
 
-test('pink hall, floating caption and honest pending BGM control', async ({ page }) => {
+test('pink hall, floating caption and icon-only glass BGM switch', async ({ page }) => {
   await page.setViewportSize({width:320,height:700})
   await page.goto('draft/?mode=preview')
-  const toggle = page.getByRole('button', {name:'배경음악 준비 중',exact:true})
-  await expect(toggle).toHaveAttribute('aria-pressed','false')
-  await expect(toggle).toContainText('BGM OFF')
+  const toggle = page.getByRole('switch', {name:'배경음악',exact:true})
+  await expect(toggle).toHaveAttribute('aria-checked','false')
+  await expect(toggle).toHaveText('')
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-checked','true')
+  await toggle.press('Space')
+  await expect(toggle).toHaveAttribute('aria-checked','false')
   await expect(page.locator('audio')).toHaveCount(0)
   await expect(page.locator('.draft-bgm')).toHaveCSS('position','fixed')
   const bgm = (await toggle.boundingBox())!, controls = (await page.locator('.draft-preview-controls').boundingBox())!
