@@ -289,6 +289,7 @@ export default function DraftStudio() {
       <div className="draft-preview-column">
         {!preview && <div className="draft-canvas-caption"><span>{scene === 'intro' ? '01 / THE PRELUDE' : '02 / THE COVER'}</span><span>드래그 · 더블클릭 · 방향키</span></div>}
         <article className="draft-invitation">
+          <div className="draft-bgm-dock"><DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} /></div>
           <section ref={stage} className="draft-stage" aria-label={`${preview ? '청첩장' : sceneLabel[scene]} 화면`}>
             {preview ? <>
               <div className="draft-cover-layer" key={`cover-${replay}`}>{renderPhoto('main', true)}<div className="draft-letter-position" style={position('main')} key={`main-${replay}-${phase === 'main'}`}>{phase === 'main' && renderLetters('main', true)}</div><span className="draft-scroll-note">{copy.coverCaption} <span>↓</span></span></div>
@@ -350,7 +351,6 @@ export default function DraftStudio() {
       </div>
     </div>
     {!preview && <button className="draft-mobile-tools" aria-controls="draft-inspector" aria-expanded={toolsOpen} onClick={() => setToolsOpen(value => !value)}>{toolsOpen ? '편집 도구 닫기 ×' : '문구 · 배경 편집 ✎'}</button>}
-    <DraftBgm key={draftMusicSrc ?? 'pending'} src={draftMusicSrc} />
     {preview && <nav className="draft-preview-controls" aria-label="미리보기 제어"><button onClick={stopPreview}>← 편집으로</button><button onClick={startPreview}>다시 재생 ↻</button></nav>}
     <dialog ref={dialog} className="draft-lightbox" onCancel={() => setLightbox(null)} onClick={event => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') setLightbox(current => current === 'intro' ? 'main' : 'intro') }}>
       <button className="draft-lightbox-close" autoFocus onClick={() => setLightbox(null)}>닫기 ×</button>

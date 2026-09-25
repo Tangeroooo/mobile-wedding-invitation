@@ -121,6 +121,10 @@ test('compact account rows, animated accessible disclosure and readable full ven
   const number = (await row.locator('.draft-account-number').boundingBox())!
   await expect(row.locator('.draft-account-number')).toHaveCSS('font-size','15px')
   await expect(row.locator('.draft-account-number')).toHaveCSS('font-weight','700')
+  for (const selector of ['strong', '.draft-account-bank']) {
+    await expect(row.locator(selector)).toHaveCSS('font-size','15px')
+    await expect(row.locator(selector)).toHaveCSS('font-weight','700')
+  }
   await expect(trigger).toHaveCSS('font-size','14px')
   await expect(row.locator('.draft-account-copy-icon')).toBeVisible()
   expect(Math.abs(name.y + name.height/2 - number.y - number.height/2)).toBeLessThan(2)
@@ -141,7 +145,7 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
   const toggle = page.getByRole('switch', {name:'배경음악',exact:true})
   await expect(toggle).toHaveAttribute('aria-checked','false')
   await expect(toggle).toHaveText('')
-  expect(await toggle.evaluate(el => {
+  expect(await toggle.locator('.draft-bgm-glass').evaluate(el => {
     const style = getComputedStyle(el)
     return [style.backdropFilter, style.getPropertyValue('-webkit-backdrop-filter')].some(value => value.includes('blur(10px)'))
   })).toBe(true)
@@ -150,13 +154,32 @@ test('pink hall, floating caption and icon-only glass BGM switch', async ({ page
   await toggle.press('Space')
   await expect(toggle).toHaveAttribute('aria-checked','false')
   await expect(page.locator('audio')).toHaveCount(0)
-  await expect(page.locator('.draft-bgm')).toHaveCSS('position','fixed')
+  await expect(page.locator('.draft-invitation .draft-bgm')).toHaveCount(1)
+  await expect(page.locator('.draft-bgm-dock')).toHaveCSS('position','sticky')
+  await expect(page.locator('.draft-bgm-glass')).toHaveCSS('height','28px')
   const bgm = (await toggle.boundingBox())!, controls = (await page.locator('.draft-preview-controls').boundingBox())!
   expect(controls.x + controls.width).toBeLessThanOrEqual(bgm.x)
   await expect(page.locator('.draft-ceremony-hall')).toHaveCSS('color','rgb(185, 68, 112)')
   await expect(page.locator('.draft-scroll-note')).toHaveCSS('animation-name','draft-scroll-float')
   await page.emulateMedia({reducedMotion:'reduce'})
   await expect(page.locator('.draft-scroll-note')).toHaveCSS('animation-name','none')
+})
+
+test('BGM stays inside the invitation on desktop and while scrolling', async ({ page }) => {
+  await page.setViewportSize({width:1440,height:1000})
+  await page.goto('draft/')
+  const inside = async () => {
+    const card = (await page.locator('.draft-invitation').boundingBox())!
+    const bgm = (await page.locator('.draft-bgm-glass').boundingBox())!
+    expect(bgm.x).toBeGreaterThan(card.x)
+    expect(bgm.x + bgm.width).toBeLessThan(card.x + card.width)
+  }
+  await inside()
+  await page.locator('.draft-date').scrollIntoViewIfNeeded()
+  await inside()
+  expect((await page.locator('.draft-bgm-glass').boundingBox())!.y).toBeLessThan(60)
+  await page.getByRole('button', {name:'미리보기 ▶'}).click()
+  await inside()
 })
 
 test('English section labels are larger and titles smaller in both modes', async ({ page }) => {

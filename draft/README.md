@@ -31,7 +31,8 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   there before publishing the final invitation.
 - Gallery is provisional (two supplied photos), with lazy thumbnails and a lightbox.
 - The main cover caption and arrow float gently; reduced-motion settings disable it.
-- BGM has a minimal glass-effect, fixed top-right music icon and switch, with no
+- BGM has a minimal 58 × 28 glass-effect music icon and switch inside the invitation,
+  anchored to its top-right edge while scrolling, with a 44px-tall touch target and no
   visible labels. No music is bundled yet: the switch previews the sound preference
   without audio requests. Add a licensed file under public/audio/ and set its
   base-path-aware URL in src/draftMusic.ts to connect it. Playback starts only after
