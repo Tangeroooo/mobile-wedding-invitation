@@ -3,6 +3,9 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import DraftLettering from './DraftLettering'
 import DraftMap from './DraftMap'
 import DraftCopyEditor from './DraftCopyEditor'
+import DraftCalendar from './DraftCalendar'
+import { ceremonyLabel } from './draftDate'
+import DraftAccounts from './DraftAccounts'
 import type { CopyKey } from './draftCopy'
 import type { Outlines } from './DraftLettering'
 import { clamp, defaults, isSupportedText, normalizeText, parseConfig, storageKey } from './draftModel'
@@ -316,10 +319,10 @@ export default function DraftStudio() {
           <div className="draft-poster-body" id="draft-body">
             <div className="draft-ticker"><span>{copy.tickerLeft}</span><b>✳</b><span>{copy.tickerRight}</span><b>✳</b></div>
             <section className="draft-poster-section draft-greeting">
-              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple">{copy.groom} <i>&</i> {copy.bride}</div>{editCopy('greeting')}
+              <div className="draft-section-index">01 <span>{copy.greetingLabel}</span></div><h2>{copy.greetingTitle}<em>{copy.greetingAccent}</em></h2><div className="draft-flower" aria-hidden="true">✳</div><p>{copy.greetingMessage}</p><p>{copy.greetingInvite}</p><div className="draft-couple"><span><small>신랑</small> {copy.groom}</span><i>&</i><span><small>신부</small> {copy.bride}</span></div>{editCopy('greeting')}
             </section>
             <section className="draft-poster-section draft-date">
-              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><span className="draft-date-year">{copy.dateYear}</span><strong>{copy.dateStamp}</strong><p className="draft-date-text">{copy.dateText}</p><span>{[copy.venueName, copy.venueHall].filter(Boolean).join(' · ')}</span></div>{editCopy('date')}
+              <div className="draft-section-index">02 <span>{copy.dateLabel}</span></div><h2>{copy.dateTitle}<em>{copy.dateAccent}</em></h2><div className="draft-date-card"><DraftCalendar dateValue={copy.ceremonyDate} /><p className="draft-date-text"><time dateTime={`${copy.ceremonyDate}T${copy.ceremonyTime}:00+09:00`}>{ceremonyLabel(copy.ceremonyDate, copy.ceremonyTime)}</time></p><span>{[copy.venueName, copy.venueHall].filter(Boolean).join(' · ')}</span></div>{editCopy('date')}
             </section>
             <section className="draft-poster-section draft-gallery">
               <div className="draft-section-index">03 <span>{copy.galleryLabel}</span></div><h2>{copy.galleryTitle}<em>{copy.galleryAccent}</em></h2><p>{copy.galleryMessage}</p><div className="draft-gallery-grid">{(['intro', 'main'] as const).map((value, index) => <button key={value} onClick={() => setLightbox(value)} aria-label={`${sceneLabel[value]} 사진 크게 보기`}><img src={photo(value)} width="800" height="1200" loading="lazy" decoding="async" alt={index ? '블루와 핑크, 두 사람의 초상' : '정원에서의 두 사람'} /><span>0{index + 1} / {index ? copy.gallerySecond : copy.galleryFirst} ↗</span></button>)}</div><small className="draft-gallery-note">{copy.galleryNote}</small>{editCopy('gallery')}
@@ -331,8 +334,11 @@ export default function DraftStudio() {
                 <a href={`https://map.kakao.com/link/search/${mapQuery}`} target="_blank" rel="noopener noreferrer"><img src="https://map.kakao.com/favicon.ico" width="22" height="22" alt="" loading="lazy" />카카오맵 ↗</a>
               </nav><p className="draft-map-help">{copy.mapHelp}</p>{copy.transport && <p className="draft-transport">{copy.transport}</p>}{editCopy('location')}
             </section>
+            <section className="draft-poster-section draft-accounts-section">
+              <div className="draft-section-index">05 <span>{copy.accountsLabel}</span></div><h2>{copy.accountsTitle}</h2><p>{copy.accountsMessage}</p><DraftAccounts copy={copy} />{editCopy('accounts')}
+            </section>
             <section className="draft-poster-section draft-rsvp">
-              <div className="draft-section-index">05 <span>{copy.rsvpLabel}</span></div><h2>{copy.rsvpTitle}<em>{copy.rsvpAccent}</em></h2><p>{copy.rsvpMessage}</p>{editCopy('rsvp')}
+              <div className="draft-section-index">06 <span>{copy.rsvpLabel}</span></div><h2>{copy.rsvpTitle}<em>{copy.rsvpAccent}</em></h2><p>{copy.rsvpMessage}</p>{editCopy('rsvp')}
             </section>
             <footer className="draft-poster-footer"><span>{copy.footerLabel}</span><strong>{copy.footerTitle}</strong><span>{copy.footerNote}</span>{editCopy('footer')}</footer>
           </div>

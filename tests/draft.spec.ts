@@ -1,5 +1,52 @@
 import { test, expect } from '@playwright/test'
 import { defaults } from '../src/draftModel'
+import { parseConfig } from '../src/draftModel'
+import { parseCeremonyDate, ceremonyLabel } from '../src/draftDate'
+
+test('calendar dates are valid and original placeholders migrate without losing edits', () => {
+  expect(parseCeremonyDate('2026-02-30')).toBeNull()
+  expect(parseCeremonyDate('2028-02-29')).not.toBeNull()
+  expect(ceremonyLabel('2026-11-07', '19:20')).toBe('2026년 11월 7일 토요일\n오후 7시 20분')
+  const legacy = structuredClone(defaults)
+  legacy.copy.groom = '신랑 이름'; legacy.copy.bride = '신부 이름'
+  legacy.copy.greetingMessage = '직접 편집한 인사말'
+  legacy.intro.rotation = 27
+  const migrated = parseConfig(legacy)
+  expect(migrated.copy.groom).toBe('정주현')
+  expect(migrated.copy.bride).toBe('임하니')
+  expect(migrated.copy.greetingMessage).toBe('직접 편집한 인사말')
+  expect(migrated.intro.rotation).toBe(27)
+  expect(() => parseConfig({ ...defaults, copy: { ...defaults.copy, ceremonyDate: '2026-02-30' } })).toThrow()
+})
+
+test('calendar and account editing persist, and accounts copy without hyphens', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.setViewportSize({width:390, height:844})
+  await page.goto('draft/')
+  await expect(page.locator('.draft-couple')).toContainText('정주현')
+  await expect(page.locator('.draft-couple')).toContainText('임하니')
+  await expect(page.locator('.draft-calendar tbody td').filter({hasText:/^\d/})).toHaveCount(30)
+  await expect(page.locator('.is-wedding-day')).toHaveText('7♥')
+  await page.locator('#edit-date summary').click()
+  await page.getByLabel('예식 일시 · 예식 날짜').fill('2028-02-29')
+  await page.getByLabel('예식 일시 · 예식 시간').fill('12:00')
+  await page.reload()
+  await expect(page.locator('.is-wedding-day')).toHaveText('29♥')
+  await expect(page.locator('.draft-calendar caption')).toContainText('FEBRUARY')
+  await expect(page.locator('.draft-date-text')).toContainText('오후 12시')
+  await page.locator('.draft-account-group.groom summary').click()
+  await expect(page.locator('.draft-account-group.groom li')).toHaveCount(3)
+  await page.getByRole('button', {name:'정주현 계좌번호 복사', exact:true}).click()
+  await expect(page.locator('.draft-account-status')).toContainText('복사했어요')
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(defaults.copy.groomAccountNumber.replaceAll('-', ''))
+  await page.locator('#edit-accounts summary').click()
+  await page.getByLabel('마음 전하실 곳 · 신랑측 2 · 계좌번호').fill('')
+  await page.reload()
+  await page.locator('.draft-account-group.groom summary').click()
+  await expect(page.locator('.draft-account-group.groom li')).toHaveCount(2)
+  await page.getByRole('button', {name:'미리보기 ▶'}).click()
+  await expect(page.locator('#edit-accounts')).toHaveCount(0)
+})
 
 test('body copy saves immediately, migrates legacy data and has a separate preview URL', async ({ page, context }) => {
   await page.goto('draft/')

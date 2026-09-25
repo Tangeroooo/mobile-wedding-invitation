@@ -38,7 +38,15 @@ The Design Lab header links to it. The page is marked noindex, not password-prot
   are included in the draft only. Buttons use the providers' official site/app icons.
   The unmodified map image has a visible Naver credit and opens Naver Map on tap.
   Map pin (37.5052943, 126.8838555) comes from the official listing's View Map link.
-- Event names, RSVP and account information are not yet supplied.
+- Couple: 정주현 & 임하니. The accounts section has separate expandable groom/bride
+  groups and per-account copy buttons (digits only); a failed clipboard request gives
+  manual-copy guidance. All account fields remain editable and are included in JSON
+  exports. Publishing the supplied names/accounts to the public repository and draft
+  page was explicitly approved by the user. RSVP details are still pending.
+- Date is a monthly calendar with the ceremony day highlighted. Editable date and
+  time fields drive the calendar, weekday and displayed time from one source.
+  Existing saved photo layouts and custom text are preserved; only the original
+  name/RSVP placeholders migrate to the new defaults.
 - Every body section has a collapsible copy editor, including labels, headings,
   names, date display, gallery captions, transport notes, and footer. Source defaults
   live in src/draftCopy.ts. Empty strings are valid; line breaks are preserved.

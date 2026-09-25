@@ -67,6 +67,37 @@
 .draft-date-card .draft-date-year { display:block; font-size:10px; letter-spacing:.2em; margin-bottom:15px; }
 .draft-date-card strong { display:block; font-size:clamp(26px,7vw,38px); }
 .draft-date-card .draft-date-text { display:block; margin:18px 0; font-size:14px; line-height:1.9; }
+.draft-couple { display:flex; align-items:center; justify-content:center; gap:4px; letter-spacing:.02em; flex-wrap:wrap; }
+.draft-couple small { font-size:10px; font-weight:400; margin-right:4px; }
+.draft-calendar { width:100%; table-layout:fixed; border-collapse:collapse; text-align:center; font-variant-numeric:tabular-nums; }
+.draft-calendar caption { text-align:left; margin-bottom:22px; }
+.draft-calendar caption>span { font-size:11px; letter-spacing:.18em; }
+.draft-calendar caption strong { margin-top:6px; font-size:50px; line-height:1.15; }
+.draft-calendar caption small { font-size:10px; letter-spacing:.12em; font-weight:600; }
+.draft-calendar th { font-size:11px; font-weight:500; padding-bottom:10px; border-bottom:1px solid color-mix(in srgb,var(--draft-blue) 20%,transparent); }
+.draft-calendar td { height:44px; font-size:13px; }
+.draft-calendar :is(th,td):first-child { color:var(--draft-pink); }
+.draft-calendar .is-wedding-day>span { display:inline-grid; place-items:center; position:relative; width:32px; height:32px; border-radius:50%; background:var(--draft-pink); color:var(--draft-paper); font-weight:800; }
+.draft-calendar .is-wedding-day i { position:absolute; bottom:-12px; font:9px/1 sans-serif; color:var(--draft-pink); }
+.draft-date-card { text-align:center; }
+.draft-accounts-section h2 { font-size:clamp(29px,8vw,40px); }
+.draft-accounts { margin-top:28px; }
+.draft-account-group { border:1px solid color-mix(in srgb,var(--draft-blue) 35%,transparent); border-radius:6px; margin-top:12px; }
+.draft-account-group summary { display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; padding:18px 16px; font-size:13px; font-weight:700; list-style:none; background:color-mix(in srgb,var(--draft-blue) 6%,var(--draft-paper)); }
+.draft-account-group summary::-webkit-details-marker { display:none; }
+.draft-account-group.bride summary { color:var(--draft-pink); background:color-mix(in srgb,var(--draft-pink) 6%,var(--draft-paper)); }
+.draft-account-toggle { font-size:18px; font-weight:400; }
+.draft-account-group[open] .draft-account-toggle { transform:rotate(45deg); }
+.draft-account-group ul { margin:0; padding:0 16px; list-style:none; }
+.draft-account-group li { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:20px 0; }
+.draft-account-group li+li { border-top:1px solid color-mix(in srgb,var(--draft-blue) 15%,transparent); }
+.draft-account-group li>div { min-width:0; }
+.draft-account-group strong { font-size:14px; }
+.draft-account-bank { margin-left:8px; font-size:11px; }
+.draft-account-number { display:block; margin-top:8px; font-size:13px; font-variant-numeric:tabular-nums; letter-spacing:.01em; user-select:text; overflow-wrap:anywhere; }
+.draft-studio .draft-account-group button { flex-shrink:0; min-height:44px; padding:10px 12px; font-size:11px; background:transparent; color:var(--draft-blue); border-color:color-mix(in srgb,var(--draft-blue) 35%,transparent); }
+.draft-account-group summary:focus-visible { outline:2px solid var(--draft-pink); outline-offset:3px; }
+.draft-accounts .draft-account-status { font-size:11px; margin:14px 0 0; }
 .draft-location-card .draft-location-hall { margin:10px 0 14px; font-size:15px; color:var(--draft-pink); }
 .draft-location-card address { font-style:normal; font-size:12px; line-height:1.8; }
 .draft-location-map { width:100%; margin-top:22px; border:1px solid color-mix(in srgb,var(--draft-blue) 25%,transparent); background:#e8e9e4; }
@@ -109,7 +140,7 @@
 .draft-copy-editor summary { width:fit-content; cursor:pointer; background:#fffef4; border:1px dashed #8b9c8e; border-radius:22px; padding:11px 16px; font-size:12px; line-height:1.5; font-weight:500; }
 .draft-copy-fields { background:#fbfbf7; border:1px solid #d7dbd2; padding:18px; border-radius:8px; margin-top:12px; }
 .draft-copy-fields label { display:block; font-size:12px; margin:16px 0; }
-.draft-copy-fields textarea { display:block; width:100%; margin-top:8px; padding:10px; color:#283d33; background:#fff; border:1px solid #d0d7cc; border-radius:4px; font:13px/1.7 -apple-system,BlinkMacSystemFont,sans-serif; resize:vertical; }
+.draft-copy-fields textarea,.draft-copy-fields input { display:block; width:100%; min-width:0; margin-top:8px; padding:10px; color:#283d33; background:#fff; border:1px solid #d0d7cc; border-radius:4px; font:13px/1.7 -apple-system,BlinkMacSystemFont,sans-serif; resize:vertical; }
 .draft-copy-fields p { font-size:11px; line-height:1.8; margin:8px 0; letter-spacing:0; }
 .draft-poster-section h2 em { display:block; }
 .draft-poster-section h2,.draft-poster-section p,.draft-poster-section address,.draft-poster-footer>span,.draft-poster-footer>strong,.draft-gallery-note,.draft-gallery-grid span,.draft-couple { white-space:pre-line; overflow-wrap:anywhere; }
