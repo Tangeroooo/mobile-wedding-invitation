@@ -83,9 +83,9 @@ export function DraftEventFloat({ dateValue, time, venue, hall, quietRegion, ena
   }, [quietRegion])
   const date = parseCeremonyDate(dateValue)
   if (!date || !validCeremonyTime(time)) return null
-  const shortVenue = venue === '더링크서울 트리뷰트 포트폴리오 호텔' ? '더링크서울' : venue
+  const shortVenue = venue === '더링크서울 트리뷰트 포트폴리오 호텔' ? '더링크호텔' : venue
   return <aside ref={float} className={`draft-event-float${quiet || !enabled ? ' is-quiet' : ''}`} aria-label="예식 일정 요약" aria-hidden={quiet || !enabled || undefined}
-    style={{ backdropFilter: 'blur(16px) saturate(160%)', WebkitBackdropFilter: 'blur(16px) saturate(160%)' }}>
+    style={{ backdropFilter: 'blur(10px) saturate(140%)', WebkitBackdropFilter: 'blur(10px) saturate(140%)' }}>
     <time dateTime={`${dateValue}T${time}:00+09:00`}>
       <strong>{String(date.getUTCMonth() + 1).padStart(2, '0')}.{String(date.getUTCDate()).padStart(2, '0')}</strong>
       <span>{['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][date.getUTCDay()]} · {time}</span>
