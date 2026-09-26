@@ -65,7 +65,7 @@ for (const edition of ['main','a','b'] as const) {
     await expect(page.locator('.draft-event-hall')).toHaveText('3층 베일리홀')
     await expect(page.locator('.draft-event-float')).toHaveCSS('background-color','rgba(24, 49, 61, 0.15)')
     await expect(page.locator('.draft-event-float')).toHaveCSS('backdrop-filter',/blur\(12px\) saturate\((?:1\.6|160%)\)/)
-    await expect(page.locator('.draft-event-float')).toHaveCSS('width','88px')
+    await expect(page.locator('.draft-event-float')).toHaveCSS('width','82px')
     await expect(page.locator('.draft-event-float')).toHaveCSS('padding','8px 4px')
     await expect(page.locator('.draft-event-float time strong')).toHaveCSS('font-size','21px')
     await expect(page.locator('.draft-event-float time>span')).toHaveCSS('font-size','11px')
