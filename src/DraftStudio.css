@@ -326,12 +326,12 @@ html.draft-preview-page body { background:transparent; }
 @media (max-width:380px) { .draft-studio:not(.is-preview) .draft-preview-column { width:calc(100% + 32px); max-width:none; margin-inline:-16px; }.draft-studio:not(.is-preview) .draft-canvas-caption { padding-inline:12px; } }
 @media (prefers-reduced-motion:reduce) { .draft-account-panel,.draft-account-toggle,.draft-account-group ul { transition:none; } }
 .draft-bgm-dock { position:sticky; top:0; height:0; z-index:12; pointer-events:none; }
-.draft-event-float { position:absolute; top:50svh; right:max(8px,env(safe-area-inset-right)); transform:translateY(-50%); width:76px; padding:10px 5px; border:1px solid #fff9ea30; border-radius:12px; background:#18313d14; color:#fff9ea; box-shadow:inset 0 1px 0 #fff9ea1a,0 3px 12px #182b450a; text-shadow:0 1px 3px #12252f80; text-align:center; pointer-events:none; }
+.draft-event-float { position:absolute; top:50svh; right:max(8px,env(safe-area-inset-right)); transform:translateY(-50%); width:94px; padding:10px 5px; border:1px solid #fff9ea30; border-radius:12px; background:#18313d33; color:#fff9ea; box-shadow:inset 0 1px 0 #fff9ea1a,0 3px 12px #182b450a; text-shadow:0 1px 3px #12252f80; text-align:center; pointer-events:none; }
 .draft-event-float time { display:block; }
-.draft-event-float time strong { display:block; font-size:17px; line-height:1.2; font-weight:650; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
-.draft-event-float time>span { display:block; margin-top:4px; font-size:8px; font-weight:600; letter-spacing:.025em; }
-.draft-event-venue { display:block; margin-top:8px; padding-top:7px; border-top:1px solid #fff9ea30; font-size:9px; line-height:1.4; font-weight:600; overflow-wrap:anywhere; }
-.draft-event-hall { display:block; margin-top:2px; font-size:8px; line-height:1.4; overflow-wrap:anywhere; }
+.draft-event-float time strong { display:block; font-size:21px; line-height:1.2; font-weight:650; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+.draft-event-float time>span { display:block; margin-top:4px; font-size:11px; font-weight:600; letter-spacing:0; }
+.draft-event-venue { display:block; margin-top:8px; padding-top:7px; border-top:1px solid #fff9ea30; font-size:12px; line-height:1.4; font-weight:600; overflow-wrap:anywhere; }
+.draft-event-hall { display:block; margin-top:2px; font-size:11px; line-height:1.4; overflow-wrap:anywhere; }
 .draft-event-float { transition:opacity .25s ease,visibility .25s ease; }
 .draft-event-float.is-quiet { opacity:0; visibility:hidden; }
 @media (prefers-reduced-motion:reduce) { .draft-event-float { transition:none; } }

@@ -36,11 +36,6 @@
 .is-large-type .draft-scroll-note span { font-size:32px; }
 .is-large-type .draft-naver-credit { font-size:13px; }
 .is-large-type .draft-naver-marker strong { font-size:13px; }
-.is-large-type .draft-event-float { width:94px; }
-.is-large-type .draft-event-float time strong { font-size:21px; }
-.is-large-type .draft-event-float time>span { font-size:11px; letter-spacing:0; }
-.is-large-type .draft-event-venue { font-size:12px; }
-.is-large-type .draft-event-hall { font-size:11px; }
 .is-large-type .draft-shuttle-modal header h2 { font-size:18px; }
 .is-large-type .draft-shuttle-modal footer { font-size:15px; }
 @media (max-width:350px) {
